@@ -1,58 +1,56 @@
+import { useNavigate } from "@remix-run/react";
+
 import "./sidebar.css";
 const folderIcon = "../assets/folder.svg";
+const plusIcon  = "../assets/plus.svg";
+const computerIcon = "../assets/computer.svg";
+const folderIcon2 = "../assets/folder2.svg";
+const photosIcon = "../assets/photo.svg";
+const trashIcon = "../assets/trash.svg";
 
 export default function SideBar() {
+  const navigate = useNavigate();
+  const routeHome = () =>  navigate("/");
   return (
     <div className="sidebar">
-      <section className="logo">
+      <button onClick={routeHome} className="logo">
         <img className="folderIcon" src={folderIcon} alt="folder icon"></img>
         <h1>FileSync</h1>
-      </section>
+      </button>
       <section className="nbWrapper">
         <button className="newButton">
-          <svg
-            className="plusButtonSvg"
-            version="1.1"
-            id="Layer_1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            x="0px"
-            y="0px"
-            role="img"
-            width="64px"
-            height="64px"
-            viewBox="0 0 64 64"
-            enable-background="new 0 0 64 64"
-            xml:space="preserve"
-          >
-            <g>
-              <line
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="2"
-                stroke-miterlimit="10"
-                x1="32"
-                y1="50"
-                x2="32"
-                y2="14"
-                id="id_101"
-              ></line>
-              <line
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="2"
-                stroke-miterlimit="10"
-                x1="14"
-                y1="32"
-                x2="50"
-                y2="32"
-                id="id_102"
-              ></line>
-            </g>
-          </svg>
-          New
+          <img className="plusButtonSvg" src={plusIcon} alt="plus icon" />
+          <p>New</p>
         </button>
       </section>
+      <div>
+        <ul className="selectorWrapper">
+          <a className="selector" href="#">
+            <li className="selectorItem">
+              <img className="selectorIcon" src={computerIcon} alt="computer" />
+              <p className="selectorText">Computers</p>
+            </li>
+          </a>
+          <a className="selector" href="#">
+            <li className="selectorItem">
+              <img className="selectorIcon" src={folderIcon2} alt="folder icon" />
+              <p className="selectorText">Files</p>
+            </li>
+          </a>
+          <a className="selector" href="#">
+            <li className="selectorItem">
+              <img className="selectorIcon" src={photosIcon} alt="photos icon" />
+              <p className="selectorText">Photos</p>
+            </li>
+          </a>
+          <a className="selector" href="#">
+            <li className="selectorItem">
+              <img className="selectorIcon" src={trashIcon} alt="trash icon" />
+              <p className="selectorText">Trash</p>
+            </li>
+          </a>
+        </ul>
+      </div>
     </div>
   );
 }

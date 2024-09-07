@@ -17,6 +17,7 @@ a {
 
 .sidebar {
   width: 15.625rem;
+  height: 100%;
   border-right: solid rgba(169, 169, 169, 0.2) 1px;
   flex-direction: row;
 }

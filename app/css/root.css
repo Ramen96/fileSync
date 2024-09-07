@@ -3,7 +3,7 @@ html {
   padding: 0px;
   width: 100vw;
   height: 100vh;
-  background: black;
+  background: rgb(22, 20, 28);
 }
 
 html {
@@ -15,6 +15,7 @@ body {
   margin: 0px;
   width: 100%;
   height: auto;
+  display: flex;
 }
 
 h1 {

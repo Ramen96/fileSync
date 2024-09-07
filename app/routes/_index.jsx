@@ -4,12 +4,15 @@ const searchIcon  = "../assets/search.svg"
 
 export default function Index() {
   return (
+    <>
+    <SideBar />
     <div className="main">
-      <SideBar />
       <div className="searchbarwrapper flex-jc-ai w100">
         <img className="searchIcon" src={searchIcon} alt="search icon" />
-        <input className="searchBar" type="text" placeholder="Search drive" />
+        <input className="searchBar" id="searchbar" type="text" placeholder="Search drive" />
       </div>
+      <div className="mainWindow"></div>
     </div>
+    </>
   );
 }

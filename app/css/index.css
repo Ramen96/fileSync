@@ -1,3 +1,7 @@
+.main-bg {
+  background: rgb(22, 20, 28);
+}
+
 .flex-jc-ai {
   display: flex;
   align-items: center;
@@ -17,7 +21,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: rgb(22, 20, 28);
 }
 
 /* ******************************************** */
@@ -55,6 +58,7 @@
 
 .searchBar:focus {
   outline: solid #ff0049 2px;
+  background: rgb(30, 33, 48);
 }
 
 .searchbarwrapper {

@@ -1,3 +1,13 @@
+.flex-jc-ai {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.w100 {
+  width: 100%;
+}
+
 /* ******************************************** */
 /* ************* Section Main ***************** */
 /* ******************************************** */
@@ -26,4 +36,48 @@
   height: 4rem;
   border: solid whitesmoke 1px;
   border-radius: 0.5rem;
+}
+
+.searchBar {
+  height: 2rem !important;
+  width: 30rem;
+  margin: 1rem;
+  border-radius: 2rem;
+  background: rgb(30, 33, 48);
+  border: none;
+  appearance: none;
+  padding: 0.5rem;
+  padding-left: 1.5rem;
+  color: white;
+  font-size: 20px;
+}
+
+.searchBar:focus {
+  outline: solid #ff0049 2px;
+}
+
+.searchbarwrapper {
+  height: 5rem;
+  border-bottom: solid rgba(169, 169, 169, 0.2) 1px;
+}
+
+.searchIcon {
+  height: 20px;
+  width: auto;
+  background: rgb(30, 33, 48);
+  padding: 1rem;
+  border-radius: 2rem;
+}
+
+
+/* ******************************** */
+/* ************ main ************* */
+/* ****************************** */
+
+.mainWindow {
+  width: 100%;
+  height: 100%;
+  border: solid rgba(169, 169, 169, 0.2) 1px;
+  border-radius: 0.5rem;
+  margin: 1rem;
 }

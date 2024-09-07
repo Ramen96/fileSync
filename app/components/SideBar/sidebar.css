@@ -18,6 +18,7 @@ a {
 .sidebar {
   width: 15.625rem;
   border-right: solid rgba(169, 169, 169, 0.2) 1px;
+  flex-direction: row;
 }
 
 /* Logo */
@@ -52,7 +53,8 @@ a {
 .newButton {
   width: 90%;
   height: 100% !important;
-  background-color: rgb(229, 50, 101);
+  /* background-color: rgb(229, 50, 101); */
+  background-color: #ff0049;
   border-radius: 0.5rem;
   border: none;
   color: white;
@@ -66,7 +68,7 @@ a {
 }
 
 .newButton:hover {
-  background-color: #ea5b84;
+  background-color: #ff1c5c;
 }
 
 .plusButtonSvg {
@@ -91,6 +93,8 @@ a {
   /* margin-top: 0.5rem; */
   border-radius: 0.5rem;
   border: none;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   background: transparent;
   display: inline-flex;
   align-items: center;

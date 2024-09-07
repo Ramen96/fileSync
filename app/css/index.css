@@ -48,6 +48,12 @@
   align-items: center;
 }
 
+.folderIcon {
+  height: 2rem;
+  width: auto;
+  margin-right: 1rem;
+}
+
 /* new button */
 .nbWrapper {
   width: 100%;
@@ -80,10 +86,4 @@
 .plusButtonSvg {
   height: 25px;
   width: auto;
-}
-
-.folderIcon {
-  height: 2rem;
-  width: auto;
-  margin-right: 1rem;
 }

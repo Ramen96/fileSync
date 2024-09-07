@@ -1,0 +1,75 @@
+/* ******************************************** */
+/* ************* Section Main ***************** */
+/* ******************************************** */
+
+.main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background: rgb(22, 20, 28);
+}
+
+/* ******************************************** */
+/* ************* Section Nav ****************** */
+/* ******************************************** */
+
+.navWrapper {
+  width: 100%;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav {
+  width: 100%;
+  height: 4rem;
+  border: solid whitesmoke 1px;
+  border-radius: 0.5rem;
+}
+
+/* ******************************************** */
+/* ************* Section Sidebar ************** */
+/* ******************************************** */
+
+.sidebar {
+  width: 15.625rem;
+  /* background: #1a2226; */
+  border-right: solid rgba(169, 169, 169, 0.2) 1px;
+}
+
+/* Logo */
+.logo {
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  margin: 1rem;
+}
+
+/* new button */
+.nbWrapper {
+  width: 100%;
+  height: 44px !important;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.newButton {
+  width: 90%;
+  background: rgb(230, 61, 110);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.newButton:hover {
+  background-color: #ea5b84;
+}

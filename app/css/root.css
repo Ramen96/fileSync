@@ -1,0 +1,22 @@
+html {
+  margin: 0px;
+  padding: 0px;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+}
+
+html {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+body {
+  margin: 0px;
+  width: 100%;
+  height: auto;
+}
+
+h1 {
+  color: white;
+}

@@ -1,12 +1,12 @@
 import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
-
 import "./css/root.css";
 
 export default function App() {
   return (
     <html>
       <head>
-        <link rel="icon" href="data:image/x-icon;base64,AA" />
+        <link rel="icon" href="assets/folder.svg" type="image/svg+xml" id="favicon" />
+        <title>FileSync</title>
         <Meta />
         <Links />
       </head>

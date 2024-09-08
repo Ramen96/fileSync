@@ -80,16 +80,6 @@ a {
   animation-name: slidein;
 }
 
-.animate4s {
-  animation-duration: 4s;
-  animation-name: slidein;
-}
-
-.animate45s {
-  animation-duration: 4.5s;
-  animation-name: slidein;
-}
-
 .folderIcon {
   height: 2rem;
   width: auto;

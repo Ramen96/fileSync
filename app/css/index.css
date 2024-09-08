@@ -85,3 +85,8 @@
   border-radius: 0.5rem;
   margin: 1rem;
 }
+
+.test {
+  height: 3rem;
+  border-bottom: solid rgba(169, 169, 169, 0.2) 1px;
+}

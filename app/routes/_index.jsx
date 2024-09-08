@@ -11,7 +11,9 @@ export default function Index() {
         <img className="searchIcon" src={searchIcon} alt="search icon" />
         <input className="searchBar" id="searchbar" type="text" placeholder="Search drive" />
       </div>
-      <div className="mainWindow main-bg"></div>
+      <div className="mainWindow main-bg">
+        
+      </div>
     </div>
     </>
   );

@@ -8,7 +8,9 @@ export default function Index() {
     <SideBar />
     <div className="main">
       <div className="searchbarwrapper flex-jc-ai w100 main-bg">
-        <img className="searchIcon" src={searchIcon} alt="search icon" />
+        <button className="submitButton">
+          <img className="searchIcon" src={searchIcon} alt="search icon" />
+        </button>
         <input className="searchBar" id="searchbar" type="text" placeholder="Search drive" />
       </div>
       <div className="mainWindow main-bg">

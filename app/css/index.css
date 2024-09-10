@@ -58,13 +58,19 @@
 
 .searchBar:focus {
   box-shadow: 1px 1px 2px black, 0 0 25px #ff0049, 0 0 5px #ff0049;
-  border: solid #ff0049 1px;
+  border: solid 1px;
   background: rgb(30, 33, 48);
 }
 
 .searchbarwrapper {
   height: 5rem;
   border-bottom: solid rgba(169, 169, 169, 0.2) 1px;
+  border-right: solid rgba(169, 169, 169, 0.2) 1px;
+  border-left: solid rgba(169, 169, 169, 0.2) 1px;
+  border-bottom-right-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  margin-right: 1rem;
+  margin-left: 1rem;
 }
 
 .searchIcon {
@@ -80,7 +86,7 @@
 }
 
 .searchIcon:active {
-  box-shadow: 1px 1px 2px black, 0 0 25px #ff0049, 0 0 5px #ff0049;
+  box-shadow: 1px 1px 2px #ff0049, 0 0 25px #ff0049, 0 0 5px #ff0049;
   border: solid white 1px;
 }
 

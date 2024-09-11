@@ -7,6 +7,7 @@ const computerIcon = "../assets/computer.svg";
 const folderIcon2 = "../assets/folder2.svg";
 const photosIcon = "../assets/photo.svg";
 const trashIcon = "../assets/trash.svg";
+const fileIcon = "../assets/file.svg"
 
 export default function SideBar() {
   const navigate = useNavigate();
@@ -27,21 +28,26 @@ export default function SideBar() {
               <ul className="dropdown-items">
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
+                    <img className="dropdownIcon" src={fileIcon} alt="file icon" />
                     <h4>Upload File</h4>
                   </button>
                 </li>
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
+                    <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
                     <h4>Upload Folder</h4>
                   </button>
                 </li>
+                <div className="spacer"></div>
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
+                    <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
                     <h4>New Folder</h4>
                   </button>
                 </li>
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
+                    <img className="dropdownIcon" src={fileIcon} alt="file icon" />
                     <h4>New Document</h4>
                   </button>
                 </li>

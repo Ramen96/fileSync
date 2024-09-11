@@ -27,22 +27,22 @@ export default function SideBar() {
               <ul className="dropdown-items">
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
-                    Upload File
+                    <h4>Upload File</h4>
                   </button>
                 </li>
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
-                    Upload Folder
+                    <h4>Upload Folder</h4>
                   </button>
                 </li>
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
-                    New Folder
+                    <h4>New Folder</h4>
                   </button>
                 </li>
                 <li className="dropdown-element">
                   <button className="drp-btn-e">
-                    New Document
+                    <h4>New Document</h4>
                   </button>
                 </li>
               </ul>

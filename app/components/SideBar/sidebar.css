@@ -171,7 +171,6 @@ a {
   display: flex;
   justify-content: start;
   align-items: start;
-  align-items: center;
 }
 
 .drp-btn-e {
@@ -189,6 +188,7 @@ a {
 .dropdown:focus .dropdown-content {display: block;}
 .dropdown-element:hover .drp-btn-e {
   color: rgb(47, 214, 181);
+  background: rgb(45, 41, 56);
 }
 
 /* selector */

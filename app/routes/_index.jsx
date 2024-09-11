@@ -3,6 +3,7 @@ import SideBar from "../components/SideBar/sidebar";
 const searchIcon  = "../assets/search.svg"
 
 export default function Index() {
+
   return (
     <>
     <SideBar />

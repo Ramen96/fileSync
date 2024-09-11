@@ -18,10 +18,36 @@ export default function SideBar() {
         <h1>FileSync</h1>
       </button>
       <section className="nbWrapper">
-        <button className="newButton animate3s">
-          <img className="plusButtonSvg" src={plusIcon} alt="plus icon" />
-          <p>New</p>
-        </button>
+          <button className="newButton animate3s dropdown">
+              <div className="centerSVG">
+                <img className="plusButtonSvg" src={plusIcon} alt="plus icon" />
+                <p>New</p>
+            </div>
+            <div className="dropdown-content">
+              <ul className="dropdown-items">
+                <li className="dropdown-element">
+                  <button className="drp-btn-e">
+                    Upload File
+                  </button>
+                </li>
+                <li className="dropdown-element">
+                  <button className="drp-btn-e">
+                    Upload Folder
+                  </button>
+                </li>
+                <li className="dropdown-element">
+                  <button className="drp-btn-e">
+                    New Folder
+                  </button>
+                </li>
+                <li className="dropdown-element">
+                  <button className="drp-btn-e">
+                    New Document
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </button>
       </section>
       <div>
         <ul className="selectorWrapper">

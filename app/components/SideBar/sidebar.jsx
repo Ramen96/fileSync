@@ -12,6 +12,8 @@ const fileIcon = "../assets/file.svg"
 export default function SideBar() {
   const navigate = useNavigate();
   const routeHome = () =>  navigate("/");
+
+
   return (
     <div className="sidebar">
       <button onClick={routeHome} className="logo animate35s">
@@ -27,29 +29,29 @@ export default function SideBar() {
             <div className="dropdown-content">
               <ul className="dropdown-items">
                 <li className="dropdown-element">
-                  <button className="drp-btn-e">
+                  <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={fileIcon} alt="file icon" />
                     <h4>Upload File</h4>
-                  </button>
+                  </div>
                 </li>
                 <li className="dropdown-element">
-                  <button className="drp-btn-e">
+                  <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
                     <h4>Upload Folder</h4>
-                  </button>
+                  </div>
                 </li>
                 <div className="spacer"></div>
                 <li className="dropdown-element">
-                  <button className="drp-btn-e">
+                  <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
                     <h4>New Folder</h4>
-                  </button>
+                  </div>
                 </li>
                 <li className="dropdown-element">
-                  <button className="drp-btn-e">
+                  <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={fileIcon} alt="file icon" />
                     <h4>New Document</h4>
-                  </button>
+                  </div>
                 </li>
               </ul>
             </div>

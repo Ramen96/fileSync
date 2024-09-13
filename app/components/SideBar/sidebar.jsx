@@ -21,6 +21,8 @@ export default function SideBar() {
         <h1>FileSync</h1>
       </button>
       <section className="nbWrapper">
+
+        {/* ********************* SECTION: Dropdown ********************** */}
           <button className="newButton animate3s dropdown">
               <div className="centerSVG">
                 <img className="plusButtonSvg" src={plusIcon} alt="plus icon" />
@@ -38,8 +40,8 @@ export default function SideBar() {
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
-                    <label htmlFor="uploadFile"><h4 className="pointer">Upload Folder</h4></label>
-                    <input style={{"display": "none"}} type="file"  id="uploadFile" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    <label htmlFor="uploadFolder"><h4 className="pointer">Upload Folder</h4></label>
+                    <input style={{"display": "none"}} type="file"  id="uploadFolder" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
                   </div>
                 </li>
                 <div className="spacer"></div>
@@ -59,6 +61,9 @@ export default function SideBar() {
             </div>
           </button>
       </section>
+          {/* ************************************************************** */}
+
+          {/* ********************* SECTION: Nav *************************** */}
       <div>
         <ul className="selectorWrapper">
           <a className="selector" href="#">
@@ -87,6 +92,7 @@ export default function SideBar() {
           </a>
         </ul>
       </div>
+      {/* ************************************************************** */}
     </div>
   );
 }

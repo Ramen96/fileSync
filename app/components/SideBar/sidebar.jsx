@@ -31,13 +31,15 @@ export default function SideBar() {
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={fileIcon} alt="file icon" />
-                    <h4>Upload File</h4>
+                    <label htmlFor="uploadFile"><h4 className="pointer">Upload File</h4></label>
+                    <input style={{"display": "none"}} type="file"  id="uploadFile" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
                   </div>
                 </li>
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
-                    <h4>Upload Folder</h4>
+                    <label htmlFor="uploadFile"><h4 className="pointer">Upload Folder</h4></label>
+                    <input style={{"display": "none"}} type="file"  id="uploadFile" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
                   </div>
                 </li>
                 <div className="spacer"></div>

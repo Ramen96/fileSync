@@ -13,6 +13,52 @@ export default function SideBar() {
   const navigate = useNavigate();
   const routeHome = () =>  navigate("/");
 
+  // This was a test to see if file uploads were being handled correctly.
+  // Will come back to this later to handle saving these to the cloud.
+  const filesUploaded = [];
+
+  function fileUpload(event) {
+
+    function sanitizePath() {
+      // proof of concept: for now just trying to get the root dir of index 0 of the FileList
+      // Moving this to backend later for now it is here for testing purposes.
+      const slash = "/";
+
+      const relitivePath = filesUploaded[0][4].webkitRelativePath;
+      const slashIndex = relitivePath.indexOf(slash);
+      const rootDirName = relitivePath.slice(0, slashIndex);
+      console.log("rootDirName: ", rootDirName); 
+
+      const slashIndexs = [];
+      const subDirArray = [];
+
+      const charArray  = relitivePath.split("");
+      console.log("charArray: ", charArray);
+
+      const dirArray = [];
+      
+      for (let i = 0; i < charArray.length; i++) {
+        if (charArray[i] === "/") {
+          slashIndexs.push(i);
+        }
+      }
+
+      for (let i = 0; i < charArray.length; i++) {
+        let currentDir = "";
+        if (charArray[i] !== "/") {
+          currentDir.concat(charArray[i]);
+          console.log("currentDIr: ",currentDir);
+          console.log("current dir i : ", currentDir[i])
+        }
+      }
+
+    }
+
+    const file = event.target.files;
+    filesUploaded.push(file);
+    console.log(filesUploaded)
+    sanitizePath();
+  }
 
   return (
     <div className="sidebar">
@@ -34,14 +80,14 @@ export default function SideBar() {
                   <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={fileIcon} alt="file icon" />
                     <label htmlFor="uploadFile"><h4 className="pointer">Upload File</h4></label>
-                    <input style={{"display": "none"}} type="file"  id="uploadFile" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    <input onChange={fileUpload} style={{"display": "none"}} type="file"  id="uploadFile" />
                   </div>
                 </li>
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
                     <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
                     <label htmlFor="uploadFolder"><h4 className="pointer">Upload Folder</h4></label>
-                    <input style={{"display": "none"}} type="file"  id="uploadFolder" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    <input style={{"display": "none"}} onChange={fileUpload} type="file" multiple={true} webkitdirectory="true" id="uploadFolder" />
                   </div>
                 </li>
                 <div className="spacer"></div>

@@ -20,43 +20,21 @@ export default function SideBar() {
   function fileUpload(event) {
 
     function sanitizePath() {
-      // proof of concept: for now just trying to get the root dir of index 0 of the FileList
-      // Moving this to backend later for now it is here for testing purposes.
-      const slash = "/";
+      const isTraversal = /(\.\.\/|\/\.\.)/g;
+      const fileList = filesUploaded[0];
 
-      const relitivePath = filesUploaded[0][4].webkitRelativePath;
-      const slashIndex = relitivePath.indexOf(slash);
-      const rootDirName = relitivePath.slice(0, slashIndex);
-      console.log("rootDirName: ", rootDirName); 
-
-      const slashIndexs = [];
-      const subDirArray = [];
-
-      const charArray  = relitivePath.split("");
-      console.log("charArray: ", charArray);
-
-      const dirArray = [];
-      
-      for (let i = 0; i < charArray.length; i++) {
-        if (charArray[i] === "/") {
-          slashIndexs.push(i);
-        }
+      for (let i = 0; i < fileList.length; i++) {
+        const relitivePath = fileList[i].webkitRelativePath;
+        const traversalTrue = [...relitivePath.matchAll(isTraversal)]; 
+        if (traversalTrue === true) {
+          throw new Error("Path traversal blocked")
+        } 
+        console.log("relitive path: ", relitivePath);
       }
-
-      for (let i = 0; i < charArray.length; i++) {
-        let currentDir = "";
-        if (charArray[i] !== "/") {
-          currentDir.concat(charArray[i]);
-          console.log("currentDIr: ",currentDir);
-          console.log("current dir i : ", currentDir[i])
-        }
-      }
-
     }
 
     const file = event.target.files;
     filesUploaded.push(file);
-    console.log(filesUploaded)
     sanitizePath();
   }
 

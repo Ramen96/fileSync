@@ -26,7 +26,8 @@ export default function SideBar() {
       for (let i = 0; i < fileList.length; i++) {
         const relitivePath = fileList[i].webkitRelativePath;
         const traversalTrue = [...relitivePath.matchAll(isTraversal)]; 
-        if (traversalTrue === true) {
+        console.log(traversalTrue)
+        if (traversalTrue != []) {
           throw new Error("Path traversal blocked")
         } 
         console.log("relitive path: ", relitivePath);
@@ -114,6 +115,15 @@ export default function SideBar() {
               <p className="selectorText">Trash</p>
             </li>
           </a>
+          <button onClick={ () => {
+            fetch("/fileStorage", {
+              method: "POST"
+            })
+              .then(res => res.json())
+              .then(data => console.log("data: ", data))
+          }} className="selector">
+            <h1>Click me</h1>
+          </button>
         </ul>
       </div>
       {/* ************************************************************** */}

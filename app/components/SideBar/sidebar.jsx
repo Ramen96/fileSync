@@ -15,28 +15,33 @@ export default function SideBar() {
 
   // This was a test to see if file uploads were being handled correctly.
   // Will come back to this later to handle saving these to the cloud.
-  const filesUploaded = [];
 
   function fileUpload(event) {
 
-    function sanitizePath() {
-      const isTraversal = /(\.\.\/|\/\.\.)/g;
-      const fileList = filesUploaded[0];
+    const file = event.target.files;
 
-      for (let i = 0; i < fileList.length; i++) {
-        const relitivePath = fileList[i].webkitRelativePath;
-        const traversalTrue = [...relitivePath.matchAll(isTraversal)]; 
-        console.log(traversalTrue)
-        if (traversalTrue != []) {
-          throw new Error("Path traversal blocked")
-        } 
-        console.log("relitive path: ", relitivePath);
-      }
+    // filesUploaded.push(file);
+    // console.log("files", file);
+
+    const fileList = new FormData();
+
+    for (let i = 0; i < file.length; i++) {
+      const fileListItem = file[i];
+      const fileName = fileListItem.name;
+      // console.log(file[i])
+      fileList.append(file[i].name, file[i]);
+      console.log(fileList)
     }
 
-    const file = event.target.files;
-    filesUploaded.push(file);
-    sanitizePath();
+    // console.log("file2: ", fileList);
+
+    fetch("fileStorage", {
+      method: "POST",
+      body : {
+        file :fileList
+      }
+    })
+    event.preventDefault();
   }
 
   return (

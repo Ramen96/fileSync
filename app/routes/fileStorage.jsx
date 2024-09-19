@@ -33,7 +33,7 @@ function sanitizePath(param) {
   // }
 }
 
-export const handleFileUpload = async ({ request }) => {
+export const action = async ({ request }) => {
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({

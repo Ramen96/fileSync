@@ -133,11 +133,12 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: App
 }, Symbol.toStringTag, { value: "Module" }));
-const action = ({ request }) => {
+const action = async ({ request }) => {
+  console.log(formData);
   const myObject = {
     "key": "value"
   };
-  console.log("request", request);
+  console.log("request", request.headers);
   return new Response(JSON.stringify(myObject), {
     status: 200,
     headers: {
@@ -161,18 +162,17 @@ function SideBar() {
   const routeHome = () => navigate("/");
   function fileUpload(event) {
     const file = event.target.files;
+    console.log(file);
     const fileList = new FormData();
     for (let i = 0; i < file.length; i++) {
       const fileListItem = file[i];
       fileListItem.name;
       fileList.append(file[i].name, file[i]);
-      console.log(fileList);
     }
+    fileList.getAll("name");
     fetch("fileStorage", {
       method: "POST",
-      body: {
-        file
-      }
+      body: fileList
     });
   }
   return /* @__PURE__ */ jsxs("div", { className: "sidebar", children: [
@@ -249,7 +249,7 @@ const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-BSEQBc5l.js", "imports": ["/assets/index-CZ3PrqHY.js", "/assets/components-CR5cdnQn.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/root-jPBstzeA.js", "imports": ["/assets/index-CZ3PrqHY.js", "/assets/components-CR5cdnQn.js"], "css": ["/assets/root-C-rFmPHj.css"] }, "routes/fileStorage": { "id": "routes/fileStorage", "parentId": "root", "path": "fileStorage", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/fileStorage-l0sNRNKZ.js", "imports": [], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-DHeky-sS.js", "imports": ["/assets/index-CZ3PrqHY.js"], "css": ["/assets/_index-C3lv2onq.css"] } }, "url": "/assets/manifest-450f2367.js", "version": "450f2367" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-BSEQBc5l.js", "imports": ["/assets/index-CZ3PrqHY.js", "/assets/components-CR5cdnQn.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/root-jPBstzeA.js", "imports": ["/assets/index-CZ3PrqHY.js", "/assets/components-CR5cdnQn.js"], "css": ["/assets/root-C-rFmPHj.css"] }, "routes/fileStorage": { "id": "routes/fileStorage", "parentId": "root", "path": "fileStorage", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/fileStorage-l0sNRNKZ.js", "imports": [], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-ppv-FQpG.js", "imports": ["/assets/index-CZ3PrqHY.js"], "css": ["/assets/_index-C3lv2onq.css"] } }, "url": "/assets/manifest-e449b1e5.js", "version": "e449b1e5" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";

@@ -1,3 +1,5 @@
+import { json, unstable_parseMultipartFormData, unstable_createMemoryUploadHandler, unstable_composeUploadHandlers, unstable_createFileUploadHandler } from "@remix-run/node";
+
 function sanitizePath(param) {
   const isTraversal = [
     "../",
@@ -31,12 +33,29 @@ function sanitizePath(param) {
   // }
 }
 
-export const action = ({ request }) => {
+export const action = async ({ request }) => {
+
+  const uploadHandler = unstable_composeUploadHandlers(
+    unstable_createFileUploadHandler({
+      maxPartSize: 5_000_000,
+      file: ({ filename }) => filename,
+    }),
+    unstable_createMemoryUploadHandler()
+  )
+
+
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  )
+
+  console.log("formData", formData);
+
   const myObject = {
     "key" : "value"
   }
 
-  console.log("request", request);
+  console.log("request", request.headers);
 
   return new Response(JSON.stringify(myObject), {
     status: 200,

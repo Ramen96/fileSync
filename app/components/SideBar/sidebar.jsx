@@ -20,6 +20,7 @@ export default function SideBar() {
 
     const file = event.target.files;
 
+    console.log(file);
     // filesUploaded.push(file);
     // console.log("files", file);
 
@@ -30,18 +31,14 @@ export default function SideBar() {
       const fileName = fileListItem.name;
       // console.log(file[i])
       fileList.append(file[i].name, file[i]);
-      console.log(fileList)
     }
 
-    // console.log("file2: ", fileList);
+    fileList.getAll("name");
 
     fetch("fileStorage", {
       method: "POST",
-      body : {
-        file :fileList
-      }
+      body : fileList
     })
-    event.preventDefault();
   }
 
   return (

@@ -1,6 +1,6 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { PassThrough } from "node:stream";
-import { createReadableStreamFromReadable } from "@remix-run/node";
+import { createReadableStreamFromReadable, unstable_composeUploadHandlers, unstable_createFileUploadHandler, unstable_createMemoryUploadHandler, unstable_parseMultipartFormData } from "@remix-run/node";
 import { RemixServer, Meta, Links, Outlet, Scripts, useNavigate } from "@remix-run/react";
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
@@ -134,7 +134,19 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   default: App
 }, Symbol.toStringTag, { value: "Module" }));
 const action = async ({ request }) => {
-  console.log(formData);
+  const uploadHandler = unstable_composeUploadHandlers(
+    unstable_createFileUploadHandler({
+      maxPartSize: 5e6,
+      file: ({ filename }) => filename,
+      directory: "cloud"
+    }),
+    unstable_createMemoryUploadHandler()
+  );
+  const formData = await unstable_parseMultipartFormData(
+    request,
+    uploadHandler
+  );
+  console.log("formData", formData);
   const myObject = {
     "key": "value"
   };

@@ -33,27 +33,28 @@ function sanitizePath(param) {
   // }
 }
 
-export const action = async ({ request }) => {
+export const handleFileUpload = async ({ request }) => {
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 5_000_000,
       file: ({ filename }) => filename,
+      directory: "cloud",
     }),
     unstable_createMemoryUploadHandler()
-  )
+  );
 
 
   const formData = await unstable_parseMultipartFormData(
     request,
     uploadHandler
-  )
+  );
 
   console.log("formData", formData);
 
   const myObject = {
     "key" : "value"
-  }
+  };
 
   console.log("request", request.headers);
 
@@ -62,5 +63,5 @@ export const action = async ({ request }) => {
     headers : {
       "Content-Type": "application/json",
     }
-  })
-} 
+  });
+};

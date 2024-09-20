@@ -17,23 +17,24 @@ export default function SideBar() {
   // Will come back to this later to handle saving these to the cloud.
 
   function fileUpload(event) {
-
     const file = event.target.files;
-
-    console.log(file);
-    // filesUploaded.push(file);
-    // console.log("files", file);
-
     const fileList = new FormData();
 
-    for (let i = 0; i < file.length; i++) {
-      const fileListItem = file[i];
-      const fileName = fileListItem.name;
-      // console.log(file[i])
+    // For some reason webKitRelitivePath is an
+    // empty string on the backend
+    // creating an object here as a work around
+
+    const relitivePaths = {};
+
+     for (let i = 0; i < file.length; i++) {
       fileList.append(file[i].name, file[i]);
+      let key = file[i].name;
+      relitivePaths[key] = file[i].webkitRelativePath;
     }
 
-    fileList.getAll("name");
+    fileList.append("relitivePaths", relitivePaths);
+    
+    console.log(relitivePaths);
 
     fetch("fileStorage", {
       method: "POST",

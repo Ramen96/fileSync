@@ -51,8 +51,9 @@ export const action = async ({ request }) => {
   );
 
   const webKitRelitivePaths = JSON.parse(formData.get("relitivePaths"));
+  const webKitRelitivePathsArr = [...Object.entries(webKitRelitivePaths)]
 
-  console.log("webKitRelitivePaths: ", webKitRelitivePaths);
+  console.log("webKitRelitivePaths: ", webKitRelitivePathsArr[0][1]);
 
   return new Response(JSON.stringify(webKitRelitivePaths), {
     status: 200,

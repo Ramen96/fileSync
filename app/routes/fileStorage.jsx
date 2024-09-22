@@ -50,15 +50,11 @@ export const action = async ({ request }) => {
     uploadHandler
   );
 
-  console.log("formData", formData);
+  const webKitRelitivePaths = JSON.parse(formData.get("relitivePaths"));
 
-  const myObject = {
-    "key" : "value"
-  };
+  console.log("webKitRelitivePaths: ", webKitRelitivePaths);
 
-  console.log("request", request.headers);
-
-  return new Response(JSON.stringify(myObject), {
+  return new Response(JSON.stringify(webKitRelitivePaths), {
     status: 200,
     headers : {
       "Content-Type": "application/json",

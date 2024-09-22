@@ -32,7 +32,7 @@ export default function SideBar() {
       relitivePaths[key] = file[i].webkitRelativePath;
     }
 
-    fileList.append("relitivePaths", relitivePaths);
+    fileList.append("relitivePaths", JSON.stringify(relitivePaths));
     
     console.log(relitivePaths);
 
@@ -118,15 +118,6 @@ export default function SideBar() {
               <p className="selectorText">Trash</p>
             </li>
           </a>
-          <button onClick={ () => {
-            fetch("/fileStorage", {
-              method: "POST"
-            })
-              .then(res => res.json())
-              .then(data => console.log("data: ", data))
-          }} className="selector">
-            <h1>Click me</h1>
-          </button>
         </ul>
       </div>
       {/* ************************************************************** */}

@@ -1,7 +1,10 @@
-import { json, unstable_parseMultipartFormData, unstable_createMemoryUploadHandler, unstable_composeUploadHandlers, unstable_createFileUploadHandler } from "@remix-run/node";
-
-
-
+import { 
+  json, 
+  unstable_parseMultipartFormData, 
+  unstable_createMemoryUploadHandler, 
+  unstable_composeUploadHandlers, 
+  unstable_createFileUploadHandler 
+} from "@remix-run/node";
 
 export const action = async ({ request }) => {
   const pathTraversalDetection = (path) => {
@@ -34,43 +37,51 @@ export const action = async ({ request }) => {
     }
     return traversalDetection;
   }
+
+  let triggerWriteData = false;
   
-
-  // const uploadHandler = unstable_composeUploadHandlers(
-    
-  //   unstable_createMemoryUploadHandler()
-  // );
-
+  const writeData = unstable_composeUploadHandlers(
+    unstable_createFileUploadHandler({
+      maxPartSize: 5_000_000,
+      file: ({ filename }) => filename,
+      directory: "cloud",
+    }),
+    unstable_createMemoryUploadHandler()
+  );
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createMemoryUploadHandler()
-  )
+  );
 
   const formData = await unstable_parseMultipartFormData(
     request,
     uploadHandler
-  );
-
+  )
+  
   const webKitRelitivePaths = JSON.parse(formData.get("relitivePaths"));
-  const webKitRelitivePathsArr = [...Object.entries(webKitRelitivePaths)]
+  const webKitRelitivePathsArr = [...Object.entries(webKitRelitivePaths)];
 
   for (let i = 0; i < webKitRelitivePathsArr.length; i++) {
     const relitivePath = webKitRelitivePathsArr[i][1]; 
     const fileName = webKitRelitivePathsArr[i][0];
-    // ToDo:
-    // pass relitvePath to sanitizePath() 
-    // return boolen value to determine if path traversal is dectected
-    // if detected throw error and do not write files to system
-    // else use relitve path as path to save inside of cloud/
-    console.log("relitvePath: ", relitivePath);
+    
     if (pathTraversalDetection(relitivePath)) {
+      triggerWriteData = false;
       throw new Error("Warning: path traversal is true.");
     } else {
-      unstable_createFileUploadHandler({
-        maxPartSize: 5_000_000,
-        file: ({ filename }) => filename,
-        directory: `cloud/${relitivePath}/${fileName}`,
-      });
+      console.log(`cloud/${relitivePath}/${fileName}`);
+      triggerWriteData = true;
     }
+  }
+
+  if (triggerWriteData === true) {
+    const stream  = new ReadableStream({
+    })
+    stream.getReader()
+
+      await unstable_parseMultipartFormData(
+        request,
+        writeData
+      )
   }
 
   return new Response(JSON.stringify(webKitRelitivePaths), {

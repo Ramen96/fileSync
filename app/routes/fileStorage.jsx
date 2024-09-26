@@ -38,53 +38,104 @@ export const action = async ({ request }) => {
     return traversalDetection;
   }
 
-  let triggerWriteData = false;
-  
-  const writeData = unstable_composeUploadHandlers(
-    unstable_createFileUploadHandler({
-      maxPartSize: 5_000_000,
-      file: ({ filename }) => filename,
-      directory: "cloud",
-    }),
-    unstable_createMemoryUploadHandler()
-  );
-  const uploadHandler = unstable_composeUploadHandlers(
-    unstable_createMemoryUploadHandler()
-  );
 
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  )
-  
-  const webKitRelitivePaths = JSON.parse(formData.get("relitivePaths"));
-  const webKitRelitivePathsArr = [...Object.entries(webKitRelitivePaths)];
 
-  for (let i = 0; i < webKitRelitivePathsArr.length; i++) {
-    const relitivePath = webKitRelitivePathsArr[i][1]; 
-    const fileName = webKitRelitivePathsArr[i][0];
-    
-    if (pathTraversalDetection(relitivePath)) {
-      triggerWriteData = false;
-      throw new Error("Warning: path traversal is true.");
-    } else {
-      console.log(`cloud/${relitivePath}/${fileName}`);
-      triggerWriteData = true;
-    }
+  // const parseFormDataObj = await request.formData();
+  // const formData = unstable_composeUploadHandlers(
+  //   unstable_createMemoryUploadHandler()
+  // )
+  
+  // const test = await unstable_parseMultipartFormData(
+  //   request,
+  //   formData
+  // )
+
+  // console.log("relitivePaths: ", webKitRelitivePathsArr);
+  // console.log(parseFormDataObj)
+
+  // let triggerWriteData = false;
+  
+  
+  
+  // const webKitRelitivePaths = JSON.parse(formData.get("relitivePaths"));
+  // const webKitRelitivePathsArr = [...Object.entries(webKitRelitivePaths)];
+
+
+  async function streamToBuffer(readableStream) {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      readableStream.on("data", data => {
+        if (typeof data === 'string') {
+          chunks.push(Buffer.from(data, 'utf-8'));
+        } else if (data instanceof Buffer) {
+          chunks.push(data);
+        } else {
+          const jsonData = JSON.stringify(data);
+          chunks.push(Buffer.from(jsonData, 'utf-8'));
+        }
+      });
+      readableStream.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      readableStream.on('error', reject);
+    });
   }
 
-  if (triggerWriteData === true) {
-    const stream  = new ReadableStream({
-    })
-    stream.getReader()
+  const test = await request.formData();
 
-      await unstable_parseMultipartFormData(
-        request,
-        writeData
-      )
+  console.log(request)
+  // const triggerWriteData = () => {
+  //   let writeData = false;
+  //   for (let i = 0; i < webKitRelitivePathsArr.length; i++) {
+  //     const relitivePath = webKitRelitivePathsArr[i][1]; 
+  //     const fileName = webKitRelitivePathsArr[i][0];
+      
+  //     if (pathTraversalDetection(relitivePath)) {
+  //       writeData = false;
+  //       throw new Error("Warning: path traversal is true.");
+  //     } else {
+  //       writeData = true;
+  //       console.log(`cloud/${relitivePath}/${fileName}`);
+  //     }
+  //   }
+  //   return writeData;
+  // }
+
+  const getRelitivePaths = () => {
+    streamToBuffer(test)
+      .then(fileData => {
+        // const formToObj = Object.fromEntries(new FormData(fileData));
+        // const webKitRelitivePathsArr = Object.entries(JSON.parse(formToObj.relitivePaths));
+        // console.log("aklsjdfklasj;dflkja;::::: ", webKitRelitivePathsArr);
+        console.log(fileData);
+      })
+      .catch(error => console.error('Error: ', error));
   }
 
-  return new Response(JSON.stringify(webKitRelitivePaths), {
+  // getRelitivePaths();
+
+  // console.log(triggerWriteData());
+
+  // if (triggerWriteData) {
+    // const newStream = formData.stream();
+
+    // const uploadHandler = unstable_composeUploadHandlers(
+    //   unstable_createFileUploadHandler({
+    //     maxPartSize: 5_000_000,
+    //     file: ({ filename }) => filename,
+    //     directory: "cloud",
+    //   }),
+    //   unstable_createMemoryUploadHandler()
+    // );
+  
+    // await unstable_parseMultipartFormData(
+    //   newStream,
+    //   uploadHandler
+    // );
+  // }
+
+  const placehodler = {};
+  return new Response(JSON.stringify(placehodler), {
     status: 200,
     headers : {
       "Content-Type": "application/json",

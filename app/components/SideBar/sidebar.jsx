@@ -13,17 +13,9 @@ export default function SideBar() {
   const navigate = useNavigate();
   const routeHome = () =>  navigate("/");
 
-  // This was a test to see if file uploads were being handled correctly.
-  // Will come back to this later to handle saving these to the cloud.
-
   function fileUpload(event) {
     const file = event.target.files;
     const fileList = new FormData();
-
-    // For some reason webKitRelitivePath is an
-    // empty string on the backend
-    // creating an object here as a work around
-
     const relitivePaths = {};
 
      for (let i = 0; i < file.length; i++) {

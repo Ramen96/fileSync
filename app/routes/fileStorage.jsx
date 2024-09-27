@@ -5,6 +5,7 @@ import {
   unstable_composeUploadHandlers, 
   unstable_createFileUploadHandler 
 } from "@remix-run/node";
+import { formatPostcssSourceMap } from "vite";
 
 export const action = async ({ request }) => {
   const pathTraversalDetection = (path) => {
@@ -39,7 +40,40 @@ export const action = async ({ request }) => {
   }
 
 
+  const formData = await request.formData();
+  const formDataObject = Object.fromEntries(formData);
+  const relitivePaths = [...Object.entries(JSON.parse(formDataObject.relitivePaths))];
 
+  function loopObject(obj) {
+    for (let file in obj) {
+      if (obj[file] instanceof File) {
+        console.log(obj[file].name);
+      }
+    }
+  }
+
+
+  const itteratePaths = () => {
+    let pathSafe = false;
+    for (let i = 0; i < relitivePaths.length; i++) {
+      const webKitRelitivePath = relitivePaths[i][1]; 
+      const fileName = relitivePaths[i][0];
+      
+      if (pathTraversalDetection(webKitRelitivePath)) {
+        pathSafe = false;
+        throw new Error("Warning: path traversal is true.");
+      } else {
+        pathSafe = true;
+        // console.log(`cloud/${webKitRelitivePath}/${fileName}`);
+      }
+    }
+    return pathSafe;
+  }
+
+  if (itteratePaths()) {
+    loopObject(formDataObject);
+  }
+  
   // const parseFormDataObj = await request.formData();
   // const formData = unstable_composeUploadHandlers(
   //   unstable_createMemoryUploadHandler()
@@ -61,56 +95,41 @@ export const action = async ({ request }) => {
   // const webKitRelitivePathsArr = [...Object.entries(webKitRelitivePaths)];
 
 
-  async function streamToBuffer(readableStream) {
-    return new Promise((resolve, reject) => {
-      const chunks = [];
-      readableStream.on("data", data => {
-        if (typeof data === 'string') {
-          chunks.push(Buffer.from(data, 'utf-8'));
-        } else if (data instanceof Buffer) {
-          chunks.push(data);
-        } else {
-          const jsonData = JSON.stringify(data);
-          chunks.push(Buffer.from(jsonData, 'utf-8'));
-        }
-      });
-      readableStream.on('end', () => {
-        resolve(Buffer.concat(chunks));
-      });
-      readableStream.on('error', reject);
-    });
-  }
-
-  const test = await request.formData();
-
-  console.log(request)
-  // const triggerWriteData = () => {
-  //   let writeData = false;
-  //   for (let i = 0; i < webKitRelitivePathsArr.length; i++) {
-  //     const relitivePath = webKitRelitivePathsArr[i][1]; 
-  //     const fileName = webKitRelitivePathsArr[i][0];
-      
-  //     if (pathTraversalDetection(relitivePath)) {
-  //       writeData = false;
-  //       throw new Error("Warning: path traversal is true.");
-  //     } else {
-  //       writeData = true;
-  //       console.log(`cloud/${relitivePath}/${fileName}`);
-  //     }
-  //   }
-  //   return writeData;
+  // async function streamToBuffer(readableStream) {
+  //   return new Promise((resolve, reject) => {
+  //     const chunks = [];
+  //     readableStream.on("data", data => {
+  //       if (typeof data === 'string') {
+  //         chunks.push(Buffer.from(data, 'utf-8'));
+  //       } else if (data instanceof Buffer) {
+  //         chunks.push(data);
+  //       } else {
+  //         const jsonData = JSON.stringify(data);
+  //         chunks.push(Buffer.from(jsonData, 'utf-8'));
+  //       }
+  //     });
+  //     readableStream.on('end', () => {
+  //       resolve(Buffer.concat(chunks));
+  //     });
+  //     readableStream.on('error', reject);
+  //   });
   // }
 
-  const getRelitivePaths = () => {
-    streamToBuffer(test)
-      .then(fileData => {
-        // const formToObj = Object.fromEntries(new FormData(fileData));
-        // const webKitRelitivePathsArr = Object.entries(JSON.parse(formToObj.relitivePaths));
-        // console.log("aklsjdfklasj;dflkja;::::: ", webKitRelitivePathsArr);
-        console.log(fileData);
-      })
-      .catch(error => console.error('Error: ', error));
-  }
+  // const test = await request.formData();
+
+  // console.log(request)
+  
+
+  // const getRelitivePaths = () => {
+  //   streamToBuffer(test)
+  //     .then(fileData => {
+  //       // const formToObj = Object.fromEntries(new FormData(fileData));
+  //       // const webKitRelitivePathsArr = Object.entries(JSON.parse(formToObj.relitivePaths));
+  //       // console.log("aklsjdfklasj;dflkja;::::: ", webKitRelitivePathsArr);
+  //       console.log(fileData);
+  //     })
+  //     .catch(error => console.error('Error: ', error));
+  // }
 
   // getRelitivePaths();
 

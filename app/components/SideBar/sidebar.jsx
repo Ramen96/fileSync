@@ -16,17 +16,10 @@ export default function SideBar() {
   function fileUpload(event) {
     const file = event.target.files;
     const fileList = new FormData();
-    const relitivePaths = {};
 
      for (let i = 0; i < file.length; i++) {
       fileList.append(file[i].name, file[i]);
-      let key = file[i].name;
-      relitivePaths[key] = file[i].webkitRelativePath;
     }
-
-    fileList.append("relitivePaths", JSON.stringify(relitivePaths));
-    
-    console.log(relitivePaths);
 
     fetch("fileStorage", {
       method: "POST",

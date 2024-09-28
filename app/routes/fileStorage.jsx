@@ -1,11 +1,4 @@
-import { 
-  json, 
-  unstable_parseMultipartFormData, 
-  unstable_createMemoryUploadHandler, 
-  unstable_composeUploadHandlers, 
-  unstable_createFileUploadHandler 
-} from "@remix-run/node";
-import { formatPostcssSourceMap } from "vite";
+import * as fs from 'node:fs/promises';
 
 export const action = async ({ request }) => {
   const pathTraversalDetection = (path) => {
@@ -42,38 +35,34 @@ export const action = async ({ request }) => {
 
   const formData = await request.formData();
   const formDataObject = Object.fromEntries(formData);
-  const relitivePaths = [...Object.entries(JSON.parse(formDataObject.relitivePaths))];
+  const webKitRelitivePath = [];
 
-  function loopObject(obj) {
-    for (let file in obj) {
-      if (obj[file] instanceof File) {
-        console.log(obj[file].name);
-      }
+  console.log(formDataObject);
+  for (let file in formDataObject) {
+    if (formDataObject[file] instanceof File) {
+      const relitivePath = formDataObject[file].name;
+      webKitRelitivePath.push(relitivePath);
     }
   }
 
-
   const itteratePaths = () => {
     let pathSafe = false;
-    for (let i = 0; i < relitivePaths.length; i++) {
-      const webKitRelitivePath = relitivePaths[i][1]; 
-      const fileName = relitivePaths[i][0];
-      
-      if (pathTraversalDetection(webKitRelitivePath)) {
+    for (let i = 0; i < webKitRelitivePath.length; i++) {
+      const path = webKitRelitivePath[i]
+      if (pathTraversalDetection(path)) {
         pathSafe = false;
         throw new Error("Warning: path traversal is true.");
       } else {
         pathSafe = true;
-        // console.log(`cloud/${webKitRelitivePath}/${fileName}`);
       }
     }
     return pathSafe;
   }
 
   if (itteratePaths()) {
-    loopObject(formDataObject);
+    // write to fs 
   }
-  
+
   // const parseFormDataObj = await request.formData();
   // const formData = unstable_composeUploadHandlers(
   //   unstable_createMemoryUploadHandler()

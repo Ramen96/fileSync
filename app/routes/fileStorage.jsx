@@ -1,7 +1,9 @@
+import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
 export const action = async ({ request }) => {
+  console.log(prisma); // testing to see if prisma works.... it works!!! :)
   const pathTraversalDetection = (path) => {
     const traversalPatterns = [
       "../",

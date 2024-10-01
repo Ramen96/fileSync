@@ -104,6 +104,7 @@ export const action = async ({ request }) => {
                 await fs.writeFile(filePath, Buffer.from(content));
                 await writeToDb();
               } catch (err) {
+                console.log(err);
                 throw new Error(`Failed to write file ${fileRelitvePath}`);
               }
             } else {

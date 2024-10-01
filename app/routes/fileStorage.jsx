@@ -3,7 +3,6 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 
 export const action = async ({ request }) => {
-  console.log(prisma); // testing to see if prisma works.... it works!!! :)
   const pathTraversalDetection = (path) => {
     const traversalPatterns = [
       "../",
@@ -66,8 +65,10 @@ export const action = async ({ request }) => {
     for (let file in formDataObject) {
       if (formDataObject[file] instanceof File) {
         const content = await formDataObject[file].arrayBuffer();
-        const fileName = formDataObject[file].name;
-        const filePath = path.join("./cloud", fileName);
+        const fileRelitvePath = formDataObject[file].name;
+        const fileName = formDataObject[file].name.slice(fileRelitvePath.lastIndexOf("/") + 1, fileRelitvePath.length);
+        const filePath = path.join("./cloud", fileRelitvePath);
+        const fileType = formDataObject[file].type;
 
         const pathExists = async () => {
           try {
@@ -82,6 +83,17 @@ export const action = async ({ request }) => {
           }
         };
 
+        const writeToDb = async () => {
+          await prisma.file_data.create({
+            data: {
+              relitive_path: fileRelitvePath,
+              file_name: fileName,
+              file_type: fileType,
+              save_date: new Date()
+            }
+          })
+        }
+
         pathExists()
           .then(async (inValidPath) => {
             if (inValidPath) {
@@ -90,8 +102,9 @@ export const action = async ({ request }) => {
               try {
                 await fs.mkdir(path.dirname(filePath), { recursive: true });
                 await fs.writeFile(filePath, Buffer.from(content));
+                await writeToDb();
               } catch (err) {
-                throw new Error(`Failed to write file ${fileName}`);
+                throw new Error(`Failed to write file ${fileRelitvePath}`);
               }
             } else {
               console.log("file already exists");

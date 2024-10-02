@@ -1,4 +1,4 @@
-import { prisma } from "../../utils/prisma.server";
+import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 

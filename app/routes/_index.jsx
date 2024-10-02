@@ -1,6 +1,7 @@
 import "../css/index.css";
-import SideBar from "../components/SideBar/sidebar";
-import DisplayDirectory from "../components/DisplayDirectory/displayDirectory";
+import SideBar from "./components/SideBar/sidebar.jsx";
+// import DisplayDirectory from "../components/DisplayDirectory/displayDirectory";
+import DisplayDirectory from "./displayDirectory.jsx";
 const searchIcon = "../assets/search.svg";
 
 export default function Index() {

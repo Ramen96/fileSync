@@ -1,29 +1,22 @@
-import Folder from "./components/DisplayDirectory/Folder/folder";
-import File from "./components/DisplayDirectory/File/file";
-import { prisma } from "../utils/prisma.server";
-import { useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node";
+export default function DisplayDirectory({ files }) {
+  // console.log("DisplayDirectory component files:", files[0]);
+  const fileData = files;
+  for ( let key in fileData) {
+    console.log(fileData[key]);
+  }
 
-export async function loader() {
-  return json(await prisma.file_data.findMany({
-    where: { relitive_path }
-  }));
-}
-
-export default function DisplayDirectory() {
-  const data = useLoaderData();
-  console.log("data: ", data);
-  return (
-    <>
-      <Folder />
-      <p
-        style={{
-          color: "red",
-        }}
-      >
-        Hello World
-      </p>
-      <File />
-    </>
-  );
+  if (!files || files.length === 0) {
+    return <h1 style={{"color": "white"}}>No Files (files is {JSON.stringify(files)})</h1>;
+  } else {
+    return (
+      <div>
+        <h1 style={{"color": "red"}}>Files here</h1>
+        <ul>
+          {files.map(file => (
+            <li style={{"color": "white", "margin": "1rem"}} key={file.id}> File Path: {file.relitive_path}, File Type: {file.file_type}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 }

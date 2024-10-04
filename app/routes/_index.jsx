@@ -1,10 +1,20 @@
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
-// import DisplayDirectory from "../components/DisplayDirectory/displayDirectory";
-import DisplayDirectory from "./displayDirectory.jsx";
+import DisplayDirectory from "./displayDirectory";
+import { prisma } from "../utils/prisma.server.js";
+
 const searchIcon = "../assets/search.svg";
 
+export async function loader() {
+  const files = await prisma.file_data.findMany();
+  return json(files);
+}
+
 export default function Index() {
+  const files = useLoaderData();
+
   return (
     <>
       <SideBar />
@@ -21,7 +31,7 @@ export default function Index() {
           />
         </div>
         <div className="mainWindow main-bg">
-          <DisplayDirectory />
+          <DisplayDirectory files={files} />
         </div>
       </div>
     </>

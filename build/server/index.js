@@ -1,9 +1,12 @@
 import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { PassThrough } from "node:stream";
-import { createReadableStreamFromReadable, unstable_composeUploadHandlers, unstable_createFileUploadHandler, unstable_createMemoryUploadHandler, unstable_parseMultipartFormData } from "@remix-run/node";
-import { RemixServer, Meta, Links, Outlet, Scripts, useNavigate } from "@remix-run/react";
+import { createReadableStreamFromReadable, json } from "@remix-run/node";
+import { RemixServer, Meta, Links, Outlet, Scripts, useLoaderData, useNavigate } from "@remix-run/react";
 import * as isbotModule from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import { PrismaClient } from "@prisma/client";
+import * as fs from "node:fs/promises";
+import path from "node:path";
 const ABORT_DELAY = 5e3;
 function handleRequest(request, responseStatusCode, responseHeaders, remixContext, loadContext) {
   let prohibitOutOfOrderStreaming = isBotRequest(request.headers.get("user-agent")) || remixContext.isSpaMode;
@@ -133,32 +136,169 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: App
 }, Symbol.toStringTag, { value: "Module" }));
+function Folder() {
+  return /* @__PURE__ */ jsx("p", { style: { color: "white" }, children: "Folder" });
+}
+function File$1() {
+  return /* @__PURE__ */ jsx("p", { style: { color: "white" }, children: "File" });
+}
+let prisma;
+if (process.env.NODE_ENV === "production") {
+  prisma = new PrismaClient();
+  prisma.$connect();
+} else {
+  if (!global.__db) {
+    global.__db = new PrismaClient();
+    global.__db.$connect();
+  }
+  prisma = global.__db;
+}
+async function loader() {
+  return json(await prisma.file_data.findMany({
+    where: {
+      id: {
+        equals: 1
+      }
+    }
+  }));
+}
+function DisplayDirectory() {
+  const data = useLoaderData();
+  console.log("data: ", data);
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx(Folder, {}),
+    /* @__PURE__ */ jsx(
+      "p",
+      {
+        style: {
+          color: "red"
+        },
+        children: "Hello World"
+      }
+    ),
+    /* @__PURE__ */ jsx(File$1, {})
+  ] });
+}
+const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: DisplayDirectory,
+  loader
+}, Symbol.toStringTag, { value: "Module" }));
 const action = async ({ request }) => {
-  const uploadHandler = unstable_composeUploadHandlers(
-    unstable_createFileUploadHandler({
-      maxPartSize: 5e6,
-      file: ({ filename }) => filename,
-      directory: "cloud"
-    }),
-    unstable_createMemoryUploadHandler()
-  );
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    uploadHandler
-  );
-  console.log("formData", formData);
-  const myObject = {
-    "key": "value"
+  const pathTraversalDetection = (path2) => {
+    const traversalPatterns = [
+      "../",
+      "%2e%2e%2f",
+      "%2e%2e/",
+      "..%2f",
+      "%2e%2e%5c",
+      "%2e%2e'",
+      "..%5c",
+      "%252e%252e%255c",
+      "..%255c",
+      "..",
+      " / ",
+      "..%c0%af",
+      "..%c1%9c"
+    ];
+    let traversalDetection = void 0;
+    for (let i = 0; i < traversalPatterns.length; i++) {
+      let traversalState = path2.includes(traversalPatterns[i]);
+      if (traversalState === true) {
+        traversalDetection = true;
+        break;
+      } else {
+        traversalDetection = false;
+      }
+    }
+    return traversalDetection;
   };
-  console.log("request", request.headers);
-  return new Response(JSON.stringify(myObject), {
+  const formData = await request.formData();
+  const formDataObject = Object.fromEntries(formData);
+  const webKitRelitivePath = [];
+  for (let file in formDataObject) {
+    if (formDataObject[file] instanceof File) {
+      const relitivePath = formDataObject[file].name;
+      webKitRelitivePath.push(relitivePath);
+    } else {
+      throw new Error("Error: Not a file");
+    }
+  }
+  const itteratePaths = () => {
+    let pathSafe = false;
+    for (let i = 0; i < webKitRelitivePath.length; i++) {
+      const path2 = webKitRelitivePath[i];
+      if (pathTraversalDetection(path2)) {
+        pathSafe = false;
+        throw new Error("Warning: path traversal is true.");
+      } else {
+        pathSafe = true;
+      }
+    }
+    return pathSafe;
+  };
+  if (itteratePaths()) {
+    for (let file in formDataObject) {
+      if (formDataObject[file] instanceof File) {
+        const content = await formDataObject[file].arrayBuffer();
+        const fileRelitvePath = formDataObject[file].name;
+        const fileName = formDataObject[file].name.slice(fileRelitvePath.lastIndexOf("/") + 1, fileRelitvePath.length);
+        const filePath = path.join("./cloud", fileRelitvePath);
+        const fileType = formDataObject[file].type;
+        const pathExists = async () => {
+          try {
+            await fs.access(filePath);
+            return false;
+          } catch (err) {
+            if (err.code === "ENOENT") {
+              return true;
+            } else {
+              throw err;
+            }
+          }
+        };
+        const writeToDb = async () => {
+          await prisma.file_data.create({
+            data: {
+              relitive_path: fileRelitvePath,
+              file_name: fileName,
+              file_type: fileType,
+              save_date: /* @__PURE__ */ new Date()
+            }
+          });
+        };
+        pathExists().then(async (inValidPath) => {
+          if (inValidPath) {
+            console.log("path dose not exist");
+            console.log("writing files");
+            try {
+              await fs.mkdir(path.dirname(filePath), { recursive: true });
+              await fs.writeFile(filePath, Buffer.from(content));
+              await writeToDb();
+            } catch (err) {
+              console.log(err);
+              throw new Error(`Failed to write file ${fileRelitvePath}`);
+            }
+          } else {
+            console.log("file already exists");
+          }
+        }).catch((err) => {
+          console.error("error checking directory", err);
+        });
+      } else {
+        throw new Error("Error: Not a file");
+      }
+    }
+  }
+  const placehodler = {};
+  return new Response(JSON.stringify(placehodler), {
     status: 200,
     headers: {
       "Content-Type": "application/json"
     }
   });
 };
-const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   action
 }, Symbol.toStringTag, { value: "Module" }));
@@ -174,14 +314,10 @@ function SideBar() {
   const routeHome = () => navigate("/");
   function fileUpload(event) {
     const file = event.target.files;
-    console.log(file);
     const fileList = new FormData();
     for (let i = 0; i < file.length; i++) {
-      const fileListItem = file[i];
-      fileListItem.name;
       fileList.append(file[i].name, file[i]);
     }
-    fileList.getAll("name");
     fetch("fileStorage", {
       method: "POST",
       body: fileList
@@ -235,12 +371,7 @@ function SideBar() {
       /* @__PURE__ */ jsx("a", { className: "selector", href: "#", children: /* @__PURE__ */ jsxs("li", { className: "selectorItem animate1s", children: [
         /* @__PURE__ */ jsx("img", { className: "selectorIcon", src: trashIcon, alt: "trash icon" }),
         /* @__PURE__ */ jsx("p", { className: "selectorText", children: "Trash" })
-      ] }) }),
-      /* @__PURE__ */ jsx("button", { onClick: () => {
-        fetch("/fileStorage", {
-          method: "POST"
-        }).then((res) => res.json()).then((data) => console.log("data: ", data));
-      }, className: "selector", children: /* @__PURE__ */ jsx("h1", { children: "Click me" }) })
+      ] }) })
     ] }) })
   ] });
 }
@@ -251,17 +382,25 @@ function Index() {
     /* @__PURE__ */ jsxs("div", { className: "main", children: [
       /* @__PURE__ */ jsxs("div", { className: "searchbarwrapper flex-jc-ai  main-bg", children: [
         /* @__PURE__ */ jsx("button", { className: "submitButton", children: /* @__PURE__ */ jsx("img", { className: "searchIcon", src: searchIcon, alt: "search icon" }) }),
-        /* @__PURE__ */ jsx("input", { className: "searchBar", id: "searchbar", type: "text", placeholder: "Search drive" })
+        /* @__PURE__ */ jsx(
+          "input",
+          {
+            className: "searchBar",
+            id: "searchbar",
+            type: "text",
+            placeholder: "Search drive"
+          }
+        )
       ] }),
-      /* @__PURE__ */ jsx("div", { className: "mainWindow main-bg" })
+      /* @__PURE__ */ jsx("div", { className: "mainWindow main-bg", children: /* @__PURE__ */ jsx(DisplayDirectory, {}) })
     ] })
   ] });
 }
-const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Index
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-BSEQBc5l.js", "imports": ["/assets/index-CZ3PrqHY.js", "/assets/components-CR5cdnQn.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/root-jPBstzeA.js", "imports": ["/assets/index-CZ3PrqHY.js", "/assets/components-CR5cdnQn.js"], "css": ["/assets/root-C-rFmPHj.css"] }, "routes/fileStorage": { "id": "routes/fileStorage", "parentId": "root", "path": "fileStorage", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/fileStorage-l0sNRNKZ.js", "imports": [], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-ppv-FQpG.js", "imports": ["/assets/index-CZ3PrqHY.js"], "css": ["/assets/_index-C3lv2onq.css"] } }, "url": "/assets/manifest-e449b1e5.js", "version": "e449b1e5" };
+const serverManifest = { "entry": { "module": "/assets/entry.client-BtZnCMf9.js", "imports": ["/assets/components-CQBjiHXJ.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/root-R3DCSY7w.js", "imports": ["/assets/components-CQBjiHXJ.js"], "css": ["/assets/root-C-rFmPHj.css"] }, "routes/displayDirectory": { "id": "routes/displayDirectory", "parentId": "root", "path": "displayDirectory", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/displayDirectory-BpLDxJOO.js", "imports": ["/assets/components-CQBjiHXJ.js"], "css": [] }, "routes/fileStorage": { "id": "routes/fileStorage", "parentId": "root", "path": "fileStorage", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/fileStorage-l0sNRNKZ.js", "imports": [], "css": [] }, "routes/_index": { "id": "routes/_index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasErrorBoundary": false, "module": "/assets/_index-73Gtx-dK.js", "imports": ["/assets/components-CQBjiHXJ.js", "/assets/displayDirectory-BpLDxJOO.js"], "css": ["/assets/_index-C3lv2onq.css"] } }, "url": "/assets/manifest-c879cea9.js", "version": "c879cea9" };
 const mode = "production";
 const assetsBuildDirectory = "build/client";
 const basename = "/";
@@ -278,13 +417,21 @@ const routes = {
     caseSensitive: void 0,
     module: route0
   },
+  "routes/displayDirectory": {
+    id: "routes/displayDirectory",
+    parentId: "root",
+    path: "displayDirectory",
+    index: void 0,
+    caseSensitive: void 0,
+    module: route1
+  },
   "routes/fileStorage": {
     id: "routes/fileStorage",
     parentId: "root",
     path: "fileStorage",
     index: void 0,
     caseSensitive: void 0,
-    module: route1
+    module: route2
   },
   "routes/_index": {
     id: "routes/_index",
@@ -292,7 +439,7 @@ const routes = {
     path: void 0,
     index: true,
     caseSensitive: void 0,
-    module: route2
+    module: route3
   }
 };
 export {

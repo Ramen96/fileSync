@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
-import DisplayDirectory from "./displayDirectory";
+import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
 
 const searchIcon = "../assets/search.svg";

@@ -1,31 +1,29 @@
 import File from "./File/file";
 import Folder from "./Folder/folder";
+import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 
 export default function DisplayDirectory({ files }) {
-  const fileData = () => {
-    const pathArr = [];
 
-    files.forEach((file) => {
-      const removeFileName = file.relitive_path.slice(
-        0,
-        file.relitive_path.lastIndexOf("/")
-      );
-      const dirNameArr = removeFileName.split("/");
+  const constructDirTree = new DirectoryTree();
 
-      if (
-        !pathArr.some(
-          (arr) => JSON.stringify(arr) === JSON.stringify(dirNameArr)
-        )
-      ) {
-        pathArr.push(dirNameArr);
+  files.map(file => {
+    const path = file.relitive_path;
+    const type = () => {
+      if(file.file_type === 'folder') {
+        return 'folder';
+      } else {
+        return 'file';
       }
-    });
+    }
 
-    console.log("arr: ", pathArr);
-    return pathArr;
-  };
+    try {
+      constructDirTree.addNodeByPath(path, type());
+    } catch {
+      console.error(error.message)
+    }
+  });
 
-  const filePaths = fileData();
+  console.log(constructDirTree);
 
   if (!files || files.length === 0) {
     return (

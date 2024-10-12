@@ -5,11 +5,14 @@ export default function Folder({
   name,
   id, 
   setCurrentNodeId,
-  treeStructure
+  setParrentNodeId,
+  parrentNodeId
 }) {
-  console.log('folder component id', id);
   return (
-    <div className="conA" onClick={() => setCurrentNodeId(id)}>
+    <div className="conA" onClick={() => {
+      setCurrentNodeId(id);
+      setParrentNodeId(parrentNodeId)
+    }}>
       <img className="folderImg" src={folder} alt="folder" />
       <h1>{name}</h1>
     </div>

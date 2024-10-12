@@ -1,48 +1,49 @@
+import React, { useState, useMemo } from 'react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 
 export default function DisplayDirectory({ files }) {
-
-  const constructDirTree = new DirectoryTree();
-
-  files.map(file => {
-    const path = file.relitive_path;
-    const type = () => {
-      if(file.file_type === 'folder') {
-        return 'folder';
-      } else {
-        return 'file';
+  const constructDirTree = useMemo(() => {
+    const tree = new DirectoryTree();
+    files.forEach(file => {
+      const path = file.relitive_path;
+      const type = file.file_type === 'folder' ? 'folder' : 'file';
+      try {
+        tree.addNodeByPath(path, type);
+      } catch (error) {
+        console.error(`Error adding path ${path}: ${error.message}`);
       }
-    }
+    });
+    return tree;
+  }, [files]);
 
-    try {
-      constructDirTree.addNodeByPath(path, type());
-    } catch {
-      console.error(error.message)
-    }
-  });
-
-  console.log(constructDirTree);
+  const [currentNodeId, setCurrentNodeId] = useState(constructDirTree.root.id);
 
   if (!files || files.length === 0) {
-    return (
-      <h1 style={{ color: "white" }}>
-        No Files (files is {JSON.stringify(files)})
-      </h1>
-    );
+    return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
   }
 
+  const childrenOfCurrentNode = constructDirTree.getNodeById(currentNodeId).children;
+
   return (
-    <div>
-      <h1 style={{ color: "red" }}>Files here</h1>
-      <ul>
-        {files.map((file) => (
-          <li style={{ color: "white", margin: "1rem" }} key={file.id}>
-            File Path: {file.relitive_path}, File Type: {file.file_type}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      {childrenOfCurrentNode.map(child => 
+        child.type === 'folder' ? (
+          <Folder 
+            key={child.id}
+            name={child.name}
+            id={child.id}
+            setCurrentNodeId={setCurrentNodeId}
+            treeStructure={constructDirTree}
+          />
+        ) : (
+          <File
+            key={child.id}
+            name={child.name}
+          />
+        )
+      )}
+    </>
   );
 }

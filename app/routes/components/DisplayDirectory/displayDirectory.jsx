@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
@@ -30,28 +30,28 @@ export default function DisplayDirectory({ files }) {
   const [parrentNodeId, setParrentNodeId] = useState(currentNode.parentId);
   const [lastChildNodeId, setLastChildNodeId] = useState(null);
 
-  console.log('parrentNode: ', parrentNodeId);
-  console.log('currentNode: ', currentNodeId);
+  useEffect(() => {
+    setParrentNodeId(currentNode.parentId);
+  }, [currentNodeId])
+
 
   const handleNavClick = (forwardOrBackward) => {
-    if (forwardOrBackward === 'forward') {
-      if (lastChildNodeId !== null) {
-        setParrentNodeId(currentNode);
-        setCurrentNodeId(lastChildNodeId);
-      } else {
-        console.error('last child node id is null')
-      }
-    } else if (forwardOrBackward === 'backward') {
-      if (parrentNodeId !== null) {
-        setLastChildNodeId(currentNodeId);
-        setCurrentNodeId(parrentNodeId);
-        setParrentNodeId(parrentNodeId);
-      } else {
-        console.error('parrent node id is null')
-        console.log(parrentNodeId);
-      }
-    } else {
-      return undefined;
+    function backward() {
+      setLastChildNodeId(currentNodeId)
+      setCurrentNodeId(parrentNodeId)
+      setParrentNodeId(parrentNodeId)
+    }
+    function forward() {
+      setCurrentNodeId(lastChildNodeId)
+    }
+    if (forwardOrBackward === 'backward') {
+      parrentNodeId === null
+        ? console.error('parrent node id is null')
+        : backward();
+    } else if (forwardOrBackward === 'forward') {
+      lastChildNodeId === null
+        ? console.error('last child node id is null')
+        : forward();
     }
   }
 

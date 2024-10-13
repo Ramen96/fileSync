@@ -6,6 +6,8 @@ import "./displayDirectory.css";
 
 export default function DisplayDirectory({ files }) {
   const constructDirTree = useMemo(() => {
+    if (!files || files.length === 0) return null;
+
     const tree = new DirectoryTree();
     files.forEach(file => {
       const path = file.relitive_path;
@@ -19,53 +21,47 @@ export default function DisplayDirectory({ files }) {
     return tree;
   }, [files]);
 
-  const [currentNodeId, setCurrentNodeId] = useState(constructDirTree.root.id);
+  const [currentNodeId, setCurrentNodeId] = useState(null);
+  const [parentNodeId, setParentNodeId] = useState(null);
+  const [lastChildNodeId, setLastChildNodeId] = useState(null);
+
+  useEffect(() => {
+    if (constructDirTree) {
+      setCurrentNodeId(constructDirTree.root.id);
+      setParentNodeId(constructDirTree.root.parentId);
+    }
+  }, [constructDirTree]);
 
   if (!files || files.length === 0) {
     return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
   }
 
-  const childrenOfCurrentNode = constructDirTree.getNodeById(currentNodeId).children;
+  if (!constructDirTree) {
+    return <h1 style={{ color: "white" }}>Loading...</h1>;
+  }
+
   const currentNode = constructDirTree.getNodeById(currentNodeId);
-  const [parrentNodeId, setParrentNodeId] = useState(currentNode.parentId);
-  const [lastChildNodeId, setLastChildNodeId] = useState(null);
-
-  useEffect(() => {
-    setParrentNodeId(currentNode.parentId);
-  }, [currentNodeId])
-
+  const childrenOfCurrentNode = currentNode ? currentNode.children : [];
 
   const handleNavClick = (forwardOrBackward) => {
-    function backward() {
-      setLastChildNodeId(currentNodeId)
-      setCurrentNodeId(parrentNodeId)
-      setParrentNodeId(parrentNodeId)
-    }
-    function forward() {
-      setCurrentNodeId(lastChildNodeId)
-    }
-    if (forwardOrBackward === 'backward') {
-      parrentNodeId === null
-        ? console.error('parrent node id is null')
-        : backward();
-    } else if (forwardOrBackward === 'forward') {
-      lastChildNodeId === null
-        ? console.error('last child node id is null')
-        : forward();
+    if (forwardOrBackward === 'backward' && parentNodeId !== null) {
+      setLastChildNodeId(currentNodeId);
+      setCurrentNodeId(currentNodeId.parentId);
+      const newParentNode = constructDirTree.getNodeById(parentNodeId);
+      setParentNodeId(newParentNode ? newParentNode.parentId : null);
+    } else if (forwardOrBackward === 'forward' && lastChildNodeId !== null) {
+      setCurrentNodeId(lastChildNodeId);
+      setParentNodeId(currentNodeId);
     }
   }
 
   return (
     <>
       <div className='navWrapper'>
-        <button className='navButton' onClick={() => {
-          handleNavClick('backward');
-        }}>
+        <button className='navButton' onClick={() => handleNavClick('backward')}>
           <p className='greaterThanLessThan'>&lt;</p>
         </button>
-        <button className='navButton' onClick={() => {
-          handleNavClick('forward');
-        }}>
+        <button className='navButton' onClick={() => handleNavClick('forward')}>
           <p className='greaterThanLessThan'>&gt;</p>
         </button>
       </div>
@@ -76,8 +72,8 @@ export default function DisplayDirectory({ files }) {
             name={child.name}
             id={child.id}
             setCurrentNodeId={setCurrentNodeId}
-            setParrentNodeId={setParrentNodeId}
-            parrentNodeId={child.parentId}
+            setParentNodeId={setParentNodeId}
+            parentNodeId={child.parentId}
           />
         ) : (
           <File

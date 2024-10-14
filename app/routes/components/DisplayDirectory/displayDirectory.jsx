@@ -65,6 +65,7 @@ export default function DisplayDirectory({ files }) {
           <p className='greaterThanLessThan'>&gt;</p>
         </button>
       </div>
+      <div className='mainWindowWrapper'>
       {childrenOfCurrentNode.map(child => 
         child.type === 'folder' ? (
           <Folder 
@@ -82,6 +83,7 @@ export default function DisplayDirectory({ files }) {
           />
         )
       )}
+      </div>
     </>
   );
 }

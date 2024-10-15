@@ -1,4 +1,3 @@
-// import "./file.css";
 import file from "../../../../../assets/file.svg";
 import "../displayDirectory.css";
 

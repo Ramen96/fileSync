@@ -1,18 +1,14 @@
-// import "./folder.css";
 import folder from "../../../../../assets/folder2.svg"
 import "../displayDirectory.css";
 
 export default function Folder({
   name,
   id, 
-  setCurrentNodeId,
-  setParrentNodeId,
-  parrentNodeId
+  handleFolderClick
 }) {
   return (
     <div className="conA" onClick={() => {
-      setCurrentNodeId(id);
-      setParrentNodeId(parrentNodeId)
+      handleFolderClick(id)
     }}>
       <div className="conB">
         <img className="folderImg" src={folder} alt="folder" />

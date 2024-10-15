@@ -24,11 +24,12 @@ export default function DisplayDirectory({ files }) {
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [parentNodeId, setParentNodeId] = useState(null);
   const [lastChildNodeId, setLastChildNodeId] = useState(null);
+  const [backHistory, setBackHistory] = useState([]);
+  const [forwardHistory, setForwardHistory] = useState([]);
 
   useEffect(() => {
     if (constructDirTree) {
       setCurrentNodeId(constructDirTree.root.id);
-      setParentNodeId(constructDirTree.root.parentId);
     }
   }, [constructDirTree]);
 
@@ -43,15 +44,28 @@ export default function DisplayDirectory({ files }) {
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
 
-  const handleNavClick = (forwardOrBackward) => {
-    if (forwardOrBackward === 'backward' && parentNodeId !== null) {
-      setLastChildNodeId(currentNodeId);
-      setCurrentNodeId(currentNodeId.parentId);
-      const newParentNode = constructDirTree.getNodeById(parentNodeId);
-      setParentNodeId(newParentNode ? newParentNode.parentId : null);
-    } else if (forwardOrBackward === 'forward' && lastChildNodeId !== null) {
-      setCurrentNodeId(lastChildNodeId);
-      setParentNodeId(currentNodeId);
+  const handleNavClick = (direction) => {
+    if (direction === 'backward') {
+      const prevNodeId = backHistory[backHistory.length - 1];
+      console.log('prevNodeID: ', prevNodeId);
+      setCurrentNodeId(prevNodeId);
+    } else if (direction === 'forward') {
+      const nextNodeId = forwardHistory[0];
+    }
+  }
+
+  const handleFolderClick = (folderId) => {
+    if (backHistory.length === 0) {
+      console.log(currentNodeId);
+
+      setBackHistory([...backHistory, currentNodeId]);
+
+      console.log('if statement: ', backHistory);
+      setCurrentNodeId(folderId);
+    } else if (backHistory.length > 0) {
+      setBackHistory([...backHistory, folderId]);
+      setCurrentNodeId(folderId);
+      console.log(backHistory);
     }
   }
 
@@ -72,9 +86,8 @@ export default function DisplayDirectory({ files }) {
             key={child.id}
             name={child.name}
             id={child.id}
-            setCurrentNodeId={setCurrentNodeId}
-            setParentNodeId={setParentNodeId}
-            parentNodeId={child.parentId}
+            handleFolderClick={handleFolderClick}
+            onClick={() => handleFolderClick(child.id)}
           />
         ) : (
           <File

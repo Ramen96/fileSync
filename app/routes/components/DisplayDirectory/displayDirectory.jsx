@@ -5,6 +5,8 @@ import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import "./displayDirectory.css";
 
 export default function DisplayDirectory({ files }) {
+
+  // create tree data set from db and memoize it.
   const constructDirTree = useMemo(() => {
     if (!files || files.length === 0) return null;
 
@@ -21,6 +23,7 @@ export default function DisplayDirectory({ files }) {
     return tree;
   }, [files]);
 
+  // Setting up states and root node id
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [parentNodeId, setParentNodeId] = useState(null);
   const [lastChildNodeId, setLastChildNodeId] = useState(null);
@@ -33,24 +36,30 @@ export default function DisplayDirectory({ files }) {
     }
   }, [constructDirTree]);
 
+  // AJAX
   if (!files || files.length === 0) {
     return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
   }
-
   if (!constructDirTree) {
     return <h1 style={{ color: "white" }}>Loading...</h1>;
   }
 
+  // Getting nodes for gui
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
 
+  // Nav buttons
   const handleNavClick = (direction) => {
     if (direction === 'backward') {
       const prevNodeId = backHistory[backHistory.length - 1];
+
+      setForwardHistory([currentNodeId, ...forwardHistory]);
+
       console.log('prevNodeID: ', prevNodeId);
       setCurrentNodeId(prevNodeId);
     } else if (direction === 'forward') {
       const nextNodeId = forwardHistory[0];
+      setCurrentNodeId(nextNodeId);
     }
   }
 
@@ -72,6 +81,12 @@ export default function DisplayDirectory({ files }) {
   return (
     <>
       <div className='navWrapper'>
+        <button className='homeButton' onClick={() => {
+          setCurrentNodeId(constructDirTree.root.id)
+          setForwardHistory([]);
+        }}>
+          <p>Home</p>
+        </button>
         <button className='navButton' onClick={() => handleNavClick('backward')}>
           <p className='greaterThanLessThan'>&lt;</p>
         </button>
@@ -87,7 +102,6 @@ export default function DisplayDirectory({ files }) {
             name={child.name}
             id={child.id}
             handleFolderClick={handleFolderClick}
-            onClick={() => handleFolderClick(child.id)}
           />
         ) : (
           <File

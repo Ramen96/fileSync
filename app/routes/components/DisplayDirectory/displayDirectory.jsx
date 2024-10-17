@@ -59,21 +59,23 @@ export default function DisplayDirectory({ files }) {
 
     if (direction === 'backward') {
 
-      currentNodeId !== constructDirTree.root.id
-        ? moveBack()
-        : console.log('they are the same');
-
+      // currentNodeId !== constructDirTree.root.id
+      //   ? moveBack()
+      //   : console.log('they are the same');
+      setForwardHistory([currentNodeId, ...forwardHistory]);
+      setBackHistory(backHistory.slice(0, -1));
+      setCurrentNodeId(prevNodeId);
       
     } else if (direction === 'forward') {
 
-      if (nextNodeId === constructDirTree.root.id) {
-        setBackHistory([...backHistory, currentNodeId]);
-        setForwardHistory([currentNodeId, ...forwardHistory]);
-        setCurrentNodeId(forwardHistory[0]);
+      if (currentNodeId === constructDirTree.root.id) {
+        // setBackHistory([...backHistory, currentNodeId]);
+        // setForwardHistory(forwardHistory.slice(1));
+        // setCurrentNodeId(forwardHistory[0]);
         console.log('heho heho');
       } else {
         setBackHistory([...backHistory, currentNodeId]);
-        setForwardHistory([currentNodeId, ...forwardHistory]);
+        setForwardHistory(forwardHistory.slice(1));
         setCurrentNodeId(forwardHistory[0]);
       }
     }
@@ -85,6 +87,7 @@ export default function DisplayDirectory({ files }) {
       // console.log(`current node id before: ${currentNodeId}`);
 
       setBackHistory([...backHistory, currentNodeId]);
+      setForwardHistory([]);
 
       // console.log('backHistory: ', backHistory);
       // console.log(`folder id ${folderId}`);

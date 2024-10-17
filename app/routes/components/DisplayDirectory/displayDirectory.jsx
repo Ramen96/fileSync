@@ -59,65 +59,21 @@ export default function DisplayDirectory({ files }) {
 
     if (direction === 'backward') {
 
-      // currentNodeId !== constructDirTree.root.id
-      //   ? moveBack()
-      //   : console.log('they are the same');
-      setForwardHistory([currentNodeId, ...forwardHistory]);
-      setBackHistory(backHistory.slice(0, -1));
-      setCurrentNodeId(prevNodeId);
+      currentNodeId !== constructDirTree.root.id
+        ? moveBack()
+        : console.log('they are the same');
       
     } else if (direction === 'forward') {
-
-      if (currentNodeId === constructDirTree.root.id) {
-        // setBackHistory([...backHistory, currentNodeId]);
-        // setForwardHistory(forwardHistory.slice(1));
-        // setCurrentNodeId(forwardHistory[0]);
-        console.log('heho heho');
-      } else {
-        setBackHistory([...backHistory, currentNodeId]);
-        setForwardHistory(forwardHistory.slice(1));
-        setCurrentNodeId(forwardHistory[0]);
-      }
+      setBackHistory([...backHistory, currentNodeId]);
+      setForwardHistory(forwardHistory.slice(1));
+      setCurrentNodeId(nextNodeId);
     }
   }
 
   const handleFolderClick = (folderId) => {
-
-
-      // console.log(`current node id before: ${currentNodeId}`);
-
       setBackHistory([...backHistory, currentNodeId]);
       setForwardHistory([]);
-
-      // console.log('backHistory: ', backHistory);
-      // console.log(`folder id ${folderId}`);
-
-      // console.log(`backHistory: ${backHistory}`);
       setCurrentNodeId(folderId);
-
-
-
-
-    // if (backHistory.length === 0) {
-
-
-    //   console.log(`current node id before: ${currentNodeId}`);
-
-    //   setBackHistory([...backHistory, currentNodeId]);
-
-    //   console.log('backHistory: ', backHistory);
-    //   console.log(`folder id ${folderId}`);
-
-    //   console.log(`backHistory: ${backHistory}`);
-    //   setCurrentNodeId(folderId);
-
-    //   console.log(`current node id after: ${currentNodeId}`);
-
-    // } else if (backHistory.length > 0) {
-    //   setBackHistory([...backHistory, currentNodeId]);
-    //   setCurrentNodeId(folderId);
-    //   console.log(backHistory);
-    // }
   }
 
   return (

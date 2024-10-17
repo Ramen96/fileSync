@@ -25,8 +25,6 @@ export default function DisplayDirectory({ files }) {
 
   // Setting up states and root node id
   const [currentNodeId, setCurrentNodeId] = useState(null);
-  const [parentNodeId, setParentNodeId] = useState(null);
-  const [lastChildNodeId, setLastChildNodeId] = useState(null);
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
 
@@ -50,32 +48,73 @@ export default function DisplayDirectory({ files }) {
 
   // Nav buttons
   const handleNavClick = (direction) => {
-    if (direction === 'backward') {
-      const prevNodeId = backHistory[backHistory.length - 1];
+    const prevNodeId = backHistory[backHistory.length - 1];
+    const nextNodeId = forwardHistory[0];
 
+    function moveBack() {
       setForwardHistory([currentNodeId, ...forwardHistory]);
-
-      console.log('prevNodeID: ', prevNodeId);
+      setBackHistory(backHistory.slice(0, -1));
       setCurrentNodeId(prevNodeId);
+    }
+
+    if (direction === 'backward') {
+
+      currentNodeId !== constructDirTree.root.id
+        ? moveBack()
+        : console.log('they are the same');
+
+      
     } else if (direction === 'forward') {
-      const nextNodeId = forwardHistory[0];
-      setCurrentNodeId(nextNodeId);
+
+      if (nextNodeId === constructDirTree.root.id) {
+        setBackHistory([...backHistory, currentNodeId]);
+        setForwardHistory([currentNodeId, ...forwardHistory]);
+        setCurrentNodeId(forwardHistory[0]);
+        console.log('heho heho');
+      } else {
+        setBackHistory([...backHistory, currentNodeId]);
+        setForwardHistory([currentNodeId, ...forwardHistory]);
+        setCurrentNodeId(forwardHistory[0]);
+      }
     }
   }
 
   const handleFolderClick = (folderId) => {
-    if (backHistory.length === 0) {
-      console.log(currentNodeId);
+
+
+      // console.log(`current node id before: ${currentNodeId}`);
 
       setBackHistory([...backHistory, currentNodeId]);
 
-      console.log('if statement: ', backHistory);
+      // console.log('backHistory: ', backHistory);
+      // console.log(`folder id ${folderId}`);
+
+      // console.log(`backHistory: ${backHistory}`);
       setCurrentNodeId(folderId);
-    } else if (backHistory.length > 0) {
-      setBackHistory([...backHistory, folderId]);
-      setCurrentNodeId(folderId);
-      console.log(backHistory);
-    }
+
+
+
+
+    // if (backHistory.length === 0) {
+
+
+    //   console.log(`current node id before: ${currentNodeId}`);
+
+    //   setBackHistory([...backHistory, currentNodeId]);
+
+    //   console.log('backHistory: ', backHistory);
+    //   console.log(`folder id ${folderId}`);
+
+    //   console.log(`backHistory: ${backHistory}`);
+    //   setCurrentNodeId(folderId);
+
+    //   console.log(`current node id after: ${currentNodeId}`);
+
+    // } else if (backHistory.length > 0) {
+    //   setBackHistory([...backHistory, currentNodeId]);
+    //   setCurrentNodeId(folderId);
+    //   console.log(backHistory);
+    // }
   }
 
   return (
@@ -84,6 +123,7 @@ export default function DisplayDirectory({ files }) {
         <button className='homeButton' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
+          setBackHistory([]);
         }}>
           <p>Home</p>
         </button>

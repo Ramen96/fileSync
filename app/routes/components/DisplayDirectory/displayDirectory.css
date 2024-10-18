@@ -136,3 +136,14 @@
   background: rgba(45, 41, 56);
   cursor: pointer;
 }
+
+.sideFolderWrapper {
+  width: auto;
+  height: auto;
+}
+
+.sideFolderDropDown {
+  height: 200px;
+  background: rgba(6, 182, 201, 0.59);
+  margin-left: 1rem;
+}

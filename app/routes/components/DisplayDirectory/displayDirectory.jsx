@@ -36,7 +36,9 @@ export default function DisplayDirectory({ files }) {
     }
   }, [constructDirTree]);
 
-  // AJAX
+  // ###########################################
+  // ############## SECTION: AJAX ##############
+  // ###########################################
   if (!files || files.length === 0) {
     return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
   }
@@ -44,11 +46,16 @@ export default function DisplayDirectory({ files }) {
     return <h1 style={{ color: "white" }}>Loading...</h1>;
   }
 
-  // Getting nodes for gui
+  // ###########################################
+  // ######### SECTION: get nodes ##############
+  // ###########################################
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
 
-  // Nav buttons
+
+  // ###########################################
+  // ######### SECTION: Nav buttons ############
+  // ###########################################
   const handleNavClick = (direction) => {
     const prevNodeId = backHistory[backHistory.length - 1];
     const nextNodeId = forwardHistory[0];
@@ -84,6 +91,12 @@ export default function DisplayDirectory({ files }) {
       setCurrentNodeId(folderId);
   }
 
+  // ###########################################
+  // ########### SECTION: Sidebar ##############
+  // ###########################################
+
+  const [showStateList ,setShowStateList] = useState([]);
+
   return (
     <>
       <div className='navWrapper'>
@@ -103,20 +116,60 @@ export default function DisplayDirectory({ files }) {
       </div>
       <div className='mainWindowWrapper'>
       <div className='dirTreeSideBar'>
-        {childrenOfCurrentNode.map(child =>
-          child.type === 'folder' ? (
-            <SideFolder
-              key={child.id} 
-              name={child.name}
-              id={child.id}
-            />
-          ) : (
-            <SideFile 
-              key={child.id}
-              name={child.name}
-            />
+        {
+          // 1) Use state for dropdown component of SideFolder
+          //    -- Create wrapper element with onClick functon to set state
+          // 2) Get the id of the node for the parrent folder to map it's children
+          // 3) Add margin-left to a wrapper containt the child componets for 
+          //    a more visual representaion of the folder structure.
+
+          childrenOfCurrentNode.map(child =>
+            child.type === 'folder' ? (
+              <div key={child.id} 
+                onClick={() => {
+                  
+                  showStateList.includes(child.id)
+                    ? setShowStateList(showStateList.filter(i => child.id !== i))
+                    : setShowStateList([...showStateList, child.id]);
+                  
+                  }}
+              className='sideFolderWrapper'>
+              {showStateList.includes(child.id)
+                ? (
+                  <>
+                    <SideFolder
+                      key={child.id} 
+                      name={child.name}
+                      id={child.id}
+                    />
+                    <div 
+                      className='sideFolderDropDown'
+                      style={{"display": 'flex' }}>
+                    </div>
+                  </>
+              ) : (
+                  <>
+                    <SideFolder
+                      key={child.id} 
+                      name={child.name}
+                      id={child.id}
+                      />
+                    <div 
+                      className='sideFolderDropDown'
+                      style={{"display": 'none' }}>
+                    </div>
+                  </>
+                )
+              }
+              </div>
+            ) : (
+              <SideFile 
+                key={child.id}
+                name={child.name}
+              />
+            )
           )
-        )}
+        }
       </div>
         {childrenOfCurrentNode.map(child => 
           child.type === 'folder' ? (

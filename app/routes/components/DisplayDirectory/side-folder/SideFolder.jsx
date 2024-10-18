@@ -1,9 +1,13 @@
 import "../displayDirectory.css"
 
-export default function SideFolder() {
+export default function SideFolder({
+  name,
+  id, 
+  handleSideFolderClick
+}) {
   return (
-   <div className="sideFolder">
-    <h3 className="sideItemName">Folder</h3>
+   <div className="sideItem">
+    <h3 className="sideItemName">{name}</h3>
    </div> 
   )
 }

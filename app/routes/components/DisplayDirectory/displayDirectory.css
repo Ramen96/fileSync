@@ -117,7 +117,7 @@
   border-right: solid rgb(74, 68, 92) 1px;
 }
 
-.sideFolder {
+.sideItem {
   height: 2rem;
   border-bottom: solid rgba(255, 255, 255, 0.356) 1px;
   border-top: solid rgba(255, 255, 255, 0.356) 1px;
@@ -132,7 +132,7 @@
   margin-left: 1rem;
 }
 
-.sideFolder:hover {
+.sideItem:hover {
   background: rgba(45, 41, 56);
   cursor: pointer;
 }

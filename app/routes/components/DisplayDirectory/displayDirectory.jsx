@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import SideFolder from './side-folder/SideFolder';
+import SideFile from './side-file/SideFile';
 import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import "./displayDirectory.css";
 
@@ -101,9 +102,21 @@ export default function DisplayDirectory({ files }) {
         </button>
       </div>
       <div className='mainWindowWrapper'>
-
       <div className='dirTreeSideBar'>
-        <SideFolder />
+        {childrenOfCurrentNode.map(child =>
+          child.type === 'folder' ? (
+            <SideFolder
+              key={child.id} 
+              name={child.name}
+              id={child.id}
+            />
+          ) : (
+            <SideFile 
+              key={child.id}
+              name={child.name}
+            />
+          )
+        )}
       </div>
         {childrenOfCurrentNode.map(child => 
           child.type === 'folder' ? (

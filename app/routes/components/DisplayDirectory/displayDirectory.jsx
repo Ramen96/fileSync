@@ -57,6 +57,12 @@ export default function DisplayDirectory({ files }) {
       setCurrentNodeId(prevNodeId);
     }
 
+    function moveForward() {
+      setBackHistory([...backHistory, currentNodeId]);
+      setForwardHistory(forwardHistory.slice(1));
+      setCurrentNodeId(nextNodeId);
+    }
+
     if (direction === 'backward') {
 
       currentNodeId !== constructDirTree.root.id
@@ -64,9 +70,9 @@ export default function DisplayDirectory({ files }) {
         : console.log('they are the same');
       
     } else if (direction === 'forward') {
-      setBackHistory([...backHistory, currentNodeId]);
-      setForwardHistory(forwardHistory.slice(1));
-      setCurrentNodeId(nextNodeId);
+      nextNodeId === undefined
+        ? console.log('end of list')
+        : moveForward();
     }
   }
 

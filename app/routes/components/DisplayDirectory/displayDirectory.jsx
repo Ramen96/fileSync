@@ -100,21 +100,23 @@ export default function DisplayDirectory({ files }) {
         </button>
       </div>
       <div className='mainWindowWrapper'>
-      {childrenOfCurrentNode.map(child => 
-        child.type === 'folder' ? (
-          <Folder 
+
+      <div className='dirTreeSideBar'></div>
+        {childrenOfCurrentNode.map(child => 
+          child.type === 'folder' ? (
+            <Folder 
             key={child.id}
             name={child.name}
             id={child.id}
             handleFolderClick={handleFolderClick}
-          />
-        ) : (
-          <File
+            />
+          ) : (
+            <File
             key={child.id}
             name={child.name}
-          />
-        )
-      )}
+            />
+          )
+        )}
       </div>
     </>
   );

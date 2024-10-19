@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Children } from 'react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import SideFolder from './side-folder/SideFolder';
@@ -51,7 +51,9 @@ export default function DisplayDirectory({ files }) {
   // ###########################################
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
-
+  const getChildNodes = (id) => {
+    return constructDirTree.getChildNodebyCurrentNodeId(id)
+  }
 
   // ###########################################
   // ######### SECTION: Nav buttons ############
@@ -142,9 +144,35 @@ export default function DisplayDirectory({ files }) {
                       name={child.name}
                       id={child.id}
                     />
+                    
                     <div 
                       className='sideFolderDropDown'
-                      style={{"display": 'flex' }}>
+                      style={{"display": 'block' }}>
+                      {
+                        getChildNodes(child.id).map(childNode => 
+                          childNode.type === 'folder' ?
+                            <div
+                              key={childNode.id}
+                              onClick={() => {
+                                 showStateList.includes(childNode.id)
+                                 ? setShowStateList(showStateList.filter(i => childNode.id !== i))
+                                 : setShowStateList([...showStateList, childNode.id]);
+                                }}
+                            >
+                              <SideFolder 
+                               key={childNode.id}
+                               name={childNode.name}
+                               id={childNode.id}
+                               
+                              />
+                            </div>
+                          :
+                            <SideFile
+                              key={childNode.id}
+                              name={childNode.name}
+                            />
+                        )
+                      }
                     </div>
                   </>
               ) : (

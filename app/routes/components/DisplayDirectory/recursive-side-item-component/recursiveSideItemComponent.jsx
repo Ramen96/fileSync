@@ -1,4 +1,7 @@
 import React from 'react';
+import folderIconColor from "../../../../../assets/folder.svg";
+import folderIconGray from "../../../../../assets/folder2.svg";
+import file from "../../../../../assets/file.svg";
 import "../displayDirectory.css";
 
 export default function RecursiveSideItemComponent({ 
@@ -7,6 +10,7 @@ export default function RecursiveSideItemComponent({
     setShowStateList, 
     getChildNodes 
   }) {
+
   return childrenOfCurrentNode.map(child => {
     if (child.type === 'folder') {
       const isExpanded = showStateList.includes(child.id);
@@ -21,9 +25,17 @@ export default function RecursiveSideItemComponent({
               );
             }}
           >
-            <div className="sideItem">
-              <h3 className="sideItemName">{child.name}</h3>
-            </div>
+            {isExpanded ? (
+              <div className="sideItem">
+                <img className='sideBarIcon' src={folderIconColor} alt="folderIcon" />
+                <h3 className="sideItemName">{child.name}</h3>
+              </div>
+            ) : (
+              <div className="sideItem">
+                <img className='sideBarIcon' src={folderIconGray} alt="folderIcon" />
+                <h3 className="sideItemName">{child.name}</h3>
+              </div>
+            )}
           </div>
           {isExpanded && (
             <div
@@ -43,6 +55,7 @@ export default function RecursiveSideItemComponent({
       } else {
         return (
           <div key={child.id} className="sideItem">
+            <img className='sideBarIcon' src={file} alt="fileIcon" />
             <h3 className="sideItemName">{child.name}</h3>
           </div>
         );

@@ -6,8 +6,8 @@ export default function SideFolder({
   handleSideFolderClick
 }) {
   return (
-   <div className="sideItem">
-    <h3 className="sideItemName">{name}</h3>
-   </div> 
+    <div className="sideItem">
+      <h3 className="sideItemName">{name}</h3>
+    </div> 
   )
 }

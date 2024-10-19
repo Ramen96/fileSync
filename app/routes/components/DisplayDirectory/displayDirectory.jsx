@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useEffect, Children } from 'react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
-import SideFolder from './side-folder/SideFolder';
-import SideFile from './side-file/SideFile';
+import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
 import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import "./displayDirectory.css";
 
@@ -51,6 +50,7 @@ export default function DisplayDirectory({ files }) {
   // ###########################################
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
+  const rootNode = constructDirTree.root.children;
   const getChildNodes = (id) => {
     return constructDirTree.getChildNodebyCurrentNodeId(id)
   }
@@ -99,6 +99,8 @@ export default function DisplayDirectory({ files }) {
 
   const [showStateList ,setShowStateList] = useState([]);
 
+  
+
   return (
     <>
       <div className='navWrapper'>
@@ -118,86 +120,12 @@ export default function DisplayDirectory({ files }) {
       </div>
       <div className='mainWindowWrapper'>
       <div className='dirTreeSideBar'>
-        {
-          // 1) Use state for dropdown component of SideFolder
-          //    -- Create wrapper element with onClick functon to set state
-          // 2) Get the id of the node for the parrent folder to map it's children
-          // 3) Add margin-left to a wrapper containt the child componets for 
-          //    a more visual representaion of the folder structure.
-
-          childrenOfCurrentNode.map(child =>
-            child.type === 'folder' ? (
-              <div key={child.id} 
-                onClick={() => {
-                  
-                  showStateList.includes(child.id)
-                    ? setShowStateList(showStateList.filter(i => child.id !== i))
-                    : setShowStateList([...showStateList, child.id]);
-                  
-                  }}
-              className='sideFolderWrapper'>
-              {showStateList.includes(child.id)
-                ? (
-                  <>
-                    <SideFolder
-                      key={child.id} 
-                      name={child.name}
-                      id={child.id}
-                    />
-                    
-                    <div 
-                      className='sideFolderDropDown'
-                      style={{"display": 'block' }}>
-                      {
-                        getChildNodes(child.id).map(childNode => 
-                          childNode.type === 'folder' ?
-                            <div
-                              key={childNode.id}
-                              onClick={() => {
-                                 showStateList.includes(childNode.id)
-                                 ? setShowStateList(showStateList.filter(i => childNode.id !== i))
-                                 : setShowStateList([...showStateList, childNode.id]);
-                                }}
-                            >
-                              <SideFolder 
-                               key={childNode.id}
-                               name={childNode.name}
-                               id={childNode.id}
-                               
-                              />
-                            </div>
-                          :
-                            <SideFile
-                              key={childNode.id}
-                              name={childNode.name}
-                            />
-                        )
-                      }
-                    </div>
-                  </>
-              ) : (
-                  <>
-                    <SideFolder
-                      key={child.id} 
-                      name={child.name}
-                      id={child.id}
-                      />
-                    <div 
-                      className='sideFolderDropDown'
-                      style={{"display": 'none' }}>
-                    </div>
-                  </>
-                )
-              }
-              </div>
-            ) : (
-              <SideFile 
-                key={child.id}
-                name={child.name}
-              />
-            )
-          )
-        }
+        <RecursiveSideItemComponent 
+          childrenOfCurrentNode={rootNode} 
+          showStateList={showStateList}
+          setShowStateList={setShowStateList}
+          getChildNodes={getChildNodes}
+        />
       </div>
         {childrenOfCurrentNode.map(child => 
           child.type === 'folder' ? (

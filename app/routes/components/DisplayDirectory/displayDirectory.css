@@ -120,10 +120,11 @@
 
 .sideItem {
   height: 2rem;
-  /* border-bottom: solid rgba(255, 255, 255, 0.356) 1px; */
-  /* border-top: solid rgba(255, 255, 255, 0.356) 1px; */
   display: flex;
   align-items: center;
+  border-radius: 2rem;
+  margin: 0.5rem;
+  border: solid rgba(74, 68, 92, 0) 1px;
 }
 
 .sideItemName {
@@ -136,6 +137,8 @@
 .sideItem:hover {
   background: rgba(45, 41, 56);
   cursor: pointer;
+  border-radius: 2rem;
+  border: solid rgb(74, 68, 92) 1px;
 }
 
 .sideFolderWrapper {
@@ -147,17 +150,11 @@
   width: auto;
   height: auto;
   margin-left: 1rem;
-  /* border-bottom: solid rgb(74, 68, 92) 1px; */
-  /* border-top: dotted rgb(74, 68, 92) 1px; */
   border-left: solid rgb(74, 68, 92) 1px;
-  /* margin-bottom: 1rem; */
-  /* margin-right: 0.5rem; */
-  /* border-bottom-left-radius: 0.5rem; */
-  /* border-bottom-right-radius: 0.5rem; */
 }
 
 .sideBarIcon {
   height: 1.5rem;
   width: auto;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
 }

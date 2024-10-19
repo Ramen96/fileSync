@@ -85,4 +85,9 @@ export class DirectoryTree {
     }
     return '/' + path.join('/');
   }
+
+  getChildNodebyCurrentNodeId(currentNodeId) {
+    const thisNode = this.getNodeById(currentNodeId);
+    return thisNode.children;
+  }
 }

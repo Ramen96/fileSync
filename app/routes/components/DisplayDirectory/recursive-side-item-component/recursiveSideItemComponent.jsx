@@ -8,8 +8,25 @@ export default function RecursiveSideItemComponent({
     childrenOfCurrentNode, 
     showStateList, 
     setShowStateList, 
-    getChildNodes 
+    getChildNodes,
+    setCurrentNodeId,
+    currentNodeId       
   }) {
+
+
+  function handleFolderClick(folderId) {
+    const isExpandedCheck = showStateList.includes(folderId);
+    if (!isExpandedCheck) {
+      setShowStateList(prevState => [...prevState, folderId]);
+      setCurrentNodeId(folderId);
+    } else if (isExpandedCheck && folderId === currentNodeId) {
+      setShowStateList(prevState => 
+        prevState.filter(id => id !== folderId)
+      )
+    } else if (isExpandedCheck && folderId !== currentNodeId) {
+      setCurrentNodeId(folderId);
+    }
+  }
 
   return childrenOfCurrentNode.map(child => {
     if (child.type === 'folder') {
@@ -17,12 +34,9 @@ export default function RecursiveSideItemComponent({
       return (
         <React.Fragment key={child.id}>
           <div 
+
             onClick={() => {
-              setShowStateList(prevState => 
-                isExpanded
-                  ? prevState.filter(id => id !== child.id)
-                  : [...prevState, child.id]
-              );
+              handleFolderClick(child.id);
             }}
           >
             {isExpanded ? (
@@ -47,6 +61,8 @@ export default function RecursiveSideItemComponent({
                 showStateList={showStateList}
                 setShowStateList={setShowStateList}
                 getChildNodes={getChildNodes}
+                currentNodeId={currentNodeId}
+                setCurrentNodeId={setCurrentNodeId}
               />
             </div>
           )}

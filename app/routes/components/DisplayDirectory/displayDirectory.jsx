@@ -105,7 +105,11 @@ export default function DisplayDirectory({ files }) {
     setShowStateList: setShowStateList,
     getChildNodes: getChildNodes,
     setCurrentNodeId: setCurrentNodeId,
-    currentNodeId: currentNodeId
+    currentNodeId: currentNodeId,
+    setForwardHistory: setForwardHistory,
+    forwardHistory: forwardHistory,
+    backHistory: backHistory,
+    setBackHistory, setBackHistory
   }
   
 

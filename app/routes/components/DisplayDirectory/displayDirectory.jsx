@@ -99,6 +99,14 @@ export default function DisplayDirectory({ files }) {
 
   const [showStateList ,setShowStateList] = useState([]);
 
+  const recursiveSideItemComponentProps = {
+    childrenOfCurrentNode: rootNode,
+    showStateList: showStateList,
+    setShowStateList: setShowStateList,
+    getChildNodes: getChildNodes,
+    setCurrentNodeId: setCurrentNodeId,
+    currentNodeId: currentNodeId
+  }
   
 
   return (
@@ -120,12 +128,7 @@ export default function DisplayDirectory({ files }) {
       </div>
       <div className='mainWindowWrapper'>
       <div className='dirTreeSideBar'>
-        <RecursiveSideItemComponent 
-          childrenOfCurrentNode={rootNode} 
-          showStateList={showStateList}
-          setShowStateList={setShowStateList}
-          getChildNodes={getChildNodes}
-        />
+        <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
       </div>
         {childrenOfCurrentNode.map(child => 
           child.type === 'folder' ? (

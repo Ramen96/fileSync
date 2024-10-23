@@ -75,15 +75,16 @@ export default function DisplayDirectory({ files }) {
     }
 
     if (direction === 'backward') {
-
-      currentNodeId !== constructDirTree.root.id
-        ? moveBack()
-        : console.log('they are the same');
+      if (prevNodeId !== undefined) {
+        if (currentNodeId !== constructDirTree.root.id) {
+          moveBack();
+        }
+      }
       
     } else if (direction === 'forward') {
-      nextNodeId === undefined
-        ? console.log('end of list')
-        : moveForward();
+      if (nextNodeId !== undefined) {
+        moveForward();
+      }
     }
   }
 

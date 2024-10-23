@@ -75,7 +75,7 @@ export default function DisplayDirectory({ files }) {
     }
 
     if (direction === 'backward') {
-      if (prevNodeId !== undefined) {
+      if (prevNodeId !== undefined && prevNodeId !== null) {
         if (currentNodeId !== constructDirTree.root.id) {
           moveBack();
         }

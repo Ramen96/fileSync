@@ -99,6 +99,7 @@ export default function DisplayDirectory({ files }) {
   // ###########################################
 
   const [showStateList ,setShowStateList] = useState([]);
+  const [showSideBar, setShowSideBar] = useState(true);
 
   const recursiveSideItemComponentProps = {
     childrenOfCurrentNode: rootNode,
@@ -117,6 +118,11 @@ export default function DisplayDirectory({ files }) {
   return (
     <>
       <div className='navWrapper'>
+        <button className='homeButton' onClick={() => 
+          showSideBar
+            ? setShowSideBar(false)
+            : setShowSideBar(true)
+        }>S/H</button>
         <button className='homeButton' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
@@ -132,9 +138,16 @@ export default function DisplayDirectory({ files }) {
         </button>
       </div>
       <div className='mainWindowWrapper'>
-      <div className='dirTreeSideBar'>
-        <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
-      </div>
+        {showSideBar
+          ? 
+            <div className='dirTreeSideBar'>
+              <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+            </div> 
+          :
+            <div style={{"display": "none"}} className='dirTreeSideBar'>
+              <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+            </div>
+        }
         {childrenOfCurrentNode.map(child => 
           child.type === 'folder' ? (
             <Folder 

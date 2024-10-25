@@ -16,6 +16,14 @@ export default function RecursiveSideItemComponent({
     setBackHistory
   }) {
 
+  function handleDoubleClick(folderId) {
+    if (isExpanded && folderId === currentNodeId) {
+
+    }
+    setCurrentNodeId(folderId);
+    setBackHistory([...backHistory, folderId]);
+    setForwardHistory([]);
+  }
 
   function handleFolderClick(folderId) {
     const isExpandedCheck = showStateList.includes(folderId);
@@ -43,6 +51,9 @@ export default function RecursiveSideItemComponent({
           <div 
             onClick={() => {
               handleFolderClick(child.id);
+            }}
+            onDoubleClick={() => {
+              // handleDoubleClick(child.id);
             }}
           >
             {isExpanded ? (

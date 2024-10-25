@@ -143,7 +143,10 @@ export default function DisplayDirectory({ files }) {
 
       setDimensions(prev => ({
         ...prev,
-        width: Math.max(250, prev.width + difference)
+        width: Math.min(
+          Math.max(250, prev.width + difference),
+          800
+        )
       }));
     };
 

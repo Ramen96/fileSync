@@ -116,6 +116,7 @@
   width: 15rem;
   height: auto;
   border-right: solid rgb(74, 68, 92) 1px;
+  display: absolute;
 }
 
 .sideItem {
@@ -157,4 +158,22 @@
   height: 1.5rem;
   width: auto;
   margin-left: 0.5rem;
+}
+
+.testResize {
+  border: solid white 1px;
+  position: relative;
+}
+
+.handle {
+  width: 10px;
+  height: 20rem;
+  border: solid rgb(255, 0, 0) 1px;
+  background: rgba(255, 255, 255, 0.582);
+  position: relative;
+  right: -10px;
+}
+
+.handle:hover {
+  cursor: grab;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, Children } from 'react';
+import React, { useState, useMemo, useEffect, Children, useRef } from 'react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
@@ -114,6 +114,54 @@ export default function DisplayDirectory({ files }) {
     setBackHistory, setBackHistory
   }
   
+  // ##########################################
+  // ########### SECTION: Resize ##############
+  // ##########################################
+
+
+  const [dimensions, setDimensions] = useState({
+    width: 250,
+  });
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStateX] = useState(0)
+
+
+  const lastX = useRef(0);
+
+  function handleMouseDown(e) {
+    setIsDragging(true);
+    lastX.current = e.clientX;
+  }
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+
+      const difference = e.clientX - lastX.current;
+      lastX.current = e.clientX;
+
+      setDimensions(prev => ({
+        ...prev,
+        width: Math.max(200, prev.width + difference)
+      }));
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    }
+
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    }
+
+  }, [startX, isDragging]);
 
   return (
     <>
@@ -140,12 +188,15 @@ export default function DisplayDirectory({ files }) {
       <div className='mainWindowWrapper'>
         {showSideBar
           ? 
-            <div className='dirTreeSideBar'>
+            <div 
+              onMouseDown={handleMouseDown}
+              style={{"width": `${dimensions.width}px`}}
+              className='dirTreeSideBar'>
               <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+              <div className='handle'></div>
             </div> 
           :
-            <div style={{"display": "none"}} className='dirTreeSideBar'>
-              <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+            <div style={{"display": "none"}}>
             </div>
         }
         {childrenOfCurrentNode.map(child => 

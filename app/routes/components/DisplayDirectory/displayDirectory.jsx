@@ -143,7 +143,7 @@ export default function DisplayDirectory({ files }) {
 
       setDimensions(prev => ({
         ...prev,
-        width: Math.max(200, prev.width + difference)
+        width: Math.max(250, prev.width + difference)
       }));
     };
 
@@ -192,7 +192,9 @@ export default function DisplayDirectory({ files }) {
               onMouseDown={handleMouseDown}
               style={{"width": `${dimensions.width}px`}}
               className='dirTreeSideBar'>
-              <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+                <div className='sideItemWrapper'>
+                <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+                </div>
               <div className='handle'></div>
             </div> 
           :

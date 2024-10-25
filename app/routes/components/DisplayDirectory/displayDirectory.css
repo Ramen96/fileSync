@@ -116,7 +116,23 @@
   width: 15rem;
   height: auto;
   border-right: solid rgb(74, 68, 92) 1px;
-  display: absolute;
+  display: flex;
+  flex-direction: row;
+}
+
+.handle {
+  width: 10px;
+  background: rgba(73, 73, 73, 0.692);
+  border-left: solid rgb(74, 68, 92) 1px;
+}
+
+.handle:hover {
+  cursor: grab;
+}
+
+.sideItemWrapper{
+  display: block;
+  width: 100%;
 }
 
 .sideItem {
@@ -160,20 +176,3 @@
   margin-left: 0.5rem;
 }
 
-.testResize {
-  border: solid white 1px;
-  position: relative;
-}
-
-.handle {
-  width: 10px;
-  height: 20rem;
-  border: solid rgb(255, 0, 0) 1px;
-  background: rgba(255, 255, 255, 0.582);
-  position: relative;
-  right: -10px;
-}
-
-.handle:hover {
-  cursor: grab;
-}

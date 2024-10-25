@@ -1,4 +1,4 @@
-import folder from "../../../../../assets/folder2.svg"
+import folder from "../../../../../assets/yellow-folder.svg"
 import "../displayDirectory.css";
 
 export default function Folder({

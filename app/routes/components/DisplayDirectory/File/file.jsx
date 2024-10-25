@@ -1,4 +1,4 @@
-import file from "../../../../../assets/file.svg";
+import file from "../../../../../assets/file2.svg";
 import "../displayDirectory.css";
 
 export default function File({name}) {

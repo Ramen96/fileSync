@@ -118,7 +118,6 @@ export default function DisplayDirectory({ files }) {
   // ########### SECTION: Resize ##############
   // ##########################################
 
-
   const [dimensions, setDimensions] = useState({
     width: 250,
   });
@@ -166,6 +165,14 @@ export default function DisplayDirectory({ files }) {
 
   }, [startX, isDragging]);
 
+
+
+  // ##########################################
+  // ########### SECTION: Icon/row ############
+  // ##########################################
+
+  const [isIcon, setIsIcon] = useState(true);
+
   return (
     <>
       <div className='navWrapper'>
@@ -187,6 +194,13 @@ export default function DisplayDirectory({ files }) {
         <button className='navButton' onClick={() => handleNavClick('forward')}>
           <p className='greaterThanLessThan'>&gt;</p>
         </button>
+        <button 
+          onClick={() => {
+            isIcon ? setIsIcon(false) : setIsIcon(true);
+          }}
+          className='homeButton'>
+          Is Icon
+        </button>
       </div>
       <div className='mainWindowWrapper'>
         {showSideBar
@@ -204,21 +218,51 @@ export default function DisplayDirectory({ files }) {
             <div style={{"display": "none"}}>
             </div>
         }
-        {childrenOfCurrentNode.map(child => 
-          child.type === 'folder' ? (
-            <Folder 
-            key={child.id}
-            name={child.name}
-            id={child.id}
-            handleFolderClick={handleFolderClick}
-            />
-          ) : (
-            <File
-            key={child.id}
-            name={child.name}
-            />
-          )
-        )}
+        {isIcon
+          ? 
+            <div className='width100 padding0 flexWrap'>
+              {childrenOfCurrentNode.map(child => 
+                child.type === 'folder' ? (
+                  <Folder 
+                  key={child.id}
+                  name={child.name}
+                  id={child.id}
+                  handleFolderClick={handleFolderClick}
+                  isIcon={isIcon}
+                  />
+                ) : (
+                  <File
+                  key={child.id}
+                  name={child.name}
+                  isIcon={isIcon}
+                  id={child.id}
+                  />
+                )
+              )}
+            </div>
+          :
+            <div className='width100 padding0'>
+              {childrenOfCurrentNode.map(child => 
+                child.type === 'folder' ? (
+                  <Folder 
+                  key={child.id}
+                  name={child.name}
+                  id={child.id}
+                  handleFolderClick={handleFolderClick}
+                  isIcon={isIcon}
+                  />
+                ) : (
+                  <File
+                  key={child.id}
+                  name={child.name}
+                  isIcon={isIcon}
+                  id={child.id}
+                  />
+                )
+              )}
+            </div>
+        }
+        
       </div>
     </>
   );

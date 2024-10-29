@@ -21,7 +21,12 @@ export default function File({
           <img className="folderImgRow" src={file} alt="folder" />
           <p className="itemName marginNone textStart">{name}</p>
         </div>
-        <input className="alignSelf-flexEnd zIndexTop margin1rem" type="checkbox" id={id} />
+        <input 
+          className="alignSelf-flexEnd margin1rem" 
+          type="checkbox" 
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => console.log("Checkbox toggled:", e.target.checked)}
+          id={id} />
       </div>
   )
 }

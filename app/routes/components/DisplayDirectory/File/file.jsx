@@ -21,21 +21,10 @@ export default function File({
           <img className="folderImgRow" src={file} alt="folder" />
           <p className="itemName marginNone textStart">{name}</p>
         </div>
-        <label className="container" htmlFor={id}>
-            <input 
-              className="margin1rem" 
-              type="checkbox" 
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => console.log("Checkbox toggled:", e.target.checked)}
-              id={id} />
-            <span 
-              className="checkmark"
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => console.log("Checkbox toggled:", e.target.checked)}
-              id={id}
-              >
-            </span>
-          </label>
+        <label className="cb-con" onClick={(e) => e.stopPropagation()}>
+          <input className="checkbox" type="checkbox" />
+          <span className="checkmark"></span>
+        </label>
       </div>
   )
 }

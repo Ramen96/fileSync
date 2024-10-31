@@ -19,27 +19,16 @@ export default function Folder({
           </div>
         </div>
       : 
-        <div className="rowWrapper mainBorder" onClick={() => {
+        <div className="rowWrapper mainBorder vc" onClick={() => {
           handleFolderClick(id);
         }}>
           <div className="centerAllFlex width100">
             <img className="folderImgRow" src={folder} alt="folder" />
             <p className="itemName marginNone textStart">{name}</p>
           </div>
-          <label className="container" htmlFor={id}>
-            <input 
-              className="margin1rem" 
-              type="checkbox" 
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => console.log("Checkbox toggled:", e.target.checked)}
-              id={id} />
-            <span 
-              className="checkmark"
-              onClick={(e) => e.stopPropagation()}
-              onChange={(e) => console.log("Checkbox toggled:", e.target.checked)}
-              id={id}
-              >
-            </span>
+          <label className="cb-con" onClick={(e) => e.stopPropagation()}>
+            <input className="checkbox" type="checkbox" />
+            <span className="checkmark"></span>
           </label>
         </div>
   )

@@ -184,67 +184,56 @@
 /* ****** SECTION: check box  ******** */
 /* *********************************** */
 
- /* The container */
-.container {
+.cb-con{
   display: block;
   position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
+  margin: 1rem;
   cursor: pointer;
-  font-size: 22px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
 
-/* Hide the browser's default checkbox */
-.container input {
+.cb-con input {
   position: absolute;
   opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+  
 }
 
-/* Create a custom checkbox */
 .checkmark {
   position: absolute;
-  border-radius: 0.5rem;
-  top: -7px;
-  left: 0;
-  height: 25px;
-  width: 25px;
-  background-color: #eeeeee28;
+  top: 50;
+  left: 50;
+  transform: translate(-50%, -50%);
+  width: 1.25rem;
+  height: 1.25rem;
   border: solid rgb(74, 68, 92) 1px;
+  border-radius: 0.25rem;
 }
 
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-  background-color: #cccccc69;
+.cb-con:hover input ~ .checkmark {
+  background-color: rgb(62, 61, 61);
 }
 
-/* When the checkbox is checked, add a blue background */
-.container input:checked ~ .checkmark {
-  background-color: #ff0049;
+.cb-con input:checked ~ .checkmark {
+  background-color: rgb(0, 153, 255);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
-/* Show the checkmark when checked */
-.container input:checked ~ .checkmark:after {
-  display: block;
+.cb-con input:checked ~ .checkmark:after {
+  display: flex;
 }
 
-/* Style the checkmark/indicator */
-.container .checkmark:after {
-  left: 9px;
-  top: 5px;
+.cb-con .checkmark:after {
   width: 5px;
   height: 10px;
   border: solid white;
@@ -253,6 +242,7 @@
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
 
 /* *********************************** */
 /* ****** SECTION: icon -- row ******* */

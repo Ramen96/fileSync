@@ -4,7 +4,10 @@ import { ChevronLeft,
         Home,
         Sidebar,
         Grid,
-        List
+        List,
+        Trash,
+        Download,
+        Upload
        } from 'lucide-react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
@@ -183,7 +186,6 @@ export default function DisplayDirectory({ files }) {
   return (
     <>
       <div className='navWrapper'>
-        
         <button className='homeButton' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
@@ -197,22 +199,33 @@ export default function DisplayDirectory({ files }) {
             : setShowSideBar(true)
           }><Sidebar />
         </button>
-        <button className='navButton' onClick={() => handleNavClick('backward')}>
-          <ChevronLeft className="w-5 h-5 text-gray-600" /> 
+        <button className='homeButton circle' onClick={() => handleNavClick('backward')}>
+          <ChevronLeft /> 
         </button>
-        <button className='navButton' onClick={() => handleNavClick('forward')}>
-          <ChevronRight className="w-5 h-5 text-gray-600" />
+        <button className='homeButton circle' onClick={() => handleNavClick('forward')}>
+          <ChevronRight />
         </button>
-        <button 
-          onClick={() => {
-            isIcon ? setIsIcon(false) : setIsIcon(true);
-          }}
-          className='homeButton'>
-            {isIcon
-              ? <Grid />
-              : <List />
-            }
-        </button>
+        <div className='nav-buttons-right'>
+          <button className='homeButton'>
+            <Trash />
+          </button>
+          <button className='homeButton'>
+            <Download />
+          </button>
+          <button className='homeButton'>
+            <Upload />
+          </button>
+          <button 
+            onClick={() => {
+              isIcon ? setIsIcon(false) : setIsIcon(true);
+            }}
+            className='homeButton'>
+              {isIcon
+                ? <Grid />
+                : <List />
+              }
+          </button>
+        </div>
       </div>
       <div className='mainWindowWrapper'>
         {showSideBar

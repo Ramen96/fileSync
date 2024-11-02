@@ -237,7 +237,13 @@ export default function DisplayDirectory({ files }) {
                 <div className='sideItemWrapper'>
                 <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
                 </div>
-              <div className='handle'></div>
+              <div className='handle'>
+                <div className='handle-gui'>
+                  <div className='dot'></div>
+                  <div className='dot'></div>
+                  <div className='dot'></div>
+                </div>
+              </div>
             </div> 
           :
             <div style={{"display": "none"}}>

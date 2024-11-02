@@ -13,13 +13,17 @@ export default function Folder({
         <div className="conA" onClick={() => {
           handleFolderClick(id);
         }}>
-          <label className="cb-con" onClick={(e) => e.stopPropagation()}>
-            <input className="checkbox" type="checkbox" />
-            <span className="checkmark"></span>
-          </label>
+          <div className="conB justifyStart">
+            <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
+              <input className="checkbox" type="checkbox" />
+              <span className="checkmark"></span>
+            </label>
+          </div>
+          <div className="conB border-bottom">
+            <img className="folderImg margin1rem" src={folder} alt="folder" />
+          </div>
           <div className="conB">
-            <img className="folderImg" src={folder} alt="folder" />
-            <p className="itemName">{name}</p>
+            <h3 className="itemName">{name}</h3>
           </div>
         </div>
       : 

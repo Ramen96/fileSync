@@ -10,6 +10,10 @@ export default function File({
     isIcon  
       ?
         <div className="conA">
+          <label className="cb-con" onClick={(e) => e.stopPropagation()}>
+            <input className="checkbox" type="checkbox" />
+            <span className="checkmark"></span>
+          </label>
           <div className="conB">
             <img className="folderImg" src={file} alt="folder" />
             <p className="itemName">{name}</p>

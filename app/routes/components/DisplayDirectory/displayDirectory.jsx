@@ -1,4 +1,11 @@
-import React, { useState, useMemo, useEffect, Children, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { ChevronLeft, 
+        ChevronRight,
+        Home,
+        Sidebar,
+        Grid,
+        List
+       } from 'lucide-react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
@@ -176,30 +183,35 @@ export default function DisplayDirectory({ files }) {
   return (
     <>
       <div className='navWrapper'>
-        <button className='homeButton' onClick={() => 
-          showSideBar
-            ? setShowSideBar(false)
-            : setShowSideBar(true)
-        }>S/H</button>
+        
         <button className='homeButton' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
           setBackHistory([]);
-        }}>
-          <p>Home</p>
+          }}>
+          <Home />
+        </button>
+        <button className='homeButton' onClick={() => 
+          showSideBar
+            ? setShowSideBar(false)
+            : setShowSideBar(true)
+          }><Sidebar />
         </button>
         <button className='navButton' onClick={() => handleNavClick('backward')}>
-          <p className='greaterThanLessThan'>&lt;</p>
+          <ChevronLeft className="w-5 h-5 text-gray-600" /> 
         </button>
         <button className='navButton' onClick={() => handleNavClick('forward')}>
-          <p className='greaterThanLessThan'>&gt;</p>
+          <ChevronRight className="w-5 h-5 text-gray-600" />
         </button>
         <button 
           onClick={() => {
             isIcon ? setIsIcon(false) : setIsIcon(true);
           }}
           className='homeButton'>
-          Is Icon
+            {isIcon
+              ? <Grid />
+              : <List />
+            }
         </button>
       </div>
       <div className='mainWindowWrapper'>

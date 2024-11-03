@@ -1,14 +1,15 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ChevronLeft, 
-        ChevronRight,
-        Home,
-        Sidebar,
-        Grid,
-        List,
-        Trash,
-        Download,
-        Upload
-       } from 'lucide-react';
+import {
+  ChevronLeft, 
+  ChevronRight,
+  Home,
+  Sidebar,
+  Grid,
+  List,
+  Trash,
+  Download,
+  Upload
+  } from 'lucide-react';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
@@ -174,8 +175,6 @@ export default function DisplayDirectory({ files }) {
     }
 
   }, [startX, isDragging]);
-
-
 
   // ##########################################
   // ########### SECTION: Icon/row ############

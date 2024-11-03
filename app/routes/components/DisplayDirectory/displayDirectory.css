@@ -39,8 +39,6 @@
     text-align: center;
     justify-content: center;
     border: var(--main-button-border);
-    /* cursor: pointer !important; */
-    
 }
 
 .homeButton:hover {

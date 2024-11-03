@@ -184,7 +184,7 @@ export default function DisplayDirectory({ files }) {
 
   return (
     <>
-      <div className='navWrapper'>
+      <div className='navWrapper prevent-select'>
         <button className='homeButton' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
@@ -226,7 +226,7 @@ export default function DisplayDirectory({ files }) {
           </button>
         </div>
       </div>
-      <div className='mainWindowWrapper'>
+      <div className='mainWindowWrapper prevent-select'>
         {showSideBar
           ? 
             <div 

@@ -185,7 +185,7 @@ export default function DisplayDirectory({ files }) {
   return (
     <>
       <div className='navWrapper prevent-select'>
-        <button className='homeButton' onClick={() => {
+        <button className='homeButton pointer' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
           setBackHistory([]);

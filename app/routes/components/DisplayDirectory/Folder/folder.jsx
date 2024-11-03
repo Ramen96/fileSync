@@ -1,3 +1,4 @@
+import { useState } from "react";
 import folder from "../../../../../assets/yellow-folder.svg"
 import "../displayDirectory.css";
 
@@ -10,7 +11,7 @@ export default function Folder({
   return (
     isIcon
       ?
-        <div className="conA" onClick={() => {
+        <div className="conA" onDoubleClick={() => {
           handleFolderClick(id);
         }}>
           <div className="conB justifyStart">
@@ -27,7 +28,7 @@ export default function Folder({
           </div>
         </div>
       : 
-        <div className="rowWrapper mainBorder vc" onClick={() => {
+        <div className="rowWrapper mainBorder vc" onDoubleClick={() => {
           handleFolderClick(id);
         }}>
           <div className="centerAllFlex width100">

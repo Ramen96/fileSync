@@ -30,10 +30,7 @@ export default function Folder({
           <div 
             className="conB justifyStart">
             <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
-              {checked
-                ? <input checked="checked" className="checkbox" type="checkbox" />
-                : <input className="checkbox" type="checkbox" />
-              }
+              <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
               <span className="checkmark"></span>
             </label>
           </div>
@@ -53,10 +50,7 @@ export default function Folder({
             <p className="itemName marginNone textStart">{name}</p>
           </div>
           <label className="cb-con" onClick={(e) => e.stopPropagation()}>
-            {checked
-              ? <input checked="checked" className="checkbox" type="checkbox" />
-              : <input className="checkbox" type="checkbox" />
-            }
+            <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
             <span className="checkmark"></span>
           </label>
         </div>

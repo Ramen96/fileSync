@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import {
   ChevronLeft, 
   ChevronRight,
@@ -13,7 +14,6 @@ import {
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
-import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import "./displayDirectory.css";
 
 export default function DisplayDirectory({ files }) {
@@ -292,7 +292,6 @@ export default function DisplayDirectory({ files }) {
               )}
             </div>
         }
-        
       </div>
     </>
   );

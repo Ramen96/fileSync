@@ -8,15 +8,32 @@ export default function Folder({
   handleFolderClick,
   isIcon
 }) {
+  
+  const [checked, setChecked] = useState(false);
+
+  const handleChecked = () => {
+    if (checked === true) {
+      setChecked(false);
+    } else {
+      setChecked(true);
+    };
+  }
+
   return (
     isIcon
       ?
-        <div className="conA" onDoubleClick={() => {
+        <div 
+          onClick={() => handleChecked()}
+          className="conA" onDoubleClick={() => {
           handleFolderClick(id);
         }}>
-          <div className="conB justifyStart">
+          <div 
+            className="conB justifyStart">
             <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
-              <input className="checkbox" type="checkbox" />
+              {checked
+                ? <input checked="checked" className="checkbox" type="checkbox" />
+                : <input className="checkbox" type="checkbox" />
+              }
               <span className="checkmark"></span>
             </label>
           </div>
@@ -28,7 +45,7 @@ export default function Folder({
           </div>
         </div>
       : 
-        <div className="rowWrapper mainBorder vc" onDoubleClick={() => {
+        <div onClick={() => handleChecked()} className="rowWrapper mainBorder vc" onDoubleClick={() => {
           handleFolderClick(id);
         }}>
           <div className="centerAllFlex width100">
@@ -36,7 +53,10 @@ export default function Folder({
             <p className="itemName marginNone textStart">{name}</p>
           </div>
           <label className="cb-con" onClick={(e) => e.stopPropagation()}>
-            <input className="checkbox" type="checkbox" />
+            {checked
+              ? <input checked="checked" className="checkbox" type="checkbox" />
+              : <input className="checkbox" type="checkbox" />
+            }
             <span className="checkmark"></span>
           </label>
         </div>

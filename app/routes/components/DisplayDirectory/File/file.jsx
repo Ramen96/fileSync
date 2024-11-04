@@ -1,3 +1,4 @@
+import { useState } from "react";
 import file from "../../../../../assets/file2.svg";
 import "../displayDirectory.css";
 
@@ -6,15 +7,26 @@ export default function File({
   isIcon,
   id
 }) {
+
+  const [checked, setChecked] = useState(false);
+
+  const handleChecked = () => {
+    if (checked === true) {
+      setChecked(false);
+    } else {
+      setChecked(true);
+    };
+  }
+
   return (
     isIcon  
       ?
         <div className="conA" onClick={() => {
-          handleFolderClick(id);
+          handleChecked();
         }}>
           <div className="conB justifyStart">
-            <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
-              <input className="checkbox" type="checkbox" />
+            <label className="cb-con test">
+              <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
               <span className="checkmark"></span>
             </label>
           </div>
@@ -26,13 +38,17 @@ export default function File({
           </div>
         </div>
       :
-      <div className="rowWrapper mainBorder">
+      <div 
+        onClick={() => {
+          handleChecked();
+        }}
+        className="rowWrapper mainBorder">
         <div className="centerAllFlex width100">
           <img className="folderImgRow" src={file} alt="folder" />
           <p className="itemName marginNone textStart">{name}</p>
         </div>
-        <label className="cb-con" onClick={(e) => e.stopPropagation()}>
-          <input className="checkbox" type="checkbox" />
+        <label className="cb-con" >
+          <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
           <span className="checkmark"></span>
         </label>
       </div>

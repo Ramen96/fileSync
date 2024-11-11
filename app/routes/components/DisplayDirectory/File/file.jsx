@@ -27,7 +27,11 @@ export default function File({
           <div className="conB justifyStart">
             <label className="cb-con test">
               <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-              <span className="checkmark"></span>
+              <span 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleChecked();
+                }} className="checkmark"></span>
             </label>
           </div>
           <div className="conB border-bottom">
@@ -49,7 +53,10 @@ export default function File({
         </div>
         <label className="cb-con" >
           <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-          <span className="checkmark"></span>
+          <span onClick={(e) => {
+            e.preventDefault();
+            handleChecked();
+          }} className="checkmark"></span>
         </label>
       </div>
   )

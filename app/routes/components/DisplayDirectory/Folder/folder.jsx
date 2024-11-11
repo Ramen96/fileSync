@@ -31,7 +31,11 @@ export default function Folder({
             className="conB justifyStart">
             <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
               <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-              <span className="checkmark"></span>
+              <span 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleChecked();
+                }} className="checkmark"></span>
             </label>
           </div>
           <div className="conB border-bottom">
@@ -51,7 +55,10 @@ export default function Folder({
           </div>
           <label className="cb-con" onClick={(e) => e.stopPropagation()}>
             <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-            <span className="checkmark"></span>
+            <span onClick={(e) => {
+              e.preventDefault();
+              handleChecked();
+            }} className="checkmark"></span>
           </label>
         </div>
   )

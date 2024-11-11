@@ -17,6 +17,9 @@ import RecursiveSideItemComponent from './recursive-side-item-component/recursiv
 import "./displayDirectory.css";
 
 export default function DisplayDirectory({ files }) {
+  // ###########################################
+  // #### SECTION: Create  data structure ######
+  // ###########################################
 
   // create tree data set from db and memoize it.
   const constructDirTree = useMemo(() => {
@@ -49,6 +52,7 @@ export default function DisplayDirectory({ files }) {
   // ###########################################
   // ############## SECTION: AJAX ##############
   // ###########################################
+
   if (!files || files.length === 0) {
     return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
   }
@@ -59,6 +63,7 @@ export default function DisplayDirectory({ files }) {
   // ###########################################
   // ######### SECTION: get nodes ##############
   // ###########################################
+
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
   const rootNode = constructDirTree.root.children;
@@ -69,6 +74,7 @@ export default function DisplayDirectory({ files }) {
   // ###########################################
   // ######### SECTION: Nav buttons ############
   // ###########################################
+
   const handleNavClick = (direction) => {
     const prevNodeId = backHistory[backHistory.length - 1];
     const nextNodeId = forwardHistory[0];
@@ -112,18 +118,7 @@ export default function DisplayDirectory({ files }) {
   const [showStateList ,setShowStateList] = useState([]);
   const [showSideBar, setShowSideBar] = useState(true);
 
-  const recursiveSideItemComponentProps = {
-    childrenOfCurrentNode: rootNode,
-    showStateList: showStateList,
-    setShowStateList: setShowStateList,
-    getChildNodes: getChildNodes,
-    setCurrentNodeId: setCurrentNodeId,
-    currentNodeId: currentNodeId,
-    setForwardHistory: setForwardHistory,
-    forwardHistory: forwardHistory,
-    backHistory: backHistory,
-    setBackHistory, setBackHistory
-  }
+  
   
   // ##########################################
   // ########### SECTION: Resize ##############
@@ -181,6 +176,26 @@ export default function DisplayDirectory({ files }) {
   // ##########################################
 
   const [isIcon, setIsIcon] = useState(true);
+
+
+
+  // ###########################################
+  // ####### SECTION: Component props ##########
+  // ###########################################
+
+  const recursiveSideItemComponentProps = {
+    childrenOfCurrentNode: rootNode,
+    showStateList: showStateList,
+    setShowStateList: setShowStateList,
+    getChildNodes: getChildNodes,
+    setCurrentNodeId: setCurrentNodeId,
+    currentNodeId: currentNodeId,
+    setForwardHistory: setForwardHistory,
+    forwardHistory: forwardHistory,
+    backHistory: backHistory,
+    setBackHistory, setBackHistory
+  }
+
 
   return (
     <>
@@ -250,47 +265,47 @@ export default function DisplayDirectory({ files }) {
         }
         {isIcon
           ? 
-            <div className='width100 padding0 flexWrap'>
-              {childrenOfCurrentNode.map(child => 
-                child.type === 'folder' ? (
-                  <Folder 
+          <div className='width100 padding0 flexWrap'>
+            {childrenOfCurrentNode.map(child => 
+              child.type === 'folder' ? (
+                <Folder 
                   key={child.id}
                   name={child.name}
                   id={child.id}
                   handleFolderClick={handleFolderClick}
                   isIcon={isIcon}
-                  />
-                ) : (
-                  <File
+                />
+              ) : (
+                <File
                   key={child.id}
                   name={child.name}
                   isIcon={isIcon}
                   id={child.id}
-                  />
-                )
-              )}
-            </div>
+                />
+              )
+            )}
+          </div>
           :
-            <div className='width100 padding0'>
-              {childrenOfCurrentNode.map(child => 
-                child.type === 'folder' ? (
-                  <Folder 
+          <div className='width100 padding0'>
+            {childrenOfCurrentNode.map(child => 
+              child.type === 'folder' ? (
+                <Folder 
                   key={child.id}
                   name={child.name}
                   id={child.id}
                   handleFolderClick={handleFolderClick}
                   isIcon={isIcon}
-                  />
-                ) : (
-                  <File
+                />
+              ) : (
+                <File
                   key={child.id}
                   name={child.name}
                   isIcon={isIcon}
                   id={child.id}
-                  />
-                )
-              )}
-            </div>
+                />
+              )
+            )}
+          </div>
         }
       </div>
     </>

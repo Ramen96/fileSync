@@ -11,6 +11,7 @@ import {
   Download,
   Upload
   } from 'lucide-react';
+import UploadCard from './UploadCard/uploadCard';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
@@ -199,6 +200,7 @@ export default function DisplayDirectory({ files }) {
 
   return (
     <>
+      <UploadCard />
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)

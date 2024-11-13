@@ -32,6 +32,9 @@ export default function UploadCard({
         </div>
         <div className="drag-n-drop">
         </div>
+        <button className="upload-btn">
+          Upload
+        </button>
       </div>
     </div>
   )

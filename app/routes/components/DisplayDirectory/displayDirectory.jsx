@@ -175,9 +175,7 @@ export default function DisplayDirectory({ files }) {
   // ##########################################
   // ########### SECTION: Icon/row ############
   // ##########################################
-
   const [isIcon, setIsIcon] = useState(true);
-
 
 
   // ###########################################
@@ -198,9 +196,25 @@ export default function DisplayDirectory({ files }) {
   }
 
 
+  // ###########################################
+  // ######### SECTION: Upload Card ############
+  // ###########################################
+  const [displayUploadCard, setDisplayUploadCard] = useState(false);
+
+  const handleUploadCardState = () => {
+    displayUploadCard ? setDisplayUploadCard(false) : setDisplayUploadCard(true);
+  }
+
+  const uploadCardProps = { 
+    handleUploadCardState: handleUploadCardState
+  }
+
   return (
     <>
-      <UploadCard />
+      {displayUploadCard ?
+        <UploadCard {...uploadCardProps} />
+        : <div style={{"display": "none"}}></div> 
+      }
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
           setCurrentNodeId(constructDirTree.root.id)
@@ -228,7 +242,11 @@ export default function DisplayDirectory({ files }) {
           <button className='homeButton'>
             <Download />
           </button>
-          <button className='homeButton'>
+          <button 
+            onClick={() => {
+              handleUploadCardState();
+            }}
+            className='homeButton'>
             <Upload />
           </button>
           <button 

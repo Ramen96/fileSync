@@ -23,12 +23,19 @@ export default function UploadCard({
           </div>
         </div>
         <div className="btn-wrapper">
-          <button className="btn">
-            <FolderPlus /> 
-          </button>
-          <button className="btn">
-            <FilePlus /> 
-          </button>
+          <div role="button" className="btn">
+            <FolderPlus className="margin-r-1" /> New Folder
+          </div>
+          <div role="button" className="btn">
+            <FilePlus className="margin-r-1" /> New File
+          </div>
+        </div>
+        <div className="upload-multiple">
+          Upload Multiple? 
+          <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
+            <input onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
+            <span className="checkmark"></span>
+          </label>
         </div>
         <div className="drag-n-drop">
         </div>

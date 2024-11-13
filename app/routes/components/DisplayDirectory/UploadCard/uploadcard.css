@@ -59,6 +59,9 @@
 }
 
 .x-circle {
+  position: absolute;
+  top: -1%;
+  right: -1%;
   margin: 1rem;
   color: #eee;
 }
@@ -76,7 +79,8 @@
 }
 
 .h1-wrapper {
+  text-align: center;
   width: inherit;
-  display: flex;
-  justify-content: center;
+  display: block;
+  /* justify-content: center; */
 }

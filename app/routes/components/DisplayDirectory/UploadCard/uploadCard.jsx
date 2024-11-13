@@ -15,12 +15,12 @@ export default function UploadCard({
         <div className="title-wrapper">
           <div className="h1-wrapper">
             <h1 className="h1">New Upload</h1>
+            <XCircle 
+              onClick={() => {
+                handleUploadCardState();
+              }}
+              className="x-circle" />
           </div>
-          <XCircle 
-            onClick={() => {
-              handleUploadCardState();
-            }}
-            className="x-circle" />
         </div>
         <div className="btn-wrapper">
           <button className="btn">

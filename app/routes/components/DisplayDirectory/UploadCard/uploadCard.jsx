@@ -1,14 +1,23 @@
 import { 
   FolderPlus,
   FilePlus,
-  XCircle
+  XCircle,
+  UploadCloudIcon
  } from "lucide-react";
 
 import "./uploadcard.css";
+import { useState } from "react";
 
 export default function UploadCard({
   handleUploadCardState
 }) {
+
+  const [multiUpload, setMultiUpload] = useState(false);
+
+  const handleMulitUploadState = () => {
+    multiUpload ? setMultiUpload(false) : setMultiUpload(true);
+  }
+  
   return(
     <div className="blur-background">
       <div className="upload-card-wrapper">
@@ -32,12 +41,16 @@ export default function UploadCard({
         </div>
         <div className="upload-multiple">
           Upload Multiple? 
-          <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
-            <input onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-            <span className="checkmark"></span>
+          <label className="cb-con test" >
+            <input checked={multiUpload} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
+            <span className="checkmark" onClick={(e) => {
+                e.stopPropagation();
+                handleMulitUploadState();
+              }}></span>
           </label>
         </div>
         <div className="drag-n-drop">
+          <UploadCloudIcon className="uploadCloudIcon" />
         </div>
         <button className="upload-btn">
           Upload

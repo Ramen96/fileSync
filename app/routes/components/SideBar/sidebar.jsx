@@ -9,11 +9,7 @@ const photosIcon = "../assets/photo.svg";
 const trashIcon = "../assets/trash.svg";
 const fileIcon = "../assets/file.svg"
 
-export default function SideBar() {
-  const navigate = useNavigate();
-  const routeHome = () =>  navigate("/");
-
-  function fileUpload(event) {
+export function fileUpload(event) {
     const file = event.target.files;
     const fileList = new FormData();
 
@@ -26,6 +22,10 @@ export default function SideBar() {
       body : fileList
     })
   }
+  
+export default function SideBar() {
+  const navigate = useNavigate();
+  const routeHome = () =>  navigate("/");
 
   return (
     <div className="sidebar">

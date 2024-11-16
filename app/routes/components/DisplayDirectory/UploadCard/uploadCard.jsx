@@ -4,7 +4,7 @@ import {
   XCircle,
   UploadCloudIcon
  } from "lucide-react";
-
+import { fileUpload } from "../../SideBar/sidebar";
 import "./uploadcard.css";
 import { useState } from "react";
 
@@ -32,11 +32,17 @@ export default function UploadCard({
           </div>
         </div>
         <div className="btn-wrapper">
-          <div role="button" className="btn">
-            <FolderPlus className="margin-r-1" /> New Folder
+          <div className="btn" role="button">
+            <label className="btn-lable" htmlFor="new-folder">
+              <FolderPlus className="margin-r-1" /> New Folder
+            </label>
+            <input style={{"display":"none"}} id="new-folder" type="file" webkitdirectory="true" />
           </div>
-          <div role="button" className="btn">
-            <FilePlus className="margin-r-1" /> New File
+          <div className="btn" role="button">
+            <label className="btn-lable" htmlFor="new-file">
+              <FilePlus className="margin-r-1" /> New File
+            </label>
+            <input id="new-file" style={{"display":"none"}} type="file" />
           </div>
         </div>
         <div className="upload-multiple">

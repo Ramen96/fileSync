@@ -7,7 +7,7 @@ import {
 import { fileUpload } from "../../SideBar/sidebar";
 import "./uploadcard.css";
 import { useState } from "react";
-
+import { useEffect } from "react";
 export default function UploadCard({
   handleUploadCardState
 }) {
@@ -17,7 +17,10 @@ export default function UploadCard({
   const handleMulitUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
   }
-  
+  useEffect(()=> {
+    console.log(multiUpload)
+  }, [multiUpload]);
+
   return(
     <div className="blur-background">
       <div className="upload-card-wrapper">
@@ -36,13 +39,19 @@ export default function UploadCard({
             <label className="btn-lable" htmlFor="new-folder">
               <FolderPlus className="margin-r-1" /> New Folder
             </label>
-            <input style={{"display":"none"}} id="new-folder" type="file" webkitdirectory="true" />
+            {multiUpload
+              ? <input style={{"display":"none"}} id="new-folder" type="file" webkitdirectory="" multiple />
+              : <input style={{"display":"none"}} id="new-folder" type="file" webkitdirectory="" />
+            }
           </div>
           <div className="btn" role="button">
             <label className="btn-lable" htmlFor="new-file">
               <FilePlus className="margin-r-1" /> New File
             </label>
-            <input id="new-file" style={{"display":"none"}} type="file" />
+            {multiUpload
+              ? <input id="new-file" style={{"display":"none"}} type="file" multiple />
+              : <input id="new-file" style={{"display":"none"}} type="file" />
+            }
           </div>
         </div>
         <div className="upload-multiple">

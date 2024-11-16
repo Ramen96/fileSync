@@ -57,6 +57,9 @@
   border: solid rgb(74, 68, 92) 1px;
   border-radius: 1rem;
   background: rgb(24, 22, 30);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .h1 {
@@ -135,4 +138,10 @@
 
 .upload-multiple {
   cursor: default;
+}
+
+.uploadCloudIcon {
+  color: #898989;
+  width: 30%;
+  height: auto;
 }

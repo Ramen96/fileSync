@@ -4,6 +4,7 @@ import {
   XCircle,
   UploadCloudIcon
  } from "lucide-react";
+import UploadItem from "./uploadItem/uploadItem";
 import { fileUpload } from "../../SideBar/sidebar";
 import "./uploadcard.css";
 import { useState } from "react";
@@ -20,24 +21,16 @@ export default function UploadCard({
 
   const [uploadMetaData, setUploadMetaData] = useState([]);
 
-  const createFormDataObject = (event) => {
+  const createFileDataObject = (event) => {
     const file = event.target.files;
     const fileList  = new FormData();
 
-    for (let i = 0; i < file.length; i++) {
-      fileList.append(file[i].name, file[i]);
-    }
-    
     for (let i = 0; i < file.length; i++) {
       setUploadMetaData([...uploadMetaData, file[i]])
     }
     
   }
 
-  useEffect(() => {
-    console.log(uploadMetaData);
-  }, [uploadMetaData]);
-  
   return(
     <div className="blur-background">
       <div className="upload-card-wrapper">
@@ -57,8 +50,25 @@ export default function UploadCard({
               <FolderPlus className="margin-r-1" /> New Folder
             </label>
             {multiUpload
-              ? <input style={{"display":"none"}} id="new-folder" type="file" webkitdirectory="" multiple />
-              : <input style={{"display":"none"}} id="new-folder" type="file" webkitdirectory="" />
+              ? <input 
+                  style={{"display":"none"}} 
+                  id="new-folder" 
+                  type="file" 
+                  webkitdirectory="" 
+                  multiple 
+                  onChange={(e) => {
+                    createFileDataObject(e);
+                  }}
+                />
+              : <input 
+                  style={{"display":"none"}} 
+                  id="new-folder" 
+                  type="file" 
+                  webkitdirectory="" 
+                  onChange={(e) => {
+                    createFileDataObject(e);
+                  }}
+                />
             }
           </div>
           <div className="btn" role="button">
@@ -71,7 +81,7 @@ export default function UploadCard({
                   style={{"display":"none"}} 
                   type="file" multiple 
                   onChange={(e) => {
-                    createFormDataObject(e);
+                    createFileDataObject(e);
                   }}
                 />
               : <input 
@@ -79,7 +89,7 @@ export default function UploadCard({
                   style={{"display":"none"}} 
                   type="file" 
                   onChange={(e) => {
-                    createFormDataObject(e);
+                    createFileDataObject(e);
                   }}
                 />
             }
@@ -96,6 +106,7 @@ export default function UploadCard({
           </label>
         </div>
         <div className="drag-n-drop">
+          <UploadItem uploadMetaData={uploadMetaData}/>
           <UploadCloudIcon className="uploadCloudIcon" />
         </div>
         <button className="upload-btn">

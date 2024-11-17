@@ -17,10 +17,27 @@ export default function UploadCard({
   const handleMulitUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
   }
-  useEffect(()=> {
-    console.log(multiUpload)
-  }, [multiUpload]);
 
+  const [uploadMetaData, setUploadMetaData] = useState([]);
+
+  const createFormDataObject = (event) => {
+    const file = event.target.files;
+    const fileList  = new FormData();
+
+    for (let i = 0; i < file.length; i++) {
+      fileList.append(file[i].name, file[i]);
+    }
+    
+    for (let i = 0; i < file.length; i++) {
+      setUploadMetaData([...uploadMetaData, file[i]])
+    }
+    
+  }
+
+  useEffect(() => {
+    console.log(uploadMetaData);
+  }, [uploadMetaData]);
+  
   return(
     <div className="blur-background">
       <div className="upload-card-wrapper">
@@ -49,8 +66,22 @@ export default function UploadCard({
               <FilePlus className="margin-r-1" /> New File
             </label>
             {multiUpload
-              ? <input id="new-file" style={{"display":"none"}} type="file" multiple />
-              : <input id="new-file" style={{"display":"none"}} type="file" />
+              ? <input 
+                  id="new-file" 
+                  style={{"display":"none"}} 
+                  type="file" multiple 
+                  onChange={(e) => {
+                    createFormDataObject(e);
+                  }}
+                />
+              : <input 
+                  id="new-file" 
+                  style={{"display":"none"}} 
+                  type="file" 
+                  onChange={(e) => {
+                    createFormDataObject(e);
+                  }}
+                />
             }
           </div>
         </div>

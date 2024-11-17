@@ -57,6 +57,8 @@
 
 .btn-lable:hover{
   cursor: pointer;
+  color:  rgb(23, 191, 99);
+  background: radial-gradient(rgba(23, 191, 99, 0.1) 0, rgba(23, 191, 99, 0) 85%);
 }
 
 .drag-n-drop {
@@ -82,11 +84,15 @@
   top: -1%;
   right: -1%;
   margin: 1rem;
-  color: #eee;
+  color: rgb(113, 118, 123);
+  border-radius: 100%;
+  padding: 3px;
 }
 
 .x-circle:hover {
   cursor: pointer;
+  color: rgba(255, 0, 72, 1);
+  background-color: rgba(255, 0, 72, 0.05);
 }
 
 .title-wrapper {

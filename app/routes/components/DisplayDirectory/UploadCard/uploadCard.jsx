@@ -4,6 +4,7 @@ import {
   XCircle,
   UploadCloudIcon
  } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 import UploadItem from "./uploadItem/uploadItem";
 import { fileUpload } from "../../SideBar/sidebar";
 import "./uploadcard.css";
@@ -26,9 +27,14 @@ export default function UploadCard({
     const fileList  = new FormData();
 
     for (let i = 0; i < file.length; i++) {
-      setUploadMetaData([...uploadMetaData, file[i]])
+      file[i].id = uuidv4();
+      setUploadMetaData([...uploadMetaData, file[i]]);
     }
-    
+  }
+
+  const uploadItemProps = {
+    uploadMetaData: uploadMetaData,
+    setUploadMetaData: setUploadMetaData
   }
 
   return(
@@ -106,7 +112,7 @@ export default function UploadCard({
           </label>
         </div>
         <div className="drag-n-drop">
-          <UploadItem uploadMetaData={uploadMetaData}/>
+          <UploadItem {...uploadItemProps}/>
           <UploadCloudIcon className="uploadCloudIcon" />
         </div>
         <button className="upload-btn">

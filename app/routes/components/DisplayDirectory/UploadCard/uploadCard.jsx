@@ -4,6 +4,7 @@ import {
   XCircle,
   UploadCloudIcon
  } from "lucide-react";
+import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import UploadItem from "./uploadItem/uploadItem";
 import { fileUpload } from "../../SideBar/sidebar";
@@ -14,6 +15,8 @@ export default function UploadCard({
   handleUploadCardState
 }) {
 
+  const inputRef = useRef(null);
+
   const [multiUpload, setMultiUpload] = useState(false);
 
   const handleMulitUploadState = () => {
@@ -22,13 +25,22 @@ export default function UploadCard({
 
   const [uploadMetaData, setUploadMetaData] = useState([]);
 
+  const clearInput = () => {
+
+  }
+
   const createFileDataObject = (event) => {
+
     const file = event.target.files;
     const fileList  = new FormData();
 
     for (let i = 0; i < file.length; i++) {
       file[i].id = uuidv4();
       setUploadMetaData([...uploadMetaData, file[i]]);
+    }
+
+    if (inputRef.current.value !== '') {
+      inputRef.current.value = '';
     }
   }
 
@@ -57,6 +69,7 @@ export default function UploadCard({
             </label>
             {multiUpload
               ? <input 
+                  ref={inputRef}
                   style={{"display":"none"}} 
                   id="new-folder" 
                   type="file" 
@@ -67,6 +80,7 @@ export default function UploadCard({
                   }}
                 />
               : <input 
+                  ref={inputRef}
                   style={{"display":"none"}} 
                   id="new-folder" 
                   type="file" 
@@ -83,6 +97,7 @@ export default function UploadCard({
             </label>
             {multiUpload
               ? <input 
+                  ref={inputRef}
                   id="new-file" 
                   style={{"display":"none"}} 
                   type="file" multiple 
@@ -91,6 +106,7 @@ export default function UploadCard({
                   }}
                 />
               : <input 
+                  ref={inputRef}
                   id="new-file" 
                   style={{"display":"none"}} 
                   type="file" 

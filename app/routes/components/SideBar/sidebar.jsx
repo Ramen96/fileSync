@@ -13,7 +13,7 @@ export function fileUpload(event) {
     const file = event.target.files;
     const fileList = new FormData();
 
-     for (let i = 0; i < file.length; i++) {
+    for (let i = 0; i < file.length; i++) {
       fileList.append(file[i].name, file[i]);
     }
 

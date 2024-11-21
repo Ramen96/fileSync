@@ -18,30 +18,39 @@ export default function UploadCard({
   const inputRef = useRef(null);
 
   const [multiUpload, setMultiUpload] = useState(false);
+  const [formDataFileList, setFormDataFileList] = useState([]);
+  const [uploadMetaData, setUploadMetaData] = useState([]);
 
   const handleMulitUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
   }
 
-  const [uploadMetaData, setUploadMetaData] = useState([]);
-
-  const clearInput = () => {
-
-  }
-
   const createFileDataObject = (event) => {
-
     const file = event.target.files;
-    const fileList  = new FormData();
-
     for (let i = 0; i < file.length; i++) {
       file[i].id = uuidv4();
+      setFormDataFileList([...formDataFileList, file[0]])
       setUploadMetaData([...uploadMetaData, file[i]]);
     }
 
     if (inputRef.current.value !== '') {
       inputRef.current.value = '';
     }
+  }
+
+  const handleSubmit = () => {
+    const formDataObject = new FormData();
+
+    for (let i = 0; i < formDataFileList.length; i++) {
+      formDataObject.append(formDataFileList[i].name, formDataFileList[i]);
+    }
+
+    fetch("fileStorage", {
+      method: "POST",
+      body : formDataObject
+    })
+
+    setFormDataFileList([]);
   }
 
   const uploadItemProps = {
@@ -131,7 +140,11 @@ export default function UploadCard({
           <UploadItem {...uploadItemProps}/>
           <UploadCloudIcon className="uploadCloudIcon" />
         </div>
-        <button className="upload-btn">
+        <button 
+          onClick={() => {
+            handleSubmit();
+          }}
+          className="upload-btn">
           Upload
         </button>
       </div>

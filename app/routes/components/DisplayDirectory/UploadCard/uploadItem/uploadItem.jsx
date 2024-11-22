@@ -7,11 +7,10 @@ import { v4 as uuidv4 } from "uuid";
 import "./uploadItem.css";
 
 export default function UploadItem({
-  uploadMetaData,
-  setUploadMetaData
+  fileArr
 }) {
 
-  return uploadMetaData.slice().reverse().map((children) => 
+  return fileArr.slice().reverse().map((children) => 
     <div key={uuidv4()} className="metadata-item-container">
       <div className="upload-item-wrapper">
         <div className="upload-item">

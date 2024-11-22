@@ -18,8 +18,7 @@ export default function UploadCard({
   const inputRef = useRef(null);
 
   const [multiUpload, setMultiUpload] = useState(false);
-  const [formDataFileList, setFormDataFileList] = useState([]);
-  const [uploadMetaData, setUploadMetaData] = useState([]);
+  const [fileArr, setFileArr] = useState([]);
 
   const handleMulitUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
@@ -27,12 +26,12 @@ export default function UploadCard({
 
   const createFileDataObject = (event) => {
     const file = event.target.files;
+    const fileDataArr = [];
     for (let i = 0; i < file.length; i++) {
       file[i].id = uuidv4();
-      setFormDataFileList([...formDataFileList, file[0]])
-      setUploadMetaData([...uploadMetaData, file[i]]);
+      fileDataArr.push(file[i]);
     }
-
+    setFileArr(fileDataArr);
     if (inputRef.current.value !== '') {
       inputRef.current.value = '';
     }
@@ -41,21 +40,20 @@ export default function UploadCard({
   const handleSubmit = () => {
     const formDataObject = new FormData();
 
-    for (let i = 0; i < formDataFileList.length; i++) {
-      formDataObject.append(formDataFileList[i].name, formDataFileList[i]);
+    for (let i = 0; i < fileArr.length; i++) {
+      formDataObject.append(fileArr[i].name, fileArr[i]);
     }
 
     fetch("fileStorage", {
       method: "POST",
       body : formDataObject
-    })
+    }).catch(err => console.error(err));
 
-    setFormDataFileList([]);
+    setFileArr([]);
   }
 
   const uploadItemProps = {
-    uploadMetaData: uploadMetaData,
-    setUploadMetaData: setUploadMetaData
+    fileArr: fileArr,
   }
 
   return(
@@ -109,7 +107,8 @@ export default function UploadCard({
                   ref={inputRef}
                   id="new-file" 
                   style={{"display":"none"}} 
-                  type="file" multiple 
+                  type="file" 
+                  multiple 
                   onChange={(e) => {
                     createFileDataObject(e);
                   }}

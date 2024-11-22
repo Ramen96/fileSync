@@ -1,13 +1,18 @@
 import { useNavigate } from "@remix-run/react";
 
 import "./sidebar.css";
+import { 
+  BookmarkPlusIcon,
+  ImageIcon,
+  FolderIcon,
+  FileUpIcon,
+  FilePlus,
+  FolderPlus,
+  FolderUpIcon,
+  Trash2,
+  Monitor,
+ } from "lucide-react";
 const folderIcon = "../assets/folder.svg";
-const plusIcon  = "../assets/plus.svg";
-const computerIcon = "../assets/computer.svg";
-const folderIcon2 = "../assets/folder2.svg";
-const photosIcon = "../assets/photo.svg";
-const trashIcon = "../assets/trash.svg";
-const fileIcon = "../assets/file.svg"
 
 export function fileUpload(event) {
     const file = event.target.files;
@@ -20,7 +25,7 @@ export function fileUpload(event) {
     fetch("fileStorage", {
       method: "POST",
       body : fileList
-    })
+    }).catch(err => console.error(err));
   }
   
 export default function SideBar() {
@@ -38,21 +43,21 @@ export default function SideBar() {
         {/* ********************* SECTION: Dropdown ********************** */}
           <button className="newButton animate3s dropdown">
               <div className="centerSVG">
-                <img className="plusButtonSvg" src={plusIcon} alt="plus icon" />
+                <BookmarkPlusIcon style={{"margin": "0.5rem"}} />
                 <p>New</p>
             </div>
             <div className="dropdown-content">
               <ul className="dropdown-items">
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
-                    <img className="dropdownIcon" src={fileIcon} alt="file icon" />
+                    <FileUpIcon className="dropdownIcon" />
                     <label htmlFor="uploadFile"><h4 className="pointer">Upload File</h4></label>
                     <input onChange={fileUpload} style={{"display": "none"}} type="file"  id="uploadFile" />
                   </div>
                 </li>
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
-                    <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
+                    <FolderUpIcon className="dropdownIcon" /> 
                     <label htmlFor="uploadFolder"><h4 className="pointer">Upload Folder</h4></label>
                     <input style={{"display": "none"}} onChange={fileUpload} type="file" multiple={true} webkitdirectory="true" id="uploadFolder" />
                   </div>
@@ -60,13 +65,13 @@ export default function SideBar() {
                 <div className="spacer"></div>
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
-                    <img className="dropdownIcon" src={folderIcon2} alt="file icon" />
+                    <FolderPlus className="dropdownIcon" /> 
                     <h4>New Folder</h4>
                   </div>
                 </li>
                 <li className="dropdown-element">
                   <div role="button" className="drp-btn-e">
-                    <img className="dropdownIcon" src={fileIcon} alt="file icon" />
+                    <FilePlus className="dropdownIcon" /> 
                     <h4>New Document</h4>
                   </div>
                 </li>
@@ -81,25 +86,25 @@ export default function SideBar() {
         <ul className="selectorWrapper">
           <a className="selector" href="#">
             <li className="selectorItem animate25s">
-              <img className="selectorIcon" src={computerIcon} alt="computer" />
+              <Monitor className="selectorIcon" />
               <p className="selectorText">Computers</p>
             </li>
           </a>
           <a className="selector" href="#">
             <li className="selectorItem animate2s">
-              <img className="selectorIcon" src={folderIcon2} alt="folder icon" />
+              <FolderIcon className="selectorIcon" />
               <p className="selectorText">Files</p>
             </li>
           </a>
           <a className="selector" href="#">
             <li className="selectorItem animate15s">
-              <img className="selectorIcon" src={photosIcon} alt="photos icon" />
+              <ImageIcon className="selectorIcon" />
               <p className="selectorText">Photos</p>
             </li>
           </a>
           <a className="selector" href="#">
             <li className="selectorItem animate1s">
-              <img className="selectorIcon" src={trashIcon} alt="trash icon" />
+              <Trash2 className="selectorIcon" />
               <p className="selectorText">Trash</p>
             </li>
           </a>

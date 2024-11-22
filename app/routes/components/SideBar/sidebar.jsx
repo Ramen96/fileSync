@@ -15,18 +15,16 @@ import {
 const folderIcon = "../assets/folder.svg";
 
 export function fileUpload(event) {
-    const file = event.target.files;
-    const fileList = new FormData();
-
-    for (let i = 0; i < file.length; i++) {
-      fileList.append(file[i].name, file[i]);
-    }
-
-    fetch("fileStorage", {
-      method: "POST",
-      body : fileList
-    }).catch(err => console.error(err));
+  const file = event.target.files;
+  const fileList = new FormData();
+  for (let i = 0; i < file.length; i++) {
+    fileList.append(file[i].name, file[i]);
   }
+  fetch("fileStorage", {
+    method: "POST",
+    body : fileList
+  }).catch(err => console.error(err));
+}
   
 export default function SideBar() {
   const navigate = useNavigate();

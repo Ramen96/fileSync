@@ -192,7 +192,7 @@ export default function DisplayDirectory({ files }) {
     setForwardHistory: setForwardHistory,
     forwardHistory: forwardHistory,
     backHistory: backHistory,
-    setBackHistory, setBackHistory
+    setBackHistory: setBackHistory
   }
 
 

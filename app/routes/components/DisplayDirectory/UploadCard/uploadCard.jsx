@@ -54,6 +54,7 @@ export default function UploadCard({
 
   const uploadItemProps = {
     fileArr: fileArr,
+    setFileArr: setFileArr
   }
 
   return(

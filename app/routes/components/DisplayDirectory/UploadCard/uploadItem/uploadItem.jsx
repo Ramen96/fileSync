@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import "./uploadItem.css";
 
 export default function UploadItem({
+  setFileArr,
   fileArr
 }) {
 
@@ -23,8 +24,8 @@ export default function UploadItem({
               role="button"
               className="trash-icon-wrapper"
               onClick={() => {
-                setUploadMetaData(
-                  uploadMetaData.filter(item => item.id !== children.id)
+                setFileArr(
+                  fileArr.filter(item => item.id !== children.id)
                 )
               }}>
               <Trash2 className="trash-icon" />

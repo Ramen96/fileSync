@@ -5,6 +5,7 @@ import "../displayDirectory.css";
 export default function File({
   name,
   isIcon,
+  handleIdArrState,
   id
 }) {
 
@@ -13,8 +14,11 @@ export default function File({
   const handleChecked = () => {
     if (checked === true) {
       setChecked(false);
+      handleIdArrState(checked, id);
+      console.log('id', id);
     } else {
       setChecked(true);
+      handleIdArrState(checked, id);
     };
   }
 
@@ -53,7 +57,8 @@ export default function File({
         </div>
         <label className="cb-con" >
           <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-          <span onClick={(e) => {
+          <span 
+            onClick={(e) => {
             e.preventDefault();
             handleChecked();
           }} className="checkmark"></span>

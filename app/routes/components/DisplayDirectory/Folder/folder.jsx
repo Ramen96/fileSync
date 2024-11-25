@@ -6,7 +6,8 @@ export default function Folder({
   name,
   id, 
   handleFolderClick,
-  isIcon
+  isIcon,
+  handleIdArrState
 }) {
   
   const [checked, setChecked] = useState(false);

@@ -9,7 +9,7 @@ import {
   List,
   Trash,
   Download,
-  Upload
+  Upload,
   } from 'lucide-react';
 import UploadCard from './UploadCard/uploadCard';
 import File from "./File/file";
@@ -28,10 +28,12 @@ export default function DisplayDirectory({ files }) {
 
     const tree = new DirectoryTree();
     files.forEach(file => {
+      // file.dbId = file.id;
+      const dbId = file.id;
       const path = file.relitive_path;
       const type = file.file_type === 'folder' ? 'folder' : 'file';
       try {
-        tree.addNodeByPath(path, type);
+        tree.addNodeByPath(path, type, dbId);
       } catch (error) {
         console.error(`Error adding path ${path}: ${error.message}`);
       }
@@ -119,8 +121,6 @@ export default function DisplayDirectory({ files }) {
   const [showStateList ,setShowStateList] = useState([]);
   const [showSideBar, setShowSideBar] = useState(true);
 
-  
-  
   // ##########################################
   // ########### SECTION: Resize ##############
   // ##########################################
@@ -177,7 +177,6 @@ export default function DisplayDirectory({ files }) {
   // ##########################################
   const [isIcon, setIsIcon] = useState(true);
 
-
   // ###########################################
   // ####### SECTION: Component props ##########
   // ###########################################
@@ -209,6 +208,33 @@ export default function DisplayDirectory({ files }) {
     handleUploadCardState: handleUploadCardState
   }
 
+  // ###########################################
+  // ######## SECTION: Delete button ###########
+  // ###########################################
+
+  const [idArr, setIdArr] = useState([]);
+
+  const handleIdArrState = (checkState, uuid) => {
+    if (!checkState) {
+      setIdArr([...idArr, uuid]);
+    } else {
+      setIdArr(idArr.filter(element => element !== uuid));
+    }
+  }
+
+  const handleDeleteButton = () => {
+    const ids = [];
+    idArr.forEach(element => ids.push(element));
+
+    // need to create class method to delete remove node from data structure
+    // also might need to come up with a different name for uuids to keep db id and class id seperate
+    // console.log(constructDirTree.removeNodebyId(ids));
+    // idArr.forEach(element => constructDirTree.removeNodebyId(element));
+    console.log(childrenOfCurrentNode);
+  }
+
+  // console.log(constructDirTree);
+
   return (
     <>
       {displayUploadCard ?
@@ -236,7 +262,11 @@ export default function DisplayDirectory({ files }) {
           <ChevronRight />
         </button>
         <div className='nav-buttons-right'>
-          <button className='homeButton'>
+          <button 
+            onClick={() => {
+              handleDeleteButton();
+            }}
+            className='homeButton'>
             <Trash />
           </button>
           <button className='homeButton'>
@@ -294,6 +324,7 @@ export default function DisplayDirectory({ files }) {
                   id={child.id}
                   handleFolderClick={handleFolderClick}
                   isIcon={isIcon}
+                  handleIdArrState={handleIdArrState}
                 />
               ) : (
                 <File
@@ -301,6 +332,7 @@ export default function DisplayDirectory({ files }) {
                   name={child.name}
                   isIcon={isIcon}
                   id={child.id}
+                  handleIdArrState={handleIdArrState}
                 />
               )
             )}
@@ -315,6 +347,7 @@ export default function DisplayDirectory({ files }) {
                   id={child.id}
                   handleFolderClick={handleFolderClick}
                   isIcon={isIcon}
+                  handleIdArrState={handleIdArrState}
                 />
               ) : (
                 <File
@@ -322,6 +355,7 @@ export default function DisplayDirectory({ files }) {
                   name={child.name}
                   isIcon={isIcon}
                   id={child.id}
+                  handleIdArrState={handleIdArrState}
                 />
               )
             )}

@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 
 class DirectoryTreeNode {
-  constructor(id, name, type, parentId = null) {
+  constructor(id, name, type, parentId = null, dbId) {
     this.id = id;
     this.name = name;
-    this.type = type; // 'file' or 'folder'
+    this.type = type; 
     this.parentId = parentId;
     this.children = [];
+    this.dbId = dbId;
   }
 
   addChild(childNode) {
@@ -22,7 +23,7 @@ export class DirectoryTree {
     this.nodes.set(rootId, this.root);
   }
 
-  addNodeByPath(path, type) {
+  addNodeByPath(path, type, dbId) {
     const parts = path.split('/').filter(Boolean);
     let currentNode = this.root;
     
@@ -34,7 +35,8 @@ export class DirectoryTree {
       
       if (!childNode) {
         const newId = uuidv4();
-        childNode = new DirectoryTreeNode(newId, part, isLastPart ? type : 'folder', currentNode.id);
+        const dataBaseID = dbId;
+        childNode = new DirectoryTreeNode(newId, part, isLastPart ? type : 'folder', currentNode.id, dataBaseID);
         this.nodes.set(newId, childNode);
         currentNode.addChild(childNode);
       } else if (isLastPart && childNode.type === type) {

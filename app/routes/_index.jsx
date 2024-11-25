@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
@@ -9,7 +9,7 @@ const searchIcon = "../assets/search.svg";
 
 export async function loader() {
   const files = await prisma.file_data.findMany();
-  return json(files);
+  return data(files);
 }
 
 export default function Index() {

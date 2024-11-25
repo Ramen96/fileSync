@@ -27,19 +27,33 @@ export default function DisplayDirectory({ files }) {
     if (!files || files.length === 0) return null;
 
     const tree = new DirectoryTree();
-    files.forEach(file => {
-      // file.dbId = file.id;
-      const dbId = file.id;
-      const path = file.relitive_path;
-      const type = file.file_type === 'folder' ? 'folder' : 'file';
+
+    for (let i = 0; i < files.length; i++) {
+      const dbId = files[i].id;
+      const path = files[i].relitive_path;
+      const type = files[i].file_type === 'folder' ? 'folder' : 'file';
+
       try {
-        tree.addNodeByPath(path, type, dbId);
+        tree.addNodeByPath(path, type, dbId)
       } catch (error) {
         console.error(`Error adding path ${path}: ${error.message}`);
       }
-    });
+    }
+
+    // files.forEach(file => {
+    //   const dbId = file.id;
+    //   const path = file.relitive_path;
+    //   const type = file.file_type === 'folder' ? 'folder' : 'file';
+    //   try {
+    //     tree.addNodeByPath(path, type, dbId);
+    //   } catch (error) {
+    //     console.error(`Error adding path ${path}: ${error.message}`);
+    //   }
+    // });
     return tree;
   }, [files]);
+
+  console.log(constructDirTree);
 
   // Setting up states and root node id
   const [currentNodeId, setCurrentNodeId] = useState(null);

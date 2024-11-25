@@ -51,7 +51,7 @@ export class DirectoryTree {
     return currentNode.id;
   }
 
-    getNodeById(id) {
+  getNodeById(id) {
     return this.nodes.get(id);
   }
 

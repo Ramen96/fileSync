@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node ./server.js",
-    "start": "cross-env NODE_ENV=production node ./server.js",
+    "dev": "remix vite:dev",
+    "build": "remix vite:build",
+    "start": "remix-serve ./build/server/index.js",
     "setup": "prisma generate && prisma migrate deploy"
   },
   "keywords": [],
@@ -25,14 +25,18 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-resizable": "^3.0.5",
+    "remix-flat-routes": "^0.6.5",
     "sanitize-filename": "^1.6.3",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.11.2",
+    "@remix-run/fs-routes": "^2.15.0",
+    "@remix-run/route-config": "^2.15.0",
+    "@remix-run/routes-option-adapter": "^2.15.0",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "prisma": "^5.20.0",
-    "vite": "^5.4.3"
+    "vite": "^5.4.11"
   }
 }

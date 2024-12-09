@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
 
 class DirectoryTreeNode {
-  constructor(id, name, type, parentId = null, dbId) {
+  constructor(id, name, type, parentId = null) {
     this.id = id;
     this.name = name;
     this.type = type; 
     this.parentId = parentId;
     this.children = [];
-    this.dbId = dbId;
+    // this.dbId = dbId;
   }
 
   addChild(childNode) {

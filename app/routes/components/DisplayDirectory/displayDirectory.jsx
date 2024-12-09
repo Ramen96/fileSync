@@ -28,28 +28,22 @@ export default function DisplayDirectory({ files }) {
 
     const tree = new DirectoryTree();
 
+    // Problem: The db has no ids for folders only files. Folders are represented by strings for the relitive path 
+    // Why this is a problem: A method is needed to be able to delete files/folders and create/delete empty folders. 
+    
+    // Solution: 
+
     for (let i = 0; i < files.length; i++) {
-      const dbId = files[i].id;
+      // const dbId = files[i].id;
       const path = files[i].relitive_path;
       const type = files[i].file_type === 'folder' ? 'folder' : 'file';
 
       try {
-        tree.addNodeByPath(path, type, dbId)
+        tree.addNodeByPath(path, type)
       } catch (error) {
         console.error(`Error adding path ${path}: ${error.message}`);
       }
     }
-
-    // files.forEach(file => {
-    //   const dbId = file.id;
-    //   const path = file.relitive_path;
-    //   const type = file.file_type === 'folder' ? 'folder' : 'file';
-    //   try {
-    //     tree.addNodeByPath(path, type, dbId);
-    //   } catch (error) {
-    //     console.error(`Error adding path ${path}: ${error.message}`);
-    //   }
-    // });
     return tree;
   }, [files]);
 
@@ -165,7 +159,7 @@ export default function DisplayDirectory({ files }) {
         ...prev,
         width: Math.min(
           Math.max(250, prev.width + difference),
-          800
+          1600
         )
       }));
     };

@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.20.0",
+    "@prisma/client": "^6.0.1",
     "@remix-run/express": "^2.11.2",
     "@remix-run/node": "^2.11.2",
     "@remix-run/react": "^2.11.2",
@@ -36,7 +36,7 @@
     "@remix-run/routes-option-adapter": "^2.15.0",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
-    "prisma": "^5.20.0",
+    "prisma": "^6.0.1",
     "vite": "^5.4.11"
   }
 }

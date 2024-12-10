@@ -83,6 +83,8 @@ export const action = async ({ request }) => {
           }
         };
 
+        // Changing here to write to new db tables
+
         const writeToDb = async () => {
           await prisma.file_data.create({
             data: {
@@ -91,6 +93,23 @@ export const action = async ({ request }) => {
               file_type: fileType,
               save_date: new Date()
             }
+          })
+
+          await prisma.metadata.create({
+            id: id,
+            name: fileName,
+            file_type: fileType,
+            is_folder: is_folder,
+            created_at: new Date()
+          })
+
+          await prisma.hierarchy.create({
+            id: id,
+            // Figure out how to get parrent id to get parrent id...
+            // Step 1)  before passing to this action route get the id of the directory the user is currently in
+            //          and pass it as a param to this fucntion.
+            // step 2) if parrent id is the root parrent id is null
+            parent_id: parent_id
           })
         }
 

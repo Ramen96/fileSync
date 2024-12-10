@@ -37,6 +37,18 @@ export default function DisplayDirectory({hierarchy, metadata }) {
     // -- Metadata, self explanitory holds meta data along with it's id.
 
     // 2. Create hash table from hierarchy and metadata tables...
+    
+
+    // TODO:
+    // #1 when files are uploaded get make new querys to update both tables
+    // #2 pull data from both tables to create a hash table
+    // #3 update upload method such that if the user is not crrently in the root of the cloud
+    //    the file/folder will be placed in their current directory.
+    // 4# When updating folders the relitive path is paced and a new folder nodes are created recursively
+    //      -- Note: when you upload folders it the metadata object just has the name of the uploaded folder as the root of the webkitdirectory
+    //      -- 1. parce the relitive path splitting at for each "/" and create an object for each folder
+    //            * Will need a way to prevent duplicates... 
+    //              - Create an array of objects and check the name of each one before createing a new node object????
 
   //   for (let i = 0; i < files.length; i++) {
   //     // const dbId = files[i].id;

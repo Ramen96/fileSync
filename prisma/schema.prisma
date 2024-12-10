@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model file_data {
-  relitive_path String?
-  file_name     String?   @db.VarChar(255)
-  file_type     String?   @db.VarChar(255)
-  save_date     DateTime? @db.Date
-  id            Int       @id @default(autoincrement())
-}
-
 model hierarchy {
   id              Int         @id @default(autoincrement())
   parent_id       Int?

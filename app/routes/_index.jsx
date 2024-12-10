@@ -8,12 +8,14 @@ import { prisma } from "../utils/prisma.server.js";
 const searchIcon = "../assets/search.svg";
 
 export async function loader() {
-  const files = await prisma.file_data.findMany();
-  return data(files);
+  const hierarchy = await prisma.hierarchy.findMany();
+  const metadata = await prisma.metadata.findMany();
+  return data(hierarchy, metadata);
 }
 
 export default function Index() {
-  const files = useLoaderData();
+  const hierarchy = useLoaderData();
+  const metadata = useLoaderData();
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function Index() {
           />
         </div>
         <div className="mainWindow main-bg">
-          <DisplayDirectory files={files} />
+          <DisplayDirectory metadata={metadata} hierarchy={hierarchy} />
         </div>
       </div>
     </>

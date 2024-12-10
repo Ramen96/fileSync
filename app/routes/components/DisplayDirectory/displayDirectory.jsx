@@ -17,59 +17,67 @@ import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
 import "./displayDirectory.css";
 
-export default function DisplayDirectory({ files }) {
+export default function DisplayDirectory({hierarchy, metadata }) {
   // ###########################################
   // #### SECTION: Create  data structure ######
   // ###########################################
 
   // create tree data set from db and memoize it.
-  const constructDirTree = useMemo(() => {
-    if (!files || files.length === 0) return null;
+  // const constructDirTree = useMemo(() => {
+  //   if (!files || files.length === 0) return null;
 
-    const tree = new DirectoryTree();
+  //   const tree = new DirectoryTree();
 
     // Problem: The db has no ids for folders only files. Folders are represented by strings for the relitive path 
     // Why this is a problem: A method is needed to be able to delete files/folders and create/delete empty folders. 
     
-    // Solution: 
+    // Solution:
+    // 1. Created hierarchy and meta data tables
+    // -- Heiarchy holds key and value pairs for node ids and their parrent id.
+    // -- Metadata, self explanitory holds meta data along with it's id.
 
-    for (let i = 0; i < files.length; i++) {
-      // const dbId = files[i].id;
-      const path = files[i].relitive_path;
-      const type = files[i].file_type === 'folder' ? 'folder' : 'file';
+    // 2. Create hash table from hierarchy and metadata tables...
 
-      try {
-        tree.addNodeByPath(path, type)
-      } catch (error) {
-        console.error(`Error adding path ${path}: ${error.message}`);
-      }
-    }
-    return tree;
-  }, [files]);
+  //   for (let i = 0; i < files.length; i++) {
+  //     // const dbId = files[i].id;
+  //     const path = files[i].relitive_path;
+  //     const type = files[i].file_type === 'folder' ? 'folder' : 'file';
 
-  console.log(constructDirTree);
+  //     try {
+  //       tree.addNodeByPath(path, type)
+  //     } catch (error) {
+  //       console.error(`Error adding path ${path}: ${error.message}`);
+  //     }
+  //   }
+  //   return tree;
+  // }, [files]);
 
   // Setting up states and root node id
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
 
-  useEffect(() => {
-    if (constructDirTree) {
-      setCurrentNodeId(constructDirTree.root.id);
-    }
-  }, [constructDirTree]);
+  // useEffect(() => {
+  //   if (constructDirTree) {
+  //     setCurrentNodeId(constructDirTree.root.id);
+  //   }
+  // }, [constructDirTree]);
 
   // ###########################################
   // ############## SECTION: AJAX ##############
   // ###########################################
 
-  if (!files || files.length === 0) {
-    return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
+  if (!metadata || metadata.length === 0) {
+    return <h1 style={{ color: "white" }}>Error no file data... {JSON.stringify(metadata)}</h1>;
   }
-  if (!constructDirTree) {
-    return <h1 style={{ color: "white" }}>Loading...</h1>;
+
+  if (!hierarchy || hierarchy.length === 0) {
+    return <h1 style={{ color: "white" }}>Error no file hierarchy... {JSON.stringify(hierarchy)}</h1>;
   }
+
+  // if (!constructDirTree) {
+  //   return <h1 style={{ color: "white" }}>Loading...</h1>;
+  // }
 
   // ###########################################
   // ######### SECTION: get nodes ##############

@@ -20,10 +20,20 @@ export function fileUpload(event) {
   for (let i = 0; i < file.length; i++) {
     fileList.append(file[i].name, file[i]);
   }
-  fetch("fileStorage", {
-    method: "POST",
-    body : fileList
-  }).catch(err => console.error(err));
+
+  const payload = {
+    formDataObject: fileList,
+    is_folder: false,
+    id: null, // ids are null for now so app dose not error TODO: get ids from users current dir if not root of cloud.
+    parent_id: null,
+  }
+
+  // putting formdata inside payload object so I can also pass information about file/folder and ids
+  console.log(payload);
+  // fetch("fileStorage", {
+  //   method: "POST",
+  //   body : fileList
+  // }).catch(err => console.error(err));
 }
 
 export default function SideBar() {

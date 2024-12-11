@@ -17,7 +17,12 @@ import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
 import "./displayDirectory.css";
 
-export default function DisplayDirectory({hierarchy, metadata }) {
+export default function DisplayDirectory({ 
+  hierarchy,
+  metadata,
+  currentNodeId,
+  setCurrentNodeId
+ }) {
   // ###########################################
   // #### SECTION: Create  data structure ######
   // ###########################################
@@ -65,7 +70,6 @@ export default function DisplayDirectory({hierarchy, metadata }) {
   // }, [files]);
 
   // Setting up states and root node id
-  const [currentNodeId, setCurrentNodeId] = useState(null);
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
 

@@ -1,5 +1,6 @@
 import { data } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
 import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
@@ -17,6 +18,15 @@ export default function Index() {
   const hierarchy = useLoaderData();
   const metadata = useLoaderData();
 
+  // need to move state management for nodes here.
+  const [currentNodeId, setCurrentNodeId] = useState(null);
+
+  const DisplayDirectoryProps = {
+    metadata: metadata,
+    hierarchy: hierarchy,
+    currentNodeId: currentNodeId,
+    setCurrentNodeId, setCurrentNodeId
+  }
   return (
     <>
       <SideBar />
@@ -33,7 +43,7 @@ export default function Index() {
           />
         </div>
         <div className="mainWindow main-bg">
-          <DisplayDirectory metadata={metadata} hierarchy={hierarchy} />
+          <DisplayDirectory {...DisplayDirectoryProps} />
         </div>
       </div>
     </>

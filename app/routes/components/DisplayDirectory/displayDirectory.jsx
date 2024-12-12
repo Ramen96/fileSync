@@ -23,6 +23,7 @@ export default function DisplayDirectory({
   currentNodeId,
   setCurrentNodeId
  }) {
+
   // ###########################################
   // #### SECTION: Create  data structure ######
   // ###########################################
@@ -32,29 +33,6 @@ export default function DisplayDirectory({
   //   if (!files || files.length === 0) return null;
 
   //   const tree = new DirectoryTree();
-
-    // Problem: The db has no ids for folders only files. Folders are represented by strings for the relitive path 
-    // Why this is a problem: A method is needed to be able to delete files/folders and create/delete empty folders. 
-    
-    // Solution:
-    // 1. Created hierarchy and meta data tables
-    // -- Heiarchy holds key and value pairs for node ids and their parrent id.
-    // -- Metadata, self explanitory holds meta data along with it's id.
-
-    // 2. Create hash table from hierarchy and metadata tables...
-    
-
-    // TODO:
-    // #1 when files are uploaded get make new querys to update both tables
-    // #2 pull data from both tables to create a hash table
-    // #3 update upload method such that if the user is not crrently in the root of the cloud
-    //    the file/folder will be placed in their current directory.
-    // 4# When updating folders the relitive path is paced and a new folder nodes are created recursively
-    //      -- Note: when you upload folders it the metadata object just has the name of the uploaded folder as the root of the webkitdirectory
-    //      -- 1. parce the relitive path splitting at for each "/" and create an object for each folder
-    //            * Will need a way to prevent duplicates... 
-    //              - Create an array of objects and check the name of each one before createing a new node object????
-
   //   for (let i = 0; i < files.length; i++) {
   //     // const dbId = files[i].id;
   //     const path = files[i].relitive_path;
@@ -69,7 +47,7 @@ export default function DisplayDirectory({
   //   return tree;
   // }, [files]);
 
-  // Setting up states and root node id
+  // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
 
@@ -79,10 +57,7 @@ export default function DisplayDirectory({
   //   }
   // }, [constructDirTree]);
 
-  // ###########################################
-  // ############## SECTION: AJAX ##############
-  // ###########################################
-
+  // ajax
   if (!metadata || metadata.length === 0) {
     return <h1 style={{ color: "white" }}>Error no file data... {JSON.stringify(metadata)}</h1>;
   }
@@ -95,10 +70,7 @@ export default function DisplayDirectory({
   //   return <h1 style={{ color: "white" }}>Loading...</h1>;
   // }
 
-  // ###########################################
-  // ######### SECTION: get nodes ##############
-  // ###########################################
-
+  // get nodes
   const currentNode = constructDirTree.getNodeById(currentNodeId);
   const childrenOfCurrentNode = currentNode ? currentNode.children : [];
   const rootNode = constructDirTree.root.children;
@@ -106,10 +78,7 @@ export default function DisplayDirectory({
     return constructDirTree.getChildNodebyCurrentNodeId(id)
   }
 
-  // ###########################################
-  // ######### SECTION: Nav buttons ############
-  // ###########################################
-
+  // Nav buttons
   const handleNavClick = (direction) => {
     const prevNodeId = backHistory[backHistory.length - 1];
     const nextNodeId = forwardHistory[0];
@@ -146,17 +115,12 @@ export default function DisplayDirectory({
       setCurrentNodeId(folderId);
   }
 
-  // ###########################################
-  // ########### SECTION: Sidebar ##############
-  // ###########################################
-
+  // Sidebar
   const [showStateList ,setShowStateList] = useState([]);
   const [showSideBar, setShowSideBar] = useState(true);
 
-  // ##########################################
-  // ########### SECTION: Resize ##############
-  // ##########################################
 
+  // Resize sidebar
   const [dimensions, setDimensions] = useState({
     width: 250,
   });
@@ -204,15 +168,11 @@ export default function DisplayDirectory({
 
   }, [startX, isDragging]);
 
-  // ##########################################
-  // ########### SECTION: Icon/row ############
-  // ##########################################
+
+  // Display files and folders as icons/rows
   const [isIcon, setIsIcon] = useState(true);
 
-  // ###########################################
-  // ####### SECTION: Component props ##########
-  // ###########################################
-
+  // Component props 
   const recursiveSideItemComponentProps = {
     childrenOfCurrentNode: rootNode,
     showStateList: showStateList,
@@ -226,10 +186,7 @@ export default function DisplayDirectory({
     setBackHistory: setBackHistory
   }
 
-
-  // ###########################################
-  // ######### SECTION: Upload Card ############
-  // ###########################################
+  // Upload Card
   const [displayUploadCard, setDisplayUploadCard] = useState(false);
 
   const handleUploadCardState = () => {
@@ -240,10 +197,7 @@ export default function DisplayDirectory({
     handleUploadCardState: handleUploadCardState
   }
 
-  // ###########################################
-  // ######## SECTION: Delete button ###########
-  // ###########################################
-
+  // Delete button
   const [idArr, setIdArr] = useState([]);
 
   const handleIdArrState = (checkState, uuid) => {

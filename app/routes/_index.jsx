@@ -7,6 +7,7 @@ import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx
 import { prisma } from "../utils/prisma.server.js";
 const searchIcon = "../assets/search.svg";
 
+
 export async function loader() {
   // Had weird error where prisma would throw an error "cannot read properties of undefined"
   // see docs https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/null-and-undefined scroll to section that talks about findMany()
@@ -35,16 +36,10 @@ export default function Index() {
   // need to move state management for nodes here.
   const [currentNodeId, setCurrentNodeId] = useState(null);
 
-  const metadata = useLoaderData();
-  const hierarchy = useLoaderData();
-
-  console.log(`hierarchy ${JSON.stringify(hierarchy)}`);
-  console.log(`metadata ${JSON.stringify(metadata)}`);
-
-  // for now this returns an empty array but that is probobly because the db is empty
-  for (let c in hierarchy) {
-    console.log(hierarchy[c]);
-  }
+  // pulling from db need to create data structure and memoize it
+  const db = useLoaderData();
+  const metadata = db.metadata;
+  const hierarchy = db.hierarchy;
 
   const DisplayDirectoryProps = {
     // metadata: metadata,

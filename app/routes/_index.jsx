@@ -5,27 +5,52 @@ import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
 import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
-
 const searchIcon = "../assets/search.svg";
 
 export async function loader() {
-  const hierarchy = await prisma.hierarchy.findMany();
-  const metadata = await prisma.metadata.findMany();
-  return data(hierarchy, metadata);
+  // Had weird error where prisma would throw an error "cannot read properties of undefined"
+  // see docs https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/null-and-undefined scroll to section that talks about findMany()
+  // see example
+  
+  // Example: 
+  //   const metadata = await prisma.metadata.findMany({
+  //     where: {
+  //       id: undefined/null here
+  //     }
+  //   });
+      
+  // For some reason after calling findMany how it is in the example above it worked both ways
+  try {
+    const metadata = await prisma.metadata.findMany(); // This is the same as setting id to undefined 
+    const hierarchy = await prisma.hierarchy.findMany(); // Note: When I did this both tables were compleatly empty, may or may not be the reason for this weird behavior.
+    
+    return data({ metadata, hierarchy });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return data({metadata: [], hierarchy: [] }, { status: 500 });
+  }
 }
 
 export default function Index() {
-  const hierarchy = useLoaderData();
-  const metadata = useLoaderData();
-
   // need to move state management for nodes here.
   const [currentNodeId, setCurrentNodeId] = useState(null);
+
+  const metadata = useLoaderData();
+  const hierarchy = useLoaderData();
+
+  console.log(`hierarchy ${JSON.stringify(hierarchy)}`);
+  console.log(`metadata ${JSON.stringify(metadata)}`);
+
+  // for now this returns an empty array but that is probobly because the db is empty
+  for (let c in hierarchy) {
+    console.log(hierarchy[c]);
+  }
 
   const DisplayDirectoryProps = {
     // metadata: metadata,
     // hierarchy: hierarchy,
     currentNodeId: currentNodeId,
-    setCurrentNodeId, setCurrentNodeId
+    setCurrentNodeId: setCurrentNodeId
   }
     // Problem: The db has no ids for folders only files. Folders are represented by strings for the relitive path 
     // Why this is a problem: A method is needed to be able to delete files/folders and create/delete empty folders. 
@@ -52,10 +77,11 @@ export default function Index() {
     // console.log(`metadata: ${metadata}`);
 
     // console.log(`metadata ${JSON.stringify(metadata)}`);
-    for (let item in metadata ) {
-      console.log(metadata[item]);
-    }
-    console.log(`hierarchy: ${JSON.stringify(hierarchy)}`);
+
+    // for (let item in metadata ) {
+    //   console.log(metadata[item]);
+    // }
+    // console.log(`hierarchy: ${JSON.stringify(hierarchy)}`);
 
   return (
     <>

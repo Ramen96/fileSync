@@ -14,29 +14,7 @@ import {
  } from "lucide-react";
 const folderIcon = "../assets/folder.svg";
 
-export function fileUpload(event) {
-  const file = event.target.files;
-  const fileList = new FormData();
-  for (let i = 0; i < file.length; i++) {
-    fileList.append(file[i].name, file[i]);
-  }
-
-  const payload = {
-    formDataObject: fileList,
-    is_folder: false,
-    id: null, // ids are null for now so app dose not error TODO: get ids from users current dir if not root of cloud.
-    parent_id: null,
-  }
-
-  // putting formdata inside payload object so I can also pass information about file/folder and ids
-  console.log(payload);
-  // fetch("fileStorage", {
-  //   method: "POST",
-  //   body : fileList
-  // }).catch(err => console.error(err));
-}
-
-export default function SideBar() {
+export default function SideBar({ fileUpload, currentNodeId }) {
   const navigate = useNavigate();
   const routeHome = () =>  navigate("/");
 

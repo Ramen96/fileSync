@@ -52,16 +52,45 @@ export default function Index() {
   // 4. for each match create new child node in data structure
   // 5. once compleate memoize data structure
 
+
+  function fileUpload(event) {
+    const file = event.target.files;
+    const fileList = new FormData();
+    for (let i = 0; i < file.length; i++) {
+      fileList.append(file[i].name, file[i]);
+    }
+
+    const payload = {
+      formDataObject: fileList,
+      is_folder: false,
+      parent_id: currentNodeId,
+    }
+
+    // putting formdata inside payload object so I can also pass information about file/folder and ids
+    console.log(payload);
+    fetch("fileStorage", {
+      method: "POST",
+      body : fileList
+    }).catch(err => console.error(err));
+  }
+
+  // Component props
   const DisplayDirectoryProps = {
     // metadata: metadata,
     // hierarchy: hierarchy,
+    fileUpload: fileUpload,
     currentNodeId: currentNodeId,
     setCurrentNodeId: setCurrentNodeId
   }
 
+  const sidebarProps = {
+    fileUpload: fileUpload,
+    currentNodeId: currentNodeId
+  }
+
   return (
     <>
-      <SideBar />
+      <SideBar {...sidebarProps} />
       <div className="main">
         <div className="searchbarwrapper flex-jc-ai  main-bg">
           <button className="submitButton">

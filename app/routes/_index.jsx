@@ -24,11 +24,15 @@ export async function loader() {
   try {
     const metadata = await prisma.metadata.findMany(); // This is the same as setting id to undefined 
     const hierarchy = await prisma.hierarchy.findMany(); // Note: When I did this both tables were compleatly empty, may or may not be the reason for this weird behavior.
-    
-    return data({ metadata, hierarchy });
+    const root = await prisma.hierarchy.findMany({
+      where: {
+        parent_id: null
+      }
+    });
+    return data({ metadata, hierarchy, root });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return data({metadata: [], hierarchy: [] }, { status: 500 });
+    return data({metadata: [], hierarchy: [],  root: [] }, { status: 500 });
   }
 }
 
@@ -40,6 +44,13 @@ export default function Index() {
   const db = useLoaderData();
   const metadata = db.metadata;
   const hierarchy = db.hierarchy;
+  const rootNodeId = db.root[0].id;
+
+  // 1. create function that takes currentNodeId state if null default to rootNodeId.
+  // 2. root of data structure will be currentNodeId/rootNodeId
+  // 3. itterate through hierarchy to find ids with parrent ids matching currentNodeId/rootNodeId
+  // 4. for each match create new child node in data structure
+  // 5. once compleate memoize data structure
 
   const DisplayDirectoryProps = {
     // metadata: metadata,
@@ -47,36 +58,6 @@ export default function Index() {
     currentNodeId: currentNodeId,
     setCurrentNodeId: setCurrentNodeId
   }
-    // Problem: The db has no ids for folders only files. Folders are represented by strings for the relitive path 
-    // Why this is a problem: A method is needed to be able to delete files/folders and create/delete empty folders. 
-    
-    // Solution:
-    // 1. Created hierarchy and meta data tables
-    // -- Heiarchy holds key and value pairs for node ids and their parrent id.
-    // -- Metadata, self explanitory holds meta data along with it's id.
-
-    // 2. Create hash table from hierarchy and metadata tables...
-
-    // TODO:
-    // #1 when files are uploaded get make new querys to update both tables
-    // #2 pull data from both tables to create a hash table
-    // #3 update upload method such that if the user is not crrently in the root of the cloud
-    //    the file/folder will be placed in their current directory.
-    // 4# When updating folders the relitive path is paced and a new folder nodes are created recursively
-    //      -- Note: when you upload folders it the metadata object just has the name of the uploaded folder as the root of the webkitdirectory
-    //      -- 1. parce the relitive path splitting at for each "/" and create an object for each folder
-    //            * Will need a way to prevent duplicates... 
-    //              - Create an array of objects and check the name of each one before createing a new node object????
-
-    // console.log(`hierarchy: ${hierarchy}`);
-    // console.log(`metadata: ${metadata}`);
-
-    // console.log(`metadata ${JSON.stringify(metadata)}`);
-
-    // for (let item in metadata ) {
-    //   console.log(metadata[item]);
-    // }
-    // console.log(`hierarchy: ${JSON.stringify(hierarchy)}`);
 
   return (
     <>

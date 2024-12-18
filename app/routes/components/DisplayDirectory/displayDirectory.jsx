@@ -21,7 +21,8 @@ export default function DisplayDirectory({
   hierarchy,
   metadata,
   currentNodeId,
-  setCurrentNodeId
+  setCurrentNodeId,
+  fileUpload
  }) {
 
   // ###########################################
@@ -194,7 +195,8 @@ export default function DisplayDirectory({
   }
 
   const uploadCardProps = { 
-    handleUploadCardState: handleUploadCardState
+    handleUploadCardState: handleUploadCardState,
+    fileUpload: fileUpload
   }
 
   // Delete button

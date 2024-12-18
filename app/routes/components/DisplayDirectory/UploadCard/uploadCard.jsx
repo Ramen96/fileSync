@@ -7,7 +7,6 @@ import {
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import UploadItem from "./uploadItem/uploadItem";
-import { fileUpload } from "../../SideBar/sidebar";
 import "./uploadcard.css";
 import { useState } from "react";
 import { useEffect } from "react";

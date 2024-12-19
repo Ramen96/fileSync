@@ -5,7 +5,6 @@ import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
 import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
-import flatRoutes from "remix-flat-routes";
 const searchIcon = "../assets/search.svg";
 
 
@@ -52,7 +51,6 @@ export default function Index() {
   // 3. itterate through hierarchy to find ids with parrent ids matching currentNodeId/rootNodeId
   // 4. for each match create new child node in data structure
   // 5. once compleate memoize data structure
-
 
   function fileUpload(event) {
     const file = event.target.files;

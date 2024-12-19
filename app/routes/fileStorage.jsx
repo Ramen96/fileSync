@@ -3,15 +3,11 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 
 export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const file = Object.fromEntries(formData);
-  const webKitRelitivePath = [];
+  const parseRequest = await request.formData();
+  const formData = Object.fromEntries(parseRequest);
+  const metadata = JSON.parse(formData.metadata);
 
-  for (let i in request.body) {
-    console.log(i);
-  }
-  console.log("************************")
-  console.log('request body ', request.body.values())
+  console.log(metadata);
 
   // for (let file in formDataObject) {
   //   if (formDataObject[file] instanceof File) {

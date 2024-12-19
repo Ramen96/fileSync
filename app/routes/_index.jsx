@@ -5,6 +5,7 @@ import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
 import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
+import flatRoutes from "remix-flat-routes";
 const searchIcon = "../assets/search.svg";
 
 
@@ -56,22 +57,46 @@ export default function Index() {
   function fileUpload(event) {
     const file = event.target.files;
     const fileList = new FormData();
+
     for (let i = 0; i < file.length; i++) {
       fileList.append(file[i].name, file[i]);
     }
 
-    const payload = {
-      formDataObject: fileList,
-      is_folder: false,
-      parent_id: currentNodeId,
+    const isFolder = (path) => {
+      const folder = false;
+      if (path.length > 0) {
+        return !folder;
+      } else if (path.length === 0) {
+        return folder;
+      } 
     }
 
-    // putting formdata inside payload object so I can also pass information about file/folder and ids
-    console.log(payload);
+    const metadata = () => {
+      const dataArr = [];
+      for (let i in file) {
+        if (file[i] instanceof File) {
+          const fileObject = file[i];
+          const fileInfo = {
+            parent_id: currentNodeId,  
+          };
+          fileInfo.is_folder = isFolder(fileObject.webkitRelativePath);
+          fileInfo.name = fileObject.name;
+          fileInfo.webkitRelativePath = fileObject.webkitRelativePath;
+          dataArr.push(fileInfo);
+        }
+      }
+      return dataArr;
+    }
+
+    fileList.append('metadata', JSON.stringify(metadata()));
     fetch("fileStorage", {
       method: "POST",
       body : fileList
-    }).catch(err => console.error(err));
+    })
+    .then(res => {
+      if (res.status !== 200) console.log(`Response: ${res.status}`)
+    })
+    .catch(err => console.error(err));
   }
 
   // Component props

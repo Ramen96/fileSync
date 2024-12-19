@@ -38,6 +38,7 @@ export const action = async ({ request }) => {
     return traversalDetection;
   };
 
+  // checking paths
   for (let i = 0; i < metadata.length; i++) {
     const path = metadata[i].webkitRelativePath;
     if (pathTraversalDetection(path) === true) {
@@ -49,6 +50,30 @@ export const action = async ({ request }) => {
         },
       });
     }
+  }
+
+  // 1. check parent_id to get parent folder default to root if null
+  // 2. 
+
+  // figure out where to save the file
+  const root = "./cloud";
+  for (let i = 0; i < metadata.length; i++) {
+    let savePath;
+    const parentId = metadata[i].parent_id;
+    const relitivePath = metadata[i].webkitRelativePath;
+
+    if (parentId === null) {
+      savePath = path.join(root, relitivePath);
+    } else {
+      const parentFolder = await prisma.metadata.findMany({
+        where: {
+          id: parentId
+        }
+      });
+
+      // need to get relitive path of parent folder
+    }
+    console.log(savePath);
   }
 
 

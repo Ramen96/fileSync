@@ -61,11 +61,11 @@ export default function Index() {
     }
 
     const isFolder = (path) => {
-      const folder = false;
+      // const folder = false;
       if (path.length > 0) {
-        return !folder;
+        return true;
       } else if (path.length === 0) {
-        return folder;
+        return false;
       } 
     }
 
@@ -74,18 +74,29 @@ export default function Index() {
       for (let i in file) {
         if (file[i] instanceof File) {
           const fileObject = file[i];
+          console.log('item in fileObject', fileObject);
+
           const fileInfo = {
             parent_id: currentNodeId,  
           };
-          fileInfo.is_folder = isFolder(fileObject.webkitRelativePath);
+
+          // determine if it is a folder or file and parce path on backend to create nodes in db for each file.
+          if (fileObject.webkitRelativePath.length === 0) {
+            fileInfo.is_folder = false;
+          } else if (fileObject.webkitRelativePath.length > 0) {
+            fileInfo.is_folder = true;
+          }
+
           fileInfo.name = fileObject.name;
           fileInfo.webkitRelativePath = fileObject.webkitRelativePath;
+          fileInfo.type = fileObject.type;
           dataArr.push(fileInfo);
         }
       }
       return dataArr;
     }
 
+    
     fileList.append('metadata', JSON.stringify(metadata()));
     fetch("fileStorage", {
       method: "POST",

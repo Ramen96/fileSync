@@ -1,7 +1,10 @@
 import { Dir, mkdir } from "node:fs";
 import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
-import path, { join } from "node:path";
+// import path, { join } from "node:path";
+import path from "node:path";
+
+const joinPath = (arr) => path.join(...arr);
 
 export const action = async ({ request }) => {
   try {
@@ -83,13 +86,13 @@ export const action = async ({ request }) => {
 
         let splitPath = path.split('/');
         let pathToBeChecked = './cloud';
-        let existingPathArr;
+        let existingPathArr = ['./cloud'];
         try {
           for (let i = 0; splitPath.length > i; i++) {
             pathToBeChecked = pathToBeChecked + '/' + splitPath[i];
             const checkingPath = await pathExists(pathToBeChecked);
+            existingPathArr.push(splitPath[i]);
             if (!checkingPath) {
-                existingPathArr = splitPath.splice(0, i);
                 splitPath = splitPath.splice(i, splitPath.length);
               break;
             } 
@@ -97,8 +100,9 @@ export const action = async ({ request }) => {
         } catch (err) {
           console.error(`Error checking path: ${err}`);
         }
-        // const existingPath = path.join(...existingPathArr);
-        console.log(`pathToBeChecked: ${pathToBeChecked}, splitPath: ${splitPath}, existingPath: ${existingPathArr}`);
+
+        const existingPath = joinPath(existingPathArr);
+        console.log(`pathToBeChecked: ${pathToBeChecked}, splitPath: ${splitPath}, existingPath: ${existingPath}`);
       } else {
         // for now if it is a file just save to root
         // later on the front end grab the parent id of the folder the user is in and send it in the request to this route

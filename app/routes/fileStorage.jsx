@@ -3,6 +3,7 @@ import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 // import path, { join } from "node:path";
 import path from "node:path";
+import { get } from "node:https";
 
 const joinPath = (arr) => path.join(...arr);
 
@@ -32,12 +33,21 @@ export const action = async ({ request }) => {
       }
     }
 
-    const getRootUUID = async () => {
-      const root = await prisma.hierarchy.findMany({
-        where: { parent_id: null }
+    const queryWebkitRelitivePathChunck = async (parentID, currentArrElementName) => {
+      const result = await prisma.metadata.findMany({
+        where: {
+          name: currentArrElementName,
+          hierarchy: {
+            is: {
+              parent_id: parentID
+            }
+          }
+        },
+        include: {
+          hierarchy: true
+        }
       });
-      if (!root.length) throw new Error('Root folder not found');
-      return root[0].id;
+      return result;
     };
 
     const pathExists = async (path) => {
@@ -86,16 +96,22 @@ export const action = async ({ request }) => {
 
         let splitPath = path.split('/');
         let pathToBeChecked = './cloud';
-        let existingPathArr = ['./cloud'];
+        const existingPathArr = ['./cloud'];
         try {
           for (let i = 0; splitPath.length > i; i++) {
-            pathToBeChecked = pathToBeChecked + '/' + splitPath[i];
-            const checkingPath = await pathExists(pathToBeChecked);
-            existingPathArr.push(splitPath[i]);
-            if (!checkingPath) {
-                splitPath = splitPath.splice(i, splitPath.length);
-              break;
-            } 
+            let currentParentId = null;
+
+            try {
+              const x = await queryWebkitRelitivePathChunck(currentParentId, "Root")
+              for (let e in x) {
+                console.log(x[e]);
+              }
+            } catch (err) {
+              if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
+            }
+            
+            
+            // pathToBeChecked = pathToBeChecked + '/' + splitPath[i];
           }
         } catch (err) {
           console.error(`Error checking path: ${err}`);
@@ -103,6 +119,7 @@ export const action = async ({ request }) => {
 
         const existingPath = joinPath(existingPathArr);
         console.log(`pathToBeChecked: ${pathToBeChecked}, splitPath: ${splitPath}, existingPath: ${existingPath}`);
+
       } else {
         // for now if it is a file just save to root
         // later on the front end grab the parent id of the folder the user is in and send it in the request to this route

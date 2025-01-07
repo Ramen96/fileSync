@@ -102,7 +102,8 @@ export const action = async ({ request }) => {
             let currentParentId = null;
 
             try {
-              const x = await queryWebkitRelitivePathChunck(currentParentId, "Root")
+              // RENAME STUFF HERE: was just testing to see if it would work it dose so now rename it.
+              const x = await queryWebkitRelitivePathChunck(currentParentId, splitPath[i]);
               for (let e in x) {
                 console.log(x[e]);
               }

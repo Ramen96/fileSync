@@ -33,7 +33,7 @@ export const action = async ({ request }) => {
       }
     }
 
-    const queryWebkitRelitivePathChunck = async (parentID, currentArrElementName) => {
+    const queryWebkitRelativePathChunk = async (parentID, currentArrElementName) => {
       if (currentArrElementName === './cloud') currentArrElementName = 'Root';
       const result = await prisma.metadata.findMany({
         where: {
@@ -64,7 +64,7 @@ export const action = async ({ request }) => {
     const saveFile = async (path, name, fileType, isFolder) => {
       // Rethinking how to do this.
       // 1 check the file path.
-      // 2 if file path exisists
+      // 2 if file path exists
       // -- throw an error saying the file already exists
       // 3 if file path dose not exist
       // -- split the path creating an array
@@ -73,8 +73,8 @@ export const action = async ({ request }) => {
       //    create a new array that only contains the parts that do not currently exist in the file system
       // 
       // 4 In the db look up the name of the last folder in the path that currently exists
-      // -- create new coloum in metadata table for relitve paths
-      // -- query db for matching relitve path to ge id for the parrent folder
+      // -- create new column in metadata table for relative paths
+      // -- query db for matching relative path to ge id for the parent folder
       //    -- once the id has been obtained use it as the parent id for the first folder in the array
       //       and using each previous array element as the parent id for the current one 
       //        -- make sure only the last element in the array is saved as a file in the db
@@ -101,7 +101,7 @@ export const action = async ({ request }) => {
           let currentParentId = null;
           for (let i = 0; splitPath.length > i; i++) {
             try {
-              const chunkQuery = await queryWebkitRelitivePathChunck(currentParentId, splitPath[i]);
+              const chunkQuery = await queryWebkitRelativePathChunk(currentParentId, splitPath[i]);
 
               if (JSON.stringify(chunkQuery) !== JSON.stringify([])) {
                 currentParentId = chunkQuery[0].hierarchy.id;

@@ -98,8 +98,8 @@ export const action = async ({ request }) => {
         let splitPath = path.split('/');
         splitPath.unshift('Root');
         try {
+          let currentParentId = null;
           for (let i = 0; splitPath.length > i; i++) {
-            let currentParentId = null;
             try {
               const chunkQuery = await queryWebkitRelitivePathChunck(currentParentId, splitPath[i]);
 

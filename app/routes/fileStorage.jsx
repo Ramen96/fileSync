@@ -34,6 +34,7 @@ export const action = async ({ request }) => {
     }
 
     const queryWebkitRelitivePathChunck = async (parentID, currentArrElementName) => {
+      if (currentArrElementName === './cloud') currentArrElementName = 'Root';
       const result = await prisma.metadata.findMany({
         where: {
           name: currentArrElementName,
@@ -95,33 +96,76 @@ export const action = async ({ request }) => {
         }
 
         let splitPath = path.split('/');
-        let pathToBeChecked = './cloud';
-        const existingPathArr = ['./cloud'];
+        splitPath.unshift('Root');
         try {
           for (let i = 0; splitPath.length > i; i++) {
             let currentParentId = null;
-
             try {
-              // RENAME STUFF HERE: was just testing to see if it would work it dose so now rename it.
-              const x = await queryWebkitRelitivePathChunck(currentParentId, splitPath[i]);
-              for (let e in x) {
-                console.log(x[e]);
+              const chunkQuery = await queryWebkitRelitivePathChunck(currentParentId, splitPath[i]);
+
+              if (JSON.stringify(chunkQuery) !== JSON.stringify([])) {
+                currentParentId = chunkQuery[0].hierarchy.id;
               }
+              // write to db here for current chunk 
+              // await prisma.metadata.
+
+              const handleWriteToDB = async (chunkIsFolder) => {
+                if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
+                  if (chunkIsFolder) {
+                    await prisma.metadata.create({
+                      data: {
+                        name: splitPath[i],
+                        is_folder: chunkIsFolder,
+                        created_at: new Date(),
+                        hierarchy: {
+                          create: {
+                            parent_id: currentParentId,
+                          }
+                        }
+                      }
+                    });
+                    
+                  } else {
+                    await prisma.metadata.create({
+                      data: {
+                        name: splitPath[i],
+                        is_folder: chunkIsFolder,
+                        created_at: new Date(),
+                        file_type: fileType,
+                        hierarchy: {
+                          create: {
+                            parent_id: currentParentId,
+                          }
+                        }
+                      }
+                    });
+                  }
+                } else {
+                  console.log('Chunk already exists in db moving on to next chunk');
+                  currentParentId = chunkQuery[0].hierarchy.id
+                  // console.log(currentParentId);
+                }
+              }
+
+              if (splitPath.length - 1 > i) {
+                // console.log(`Folder: ${splitPath[i]}`);
+                handleWriteToDB(true);
+              } else {
+                // console.log(`File: ${splitPath[i]}`);
+                handleWriteToDB(false);
+              }
+
             } catch (err) {
               if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
             }
-            
-            
             // pathToBeChecked = pathToBeChecked + '/' + splitPath[i];
           }
         } catch (err) {
           console.error(`Error checking path: ${err}`);
         }
 
-        const existingPath = joinPath(existingPathArr);
-        console.log(`pathToBeChecked: ${pathToBeChecked}, splitPath: ${splitPath}, existingPath: ${existingPath}`);
-
       } else {
+
         // for now if it is a file just save to root
         // later on the front end grab the parent id of the folder the user is in and send it in the request to this route
         console.log(name);

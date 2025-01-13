@@ -62,22 +62,38 @@ export const action = async ({ request }) => {
     };
 
     const saveFile = async (path, name, fileType, isFolder) => {
-      // Rethinking how to do this.
-      // 1 check the file path.
-      // 2 if file path exists
-      // -- throw an error saying the file already exists
-      // 3 if file path dose not exist
-      // -- split the path creating an array
-      // -- loop through the array for each element in it check if the path exists joining the previous elements to reconstruct the path
-      //    if you reach a point where the paths no longer match what is on the file system
-      //    create a new array that only contains the parts that do not currently exist in the file system
-      // 
-      // 4 In the db look up the name of the last folder in the path that currently exists
-      // -- create new column in metadata table for relative paths
-      // -- query db for matching relative path to ge id for the parent folder
-      //    -- once the id has been obtained use it as the parent id for the first folder in the array
-      //       and using each previous array element as the parent id for the current one 
-      //        -- make sure only the last element in the array is saved as a file in the db
+
+      const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
+        const newEntry = 
+        isFolder ?
+          await prisma.metadata.create({
+            data: {
+              name: currentChunk,
+              is_folder: chunkIsFolder,
+              created_at: new Date(),
+              hierarchy: {
+                create: {
+                  parent_id: parentId
+                }
+              }
+            }
+          })
+        :
+          await prisma.metadata.create({
+            data: {
+              name: currentChunk,
+              is_folder: chunkIsFolder,
+              created_at: new Date(),
+              file_type: fileType,
+              hierarchy: {
+                create: {
+                  parent_id: parentId
+                }
+              }
+            }
+          });
+        return newEntry;
+      }
 
       if (typeof isFolder !== "boolean") {
         console.error('Error: isFolder param is not a boolean value');
@@ -87,73 +103,30 @@ export const action = async ({ request }) => {
         });
       }
 
-      if (isFolder) {
-        try {
-          const checkingPath = await pathExists(path);
-          if (checkingPath) throw Error("File path already exists");
-        } catch (e) {
-          console.error(`Error checking path: ${e}`);
-        }
-
-        let splitPath = path.split('/');
-        splitPath.unshift('Root');
-        try {
-          let currentParentId = null;
-          for (let i = 0; splitPath.length > i; i++) {
-            try {
-              const chunkQuery = await queryWebkitRelativePathChunk(currentParentId, splitPath[i]);
-
-              if (JSON.stringify(chunkQuery) !== JSON.stringify([])) {
-                currentParentId = chunkQuery[0].hierarchy.id;
-              }
-              // write to db here for current chunk 
-              // await prisma.metadata.
-
-              const handleWriteToDB = async (chunkIsFolder) => {
-                if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
-                  if (chunkIsFolder) {
-                    await prisma.metadata.create({
-                      data: {
-                        name: splitPath[i],
-                        is_folder: chunkIsFolder,
-                        created_at: new Date(),
-                        hierarchy: {
-                          create: {
-                            parent_id: currentParentId,
-                          }
-                        }
-                      }
-                    });
-                    
-                  } else {
-                    await prisma.metadata.create({
-                      data: {
-                        name: splitPath[i],
-                        is_folder: chunkIsFolder,
-                        created_at: new Date(),
-                        file_type: fileType,
-                        hierarchy: {
-                          create: {
-                            parent_id: currentParentId,
-                          }
-                        }
-                      }
-                    });
-                  }
-                } else {
-                  console.log('Chunk already exists in db moving on to next chunk');
-                  currentParentId = chunkQuery[0].hierarchy.id
-                  // console.log(currentParentId);
+      try {
+        const checkingPath = await pathExists(path);
+        if (checkingPath) throw Error("File path already exists");
+      } catch (e) {
+        console.error(`Error checking path: ${e}`);
+      }
+      
+      let splitPath = path.split('/');
+      splitPath.unshift('Root');
+      try {
+        let currentParentId = null;
+        for (let i = 0; splitPath.length > i; i++) {
+          const currentChunkName = splitPath[i];
+          try {
+            const chunkQuery = await queryWebkitRelativePathChunk(currentParentId, currentChunkName);
+            if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
+              writeChunkToDB(currentChunkName, isFolder, currentParentId)
+              .then(res => {
+                for (let element in res) {
+                  console.log(`Newest entry created: ${res[element]}`);
                 }
-              }
-
-              if (splitPath.length - 1 > i) {
-                // console.log(`Folder: ${splitPath[i]}`);
-                handleWriteToDB(true);
-              } else {
-                // console.log(`File: ${splitPath[i]}`);
-                handleWriteToDB(false);
-              }
+              })
+              .catch(err => console.error(`Error writing chunk to db/getting lates entry in db: ${err}`));
+            }
 
             } catch (err) {
               if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
@@ -163,13 +136,6 @@ export const action = async ({ request }) => {
         } catch (err) {
           console.error(`Error checking path: ${err}`);
         }
-
-      } else {
-
-        // for now if it is a file just save to root
-        // later on the front end grab the parent id of the folder the user is in and send it in the request to this route
-        console.log(name);
-      }
 
       // try {
       //   if (isFolder) {

@@ -64,9 +64,8 @@ export const action = async ({ request }) => {
     const saveFile = async (path, name, fileType, isFolder) => {
 
       const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
-        const newEntry = 
-        isFolder ?
-          await prisma.metadata.create({
+        if (isFolder) {
+          const query = await prisma.metadata.create({
             data: {
               name: currentChunk,
               is_folder: chunkIsFolder,
@@ -77,9 +76,10 @@ export const action = async ({ request }) => {
                 }
               }
             }
-          })
-        :
-          await prisma.metadata.create({
+          });
+          return query;
+        } else {
+          const query = await prisma.metadata.create({
             data: {
               name: currentChunk,
               is_folder: chunkIsFolder,
@@ -91,8 +91,9 @@ export const action = async ({ request }) => {
                 }
               }
             }
-          });
-        return newEntry;
+          })
+          return query;
+        }
       }
 
       if (typeof isFolder !== "boolean") {
@@ -121,11 +122,11 @@ export const action = async ({ request }) => {
             if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
               writeChunkToDB(currentChunkName, isFolder, currentParentId)
               .then(res => {
-                for (let element in res) {
-                  console.log(`Newest entry created: ${res[element]}`);
-                }
+                currentParentId = res.id;
               })
               .catch(err => console.error(`Error writing chunk to db/getting lates entry in db: ${err}`));
+            } else {
+              currentParentId = chunkQuery[0].hierarchy.id;
             }
 
             } catch (err) {

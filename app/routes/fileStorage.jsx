@@ -64,11 +64,11 @@ export const action = async ({ request }) => {
     const saveFile = async (path, name, fileType, isFolder) => {
 
       const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
-        if (isFolder) {
+        if (chunkIsFolder) {
           const query = await prisma.metadata.create({
             data: {
               name: currentChunk,
-              is_folder: chunkIsFolder,
+              is_folder: true,
               created_at: new Date(),
               hierarchy: {
                 create: {
@@ -82,7 +82,7 @@ export const action = async ({ request }) => {
           const query = await prisma.metadata.create({
             data: {
               name: currentChunk,
-              is_folder: chunkIsFolder,
+              is_folder: false,
               created_at: new Date(),
               file_type: fileType,
               hierarchy: {
@@ -117,14 +117,22 @@ export const action = async ({ request }) => {
         let currentParentId = null;
         for (let i = 0; splitPath.length > i; i++) {
           const currentChunkName = splitPath[i];
+
           try {
             const chunkQuery = await queryWebkitRelativePathChunk(currentParentId, currentChunkName);
+
+            async function handleWriteChunkToDB(chunkIsFolder) {
+              try {
+                const res = await writeChunkToDB(currentChunkName, chunkIsFolder, currentParentId);
+                currentParentId = res.id; 
+              } catch (err) {
+                console.error(`Error writing chunk to DB: ${err}`);
+                throw err;
+              }
+            }
+
             if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
-              writeChunkToDB(currentChunkName, isFolder, currentParentId)
-              .then(res => {
-                currentParentId = res.id;
-              })
-              .catch(err => console.error(`Error writing chunk to db/getting lates entry in db: ${err}`));
+              await handleWriteChunkToDB(splitPath.length - 1 !== i);
             } else {
               currentParentId = chunkQuery[0].hierarchy.id;
             }
@@ -132,7 +140,6 @@ export const action = async ({ request }) => {
             } catch (err) {
               if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
             }
-            // pathToBeChecked = pathToBeChecked + '/' + splitPath[i];
           }
         } catch (err) {
           console.error(`Error checking path: ${err}`);
@@ -215,7 +222,6 @@ export const action = async ({ request }) => {
           where: { id: parent_id }
         });
         if (!parentFolder) throw new Error(`Parent folder ${parent_id} not found`);
-        // TODO: Implement parent folder relative path logic
       }
     }
 

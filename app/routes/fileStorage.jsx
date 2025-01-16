@@ -1,7 +1,6 @@
 import { Dir, mkdir } from "node:fs";
 import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
-// import path, { join } from "node:path";
 import path from "node:path";
 import { get } from "node:https";
 

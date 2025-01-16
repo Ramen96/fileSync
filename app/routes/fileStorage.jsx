@@ -13,13 +13,13 @@ export const action = async ({ request }) => {
     const formData = Object.fromEntries(parseRequest);
     const metadata = JSON.parse(formData.metadata);
 
-    const pathTraversalDetection = (path) => {
+    const pathTraversalDetection = (activePath) => {
       const traversalPatterns = [
         "../", "%2e%2e%2f", "%2e%2e/", "..%2f", "%2e%2e%5c",
         "%2e%2e'", "..%5c", "%252e%252e%255c", "..%255c",
         "..", " / ", "..%c0%af", "..%c1%9c",
       ];
-      return traversalPatterns.some(pattern => path.includes(pattern));
+      return traversalPatterns.some(pattern => activePath.includes(pattern));
     };
 
     // Check paths for traversal attempts
@@ -51,9 +51,9 @@ export const action = async ({ request }) => {
       return result;
     };
 
-    const pathExists = async (path) => {
+    const checkIfPathExists = async (activePath) => {
       try {
-        await fs.access(path);
+        await fs.access(activePath);
         return true;
       } catch (err) {
         if (err.code === "ENOENT") return false;
@@ -61,7 +61,7 @@ export const action = async ({ request }) => {
       }
     };
 
-    const saveFile = async (path, name, fileType, isFolder) => {
+    const saveFile = async (activePath, name, fileType, isFolder) => {
 
       const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
         if (chunkIsFolder) {
@@ -105,17 +105,18 @@ export const action = async ({ request }) => {
       }
 
       try {
-        const checkingPath = await pathExists(path);
+        const checkingPath = await checkIfPathExists(activePath);
         if (checkingPath) throw Error("File path already exists");
       } catch (e) {
         console.error(`Error checking path: ${e}`);
       }
       
-      let splitPath = path.split('/');
+      let splitPath = activePath.split('/');
       splitPath.unshift('Root');
       try {
         let currentParentId = null;
         for (let i = 0; splitPath.length > i; i++) {
+          let reconstructedPathArr = [];
           const currentChunkName = splitPath[i];
 
           try {
@@ -132,13 +133,38 @@ export const action = async ({ request }) => {
             }
 
             if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
-              await handleWriteChunkToDB(splitPath.length - 1 !== i);
+              const currentChunkIsFolder = splitPath.length - 1 !== i;
+              await handleWriteChunkToDB(currentChunkIsFolder);
             } else {
               currentParentId = chunkQuery[0].hierarchy.id;
             }
 
             } catch (err) {
               if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
+            }
+            splitPath.forEach(e => reconstructedPathArr.push(e));
+            reconstructedPathArr.shift();
+            const reconstructedPath = joinPath(reconstructedPathArr);
+            try {
+              const pathExists = await checkIfPathExists(reconstructedPath);
+              if (!pathExists) {
+                for (let i in formData) {
+                  if (formData[i] instanceof File) {
+                    if (formData[i].name === reconstructedPath) {
+                      try {
+                        const fileBuffer = Buffer.from(await formData[i].arrayBuffer());
+                        await fs.mkdir(path.dirname('cloud/' + reconstructedPath), { recursive: true });
+                        await fs.writeFile('cloud/' + reconstructedPath, fileBuffer);
+                      } catch (err) {
+                        console.error(`Error writing file: ${err}`);
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (err) {
+              if (err)
+              console.error(`Error checking if path exists ${err}`);
             }
           }
         } catch (err) {

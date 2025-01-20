@@ -200,9 +200,8 @@ export const action = async ({ request }) => {
         }
 
         try {
-          await fs.mkdir(path.dirname('cloud/'), { recursive: true });
           await fs.writeFile('cloud/' + fileName, file);
-          console.log('file saved successfully');
+          console.log(`File saved successfully ${'cloud/' + fileName}`);
         } catch (err) {
           console.error(`error saving file to filesystem ${err}`);
         }

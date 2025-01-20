@@ -60,14 +60,7 @@ export default function Index() {
       fileList.append(file[i].name, file[i]);
     }
 
-    const isFolder = (path) => {
-      // const folder = false;
-      if (path.length > 0) {
-        return true;
-      } else if (path.length === 0) {
-        return false;
-      } 
-    }
+    
 
     const metadata = () => {
       const dataArr = [];

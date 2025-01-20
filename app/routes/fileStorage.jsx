@@ -3,6 +3,7 @@ import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { get } from "node:https";
+import { FolderMinus } from "lucide-react";
 
 const joinPath = (arr) => path.join(...arr);
 
@@ -60,7 +61,7 @@ export const action = async ({ request }) => {
       }
     };
 
-    const saveFile = async (activePath, name, fileType, isFolder) => {
+    const saveFolder = async (activePath, fileType, isFolder) => {
 
       const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
         if (chunkIsFolder) {
@@ -171,16 +172,61 @@ export const action = async ({ request }) => {
         }
     };
 
+
+    const saveFile = async (fileName, fileType, parentId, file) => {
+
+      const getRootId = await queryWebkitRelativePathChunk(null, 'Root');
+      const rootId = getRootId[0].hierarchy.id;
+
+        if (parentId === null) parentId = rootId;
+
+        try {
+          await prisma.metadata.create({
+            data: {
+              name: fileName,
+              is_folder: false,
+              created_at: new Date(),
+              file_type: fileType,
+              hierarchy: {
+                create: {
+                  parent_id: parentId
+                }
+              }
+            }
+          });
+        } catch (err) {
+          console.error(`error saving file metadata to database ${err}`);
+          throw err;
+        }
+
+        try {
+          await fs.mkdir(path.dirname('cloud/'), { recursive: true });
+          await fs.writeFile('cloud/' + fileName, file);
+          console.log('file saved successfully');
+        } catch (err) {
+          console.error(`error saving file to filesystem ${err}`);
+        }
+    };
+
     for (const item of metadata) {
       const { parent_id, webkitRelativePath, name, type, is_folder } = item;
 
-      if (!parent_id) {
-        await saveFile(webkitRelativePath, name, type, is_folder);
+      if (!is_folder) {
+        for (let i in formData) {
+          if (formData[i] instanceof File) {
+            const fileBuffer = Buffer.from(await formData[i].arrayBuffer());
+            await saveFile(name, type, parent_id, fileBuffer);
+          }
+        }
+        // isFolderCheck(webkitRelativePath) ?
+        //   await saveFolder(webkitRelativePath, type, is_folder)
+        // : await saveFile(name, type);
       } else {
-        const parentFolder = await prisma.metadata.findUnique({
-          where: { id: parent_id }
-        });
-        if (!parentFolder) throw new Error(`Parent folder ${parent_id} not found`);
+          await saveFolder(webkitRelativePath, type, is_folder);
+        // const parentFolder = await prisma.metadata.findUnique({
+          // where: { id: parent_id }
+        // });
+        // if (!parentFolder) throw new Error(`Parent folder ${parent_id} not found`);
       }
     }
 

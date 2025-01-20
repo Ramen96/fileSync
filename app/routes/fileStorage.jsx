@@ -218,15 +218,8 @@ export const action = async ({ request }) => {
             await saveFile(name, type, parent_id, fileBuffer);
           }
         }
-        // isFolderCheck(webkitRelativePath) ?
-        //   await saveFolder(webkitRelativePath, type, is_folder)
-        // : await saveFile(name, type);
       } else {
           await saveFolder(webkitRelativePath, type, is_folder);
-        // const parentFolder = await prisma.metadata.findUnique({
-          // where: { id: parent_id }
-        // });
-        // if (!parentFolder) throw new Error(`Parent folder ${parent_id} not found`);
       }
     }
 

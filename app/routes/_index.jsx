@@ -11,13 +11,20 @@ const searchIcon = "../assets/search.svg";
 export async function loader() {
   // ToDo: see if there is a way to query prisma and include the children of root in the query
   try {
-    const initRoot = await prisma.metadata.findFirst({
+    const initRoot = await prisma.hierarchy.findFirst({
       where: {
-        hierarchy: {
-          parent_id: null
-        },
+        parent_id: null,
+      }, 
+      include: {
+        metadata: true,
+        children: {
+          include: {
+            metadata: true,
+          }
+        }
       }
-    })
+    });
+
     return data(initRoot);
   } catch (error) {
     console.error("Error fetching data:", error);

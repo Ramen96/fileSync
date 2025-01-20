@@ -1,6 +1,6 @@
 import { data } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
 import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
@@ -9,30 +9,19 @@ const searchIcon = "../assets/search.svg";
 
 
 export async function loader() {
-  // Had weird error where prisma would throw an error "cannot read properties of undefined"
-  // see docs https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/null-and-undefined scroll to section that talks about findMany()
-  // see example
-  
-  // Example: 
-  //   const metadata = await prisma.metadata.findMany({
-  //     where: {
-  //       id: undefined/null here
-  //     }
-  //   });
-      
-  // For some reason after calling findMany how it is in the example above it worked both ways
+  // ToDo: see if there is a way to query prisma and include the children of root in the query
   try {
-    const metadata = await prisma.metadata.findMany(); // This is the same as setting id to undefined 
-    const hierarchy = await prisma.hierarchy.findMany(); // Note: When I did this both tables were compleatly empty, may or may not be the reason for this weird behavior.
-    const root = await prisma.hierarchy.findMany({
+    const initRoot = await prisma.metadata.findFirst({
       where: {
-        parent_id: null
+        hierarchy: {
+          parent_id: null
+        },
       }
-    });
-    return data({ metadata, hierarchy, root });
+    })
+    return data(initRoot);
   } catch (error) {
     console.error("Error fetching data:", error);
-    return data({metadata: [], hierarchy: [],  root: [] }, { status: 500 });
+    return data({}, { status: 500 });
   }
 }
 
@@ -42,9 +31,13 @@ export default function Index() {
 
   // pulling from db need to create data structure and memoize it
   const db = useLoaderData();
-  const metadata = db.metadata;
-  const hierarchy = db.hierarchy;
-  const rootNodeId = db.root[0].id;
+  // const metadata = db.metadata;
+  // const hierarchy = db.hierarchy;
+  // const rootNodeId = db.root[0].id;
+
+  useEffect(() => {
+    console.log(db);
+  }, []);
 
   // 1. create function that takes currentNodeId state if null default to rootNodeId.
   // 2. root of data structure will be currentNodeId/rootNodeId
@@ -59,8 +52,6 @@ export default function Index() {
     for (let i = 0; i < file.length; i++) {
       fileList.append(file[i].name, file[i]);
     }
-
-    
 
     const metadata = () => {
       const dataArr = [];

@@ -40,10 +40,13 @@ export default function Index() {
   const db = useLoaderData();
   // const metadata = db.metadata;
   // const hierarchy = db.hierarchy;
-  // const rootNodeId = db.root[0].id;
+  const childrenOfRoot = db.children;
+  const rootNodeId = db.id
+  // console.log(`rootNodeId: ${childrenOfRoot}`);
+  // setCurrentNodeId(rootNodeId);
 
   useEffect(() => {
-    console.log(db);
+    // console.log(db);
   }, []);
 
   // 1. create function that takes currentNodeId state if null default to rootNodeId.

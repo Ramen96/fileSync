@@ -25,59 +25,33 @@ export default function DisplayDirectory({
   fileUpload
  }) {
 
-  // ###########################################
-  // #### SECTION: Create  data structure ######
-  // ###########################################
-
-  // create tree data set from db and memoize it.
-  // const constructDirTree = useMemo(() => {
-  //   if (!files || files.length === 0) return null;
-
-  //   const tree = new DirectoryTree();
-  //   for (let i = 0; i < files.length; i++) {
-  //     // const dbId = files[i].id;
-  //     const path = files[i].relitive_path;
-  //     const type = files[i].file_type === 'folder' ? 'folder' : 'file';
-
-  //     try {
-  //       tree.addNodeByPath(path, type)
-  //     } catch (error) {
-  //       console.error(`Error adding path ${path}: ${error.message}`);
-  //     }
-  //   }
-  //   return tree;
-  // }, [files]);
 
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
 
-  // useEffect(() => {
-  //   if (constructDirTree) {
-  //     setCurrentNodeId(constructDirTree.root.id);
-  //   }
-  // }, [constructDirTree]);
 
   // ajax
-  if (!metadata || metadata.length === 0) {
-    return <h1 style={{ color: "white" }}>Error no file data... {JSON.stringify(metadata)}</h1>;
-  }
 
-  if (!hierarchy || hierarchy.length === 0) {
-    return <h1 style={{ color: "white" }}>Error no file hierarchy... {JSON.stringify(hierarchy)}</h1>;
-  }
+  // if (!metadata || metadata.length === 0) {
+  //   return <h1 style={{ color: "white" }}>Error no file data... {JSON.stringify(metadata)}</h1>;
+  // }
+
+  // if (!hierarchy || hierarchy.length === 0) {
+  //   return <h1 style={{ color: "white" }}>Error no file hierarchy... {JSON.stringify(hierarchy)}</h1>;
+  // }
 
   // if (!constructDirTree) {
   //   return <h1 style={{ color: "white" }}>Loading...</h1>;
   // }
 
   // get nodes
-  const currentNode = constructDirTree.getNodeById(currentNodeId);
-  const childrenOfCurrentNode = currentNode ? currentNode.children : [];
-  const rootNode = constructDirTree.root.children;
-  const getChildNodes = (id) => {
-    return constructDirTree.getChildNodebyCurrentNodeId(id)
-  }
+  // const currentNode = constructDirTree.getNodeById(currentNodeId);
+  // const childrenOfCurrentNode = currentNode ? currentNode.children : [];
+  // const rootNode = constructDirTree.root.children;
+  // const getChildNodes = (id) => {
+  //   return constructDirTree.getChildNodebyCurrentNodeId(id)
+  // }
 
   // Nav buttons
   const handleNavClick = (direction) => {
@@ -175,16 +149,16 @@ export default function DisplayDirectory({
 
   // Component props 
   const recursiveSideItemComponentProps = {
-    childrenOfCurrentNode: rootNode,
-    showStateList: showStateList,
-    setShowStateList: setShowStateList,
-    getChildNodes: getChildNodes,
-    setCurrentNodeId: setCurrentNodeId,
-    currentNodeId: currentNodeId,
-    setForwardHistory: setForwardHistory,
-    forwardHistory: forwardHistory,
-    backHistory: backHistory,
-    setBackHistory: setBackHistory
+    // childrenOfCurrentNode: rootNode,
+    // showStateList: showStateList,
+    // setShowStateList: setShowStateList,
+    // getChildNodes: getChildNodes,
+    // setCurrentNodeId: setCurrentNodeId,
+    // currentNodeId: currentNodeId,
+    // setForwardHistory: setForwardHistory,
+    // forwardHistory: forwardHistory,
+    // backHistory: backHistory,
+    // setBackHistory: setBackHistory
   }
 
   // Upload Card
@@ -213,15 +187,8 @@ export default function DisplayDirectory({
   const handleDeleteButton = () => {
     const ids = [];
     idArr.forEach(element => ids.push(element));
-
-    // need to create class method to delete remove node from data structure
-    // also might need to come up with a different name for uuids to keep db id and class id seperate
-    // console.log(constructDirTree.removeNodebyId(ids));
-    // idArr.forEach(element => constructDirTree.removeNodebyId(element));
     console.log(childrenOfCurrentNode);
   }
-
-  // console.log(constructDirTree);
 
   return (
     <>
@@ -304,7 +271,7 @@ export default function DisplayDirectory({
         {isIcon
           ? 
           <div className='width100 padding0 flexWrap'>
-            {childrenOfCurrentNode.map(child => 
+            {/* {childrenOfCurrentNode.map(child => 
               child.type === 'folder' ? (
                 <Folder 
                   key={child.id}
@@ -323,11 +290,11 @@ export default function DisplayDirectory({
                   handleIdArrState={handleIdArrState}
                 />
               )
-            )}
+            )} */}
           </div>
           :
           <div className='width100 padding0'>
-            {childrenOfCurrentNode.map(child => 
+            {/* {childrenOfCurrentNode.map(child => 
               child.type === 'folder' ? (
                 <Folder 
                   key={child.id}
@@ -346,7 +313,7 @@ export default function DisplayDirectory({
                   handleIdArrState={handleIdArrState}
                 />
               )
-            )}
+            )} */}
           </div>
         }
       </div>

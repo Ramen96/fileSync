@@ -15,6 +15,7 @@ import UploadCard from './UploadCard/uploadCard';
 import File from "./File/file";
 import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
+import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
 
 export default function DisplayDirectory({ 
@@ -22,7 +23,8 @@ export default function DisplayDirectory({
   metadata,
   currentNodeId,
   setCurrentNodeId,
-  fileUpload
+  fileUpload,
+  childrenOfCurrentNode
  }) {
 
 
@@ -45,13 +47,12 @@ export default function DisplayDirectory({
   //   return <h1 style={{ color: "white" }}>Loading...</h1>;
   // }
 
+
   // get nodes
-  // const currentNode = constructDirTree.getNodeById(currentNodeId);
-  // const childrenOfCurrentNode = currentNode ? currentNode.children : [];
-  // const rootNode = constructDirTree.root.children;
-  // const getChildNodes = (id) => {
-  //   return constructDirTree.getChildNodebyCurrentNodeId(id)
-  // }
+  if (childrenOfCurrentNode !== null) {
+    childrenOfCurrentNode.map(e => console.log(e.metadata));
+  }
+
 
   // Nav buttons
   const handleNavClick = (direction) => {
@@ -190,6 +191,37 @@ export default function DisplayDirectory({
     console.log(childrenOfCurrentNode);
   }
 
+
+
+  const renderChildren = (isIconView) => {
+    if (!childrenOfCurrentNode) {
+      return <h1>Loading...</h1>;
+    }
+
+    return childrenOfCurrentNode.map(child => {
+      const isFolder = child.metadata?.is_folder === true;
+      
+      return isFolder ? (
+        <Folder 
+          key={child.metadata.id}
+          name={child.metadata.name}
+          id={child.metadata.id}
+          isIcon={isIconView}
+          handleFolderClick={handleFolderClick}
+          handleIdArrState={handleIdArrState}
+        />
+      ) : (
+        <File 
+          key={child.metadata.id}
+          id={child.metadata.id}
+          name={child.metadata.name}
+          isIcon={isIconView}
+          handleIdArrState={handleIdArrState}
+        />
+      );
+    });
+  };
+
   return (
     <>
       {displayUploadCard ?
@@ -198,7 +230,7 @@ export default function DisplayDirectory({
       }
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
-          setCurrentNodeId(constructDirTree.root.id)
+          // setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
           setBackHistory([]);
           }}>
@@ -247,6 +279,7 @@ export default function DisplayDirectory({
         </div>
       </div>
       <div className='mainWindowWrapper prevent-select'>
+        
         {showSideBar
           ? 
             <div 
@@ -268,54 +301,14 @@ export default function DisplayDirectory({
             <div style={{"display": "none"}}>
             </div>
         }
-        {isIcon
-          ? 
-          <div className='width100 padding0 flexWrap'>
-            {/* {childrenOfCurrentNode.map(child => 
-              child.type === 'folder' ? (
-                <Folder 
-                  key={child.id}
-                  name={child.name}
-                  id={child.id}
-                  handleFolderClick={handleFolderClick}
-                  isIcon={isIcon}
-                  handleIdArrState={handleIdArrState}
-                />
-              ) : (
-                <File
-                  key={child.id}
-                  name={child.name}
-                  isIcon={isIcon}
-                  id={child.id}
-                  handleIdArrState={handleIdArrState}
-                />
-              )
-            )} */}
-          </div>
-          :
-          <div className='width100 padding0'>
-            {/* {childrenOfCurrentNode.map(child => 
-              child.type === 'folder' ? (
-                <Folder 
-                  key={child.id}
-                  name={child.name}
-                  id={child.id}
-                  handleFolderClick={handleFolderClick}
-                  isIcon={isIcon}
-                  handleIdArrState={handleIdArrState}
-                />
-              ) : (
-                <File
-                  key={child.id}
-                  name={child.name}
-                  isIcon={isIcon}
-                  id={child.id}
-                  handleIdArrState={handleIdArrState}
-                />
-              )
-            )} */}
-          </div>
-        }
+        <div className={`width100 padding0 ${isIcon ? 'flexWrap' : ''}`}>
+          <HandleDisplayIcons 
+            childrenOfCurrentNode={childrenOfCurrentNode}
+            isIcon={isIcon}
+            handleFolderClick={handleFolderClick}
+            handleIdArrState={handleIdArrState}
+          />
+        </div>
       </div>
     </>
   );

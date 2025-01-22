@@ -35,6 +35,7 @@ export async function loader() {
 export default function Index() {
   // need to move state management for nodes here.
   const [currentNodeId, setCurrentNodeId] = useState(null);
+  const [childrenOfCurrentNode, setChildrenOfCurrentNode] = useState(null);
 
   // pulling from db need to create data structure and memoize it
   const db = useLoaderData();
@@ -43,10 +44,11 @@ export default function Index() {
   const childrenOfRoot = db.children;
   const rootNodeId = db.id
   // console.log(`rootNodeId: ${childrenOfRoot}`);
-  // setCurrentNodeId(rootNodeId);
-
+  
+  // initialize root node and its children with state
   useEffect(() => {
-    // console.log(db);
+    setChildrenOfCurrentNode(childrenOfRoot);
+    setCurrentNodeId(rootNodeId);
   }, []);
 
   // 1. create function that takes currentNodeId state if null default to rootNodeId.
@@ -106,6 +108,8 @@ export default function Index() {
   const DisplayDirectoryProps = {
     // metadata: metadata,
     // hierarchy: hierarchy,
+    childrenOfCurrentNode: childrenOfCurrentNode,
+    setChildrenOfCurrentNode, setChildrenOfCurrentNode,
     fileUpload: fileUpload,
     currentNodeId: currentNodeId,
     setCurrentNodeId: setCurrentNodeId

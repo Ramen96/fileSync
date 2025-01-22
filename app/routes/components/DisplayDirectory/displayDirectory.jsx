@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import {
   ChevronLeft, 
   ChevronRight,
@@ -12,8 +11,6 @@ import {
   Upload,
   } from 'lucide-react';
 import UploadCard from './UploadCard/uploadCard';
-import File from "./File/file";
-import Folder from "./Folder/folder";
 import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
@@ -31,21 +28,6 @@ export default function DisplayDirectory({
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
-
-
-  // ajax
-
-  // if (!metadata || metadata.length === 0) {
-  //   return <h1 style={{ color: "white" }}>Error no file data... {JSON.stringify(metadata)}</h1>;
-  // }
-
-  // if (!hierarchy || hierarchy.length === 0) {
-  //   return <h1 style={{ color: "white" }}>Error no file hierarchy... {JSON.stringify(hierarchy)}</h1>;
-  // }
-
-  // if (!constructDirTree) {
-  //   return <h1 style={{ color: "white" }}>Loading...</h1>;
-  // }
 
 
   // get nodes
@@ -190,37 +172,6 @@ export default function DisplayDirectory({
     idArr.forEach(element => ids.push(element));
     console.log(childrenOfCurrentNode);
   }
-
-
-
-  const renderChildren = (isIconView) => {
-    if (!childrenOfCurrentNode) {
-      return <h1>Loading...</h1>;
-    }
-
-    return childrenOfCurrentNode.map(child => {
-      const isFolder = child.metadata?.is_folder === true;
-      
-      return isFolder ? (
-        <Folder 
-          key={child.metadata.id}
-          name={child.metadata.name}
-          id={child.metadata.id}
-          isIcon={isIconView}
-          handleFolderClick={handleFolderClick}
-          handleIdArrState={handleIdArrState}
-        />
-      ) : (
-        <File 
-          key={child.metadata.id}
-          id={child.metadata.id}
-          name={child.metadata.name}
-          isIcon={isIconView}
-          handleIdArrState={handleIdArrState}
-        />
-      );
-    });
-  };
 
   return (
     <>

@@ -32,7 +32,7 @@ export default function DisplayDirectory({
 
   // get nodes
   if (childrenOfCurrentNode !== null) {
-    childrenOfCurrentNode.map(e => console.log(e.metadata));
+    // childrenOfCurrentNode.map(e => console.log(e.metadata));
   }
 
 

@@ -1,5 +1,7 @@
-import { prisma } from "../utils/prisma.server";
+import { response } from "express";
+import { data } from "@remix-run/node";
 
 export const action = async ({ request }) => {
-  console.log(request);
+  console.log(data(response));
+  return Response.json({ body: "data "}, { status: 200 })
 }

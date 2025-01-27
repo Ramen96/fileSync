@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import folderIconColor from "../../../../../assets/open-yellow-folder.svg";
 import folderIconGray from "../../../../../assets/yellow-folder.svg";
@@ -16,6 +16,22 @@ export default function RecursiveSideItemComponent({
     backHistory,
     setBackHistory
   }) {
+
+  const testApi = async () => {
+    fetch('/databaseApi', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(moreData => console.log(moreData))
+    .catch(error => console.error(`error fetching route ${error}`));
+  }
+
+  useEffect(() => {
+    testApi();
+  }, [])
 
   let isExpanded = false;
   function handleDoubleClick(folderId) {

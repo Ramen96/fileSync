@@ -11,7 +11,6 @@ export default function HandleDisplayIcons({
   if (!childrenOfCurrentNode) {
     return <h1>Loading...</h1>;
   }
-
   return childrenOfCurrentNode.map(child => {
     const isFolder = child.metadata?.is_folder === true;
     

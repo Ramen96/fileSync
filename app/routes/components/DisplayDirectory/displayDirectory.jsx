@@ -132,16 +132,16 @@ export default function DisplayDirectory({
 
   // Component props 
   const recursiveSideItemComponentProps = {
-    // childrenOfCurrentNode: rootNode,
-    // showStateList: showStateList,
-    // setShowStateList: setShowStateList,
+    childrenOfCurrentNode: childrenOfCurrentNode,
+    showStateList: showStateList,
+    setShowStateList: setShowStateList,
     // getChildNodes: getChildNodes,
-    // setCurrentNodeId: setCurrentNodeId,
-    // currentNodeId: currentNodeId,
-    // setForwardHistory: setForwardHistory,
-    // forwardHistory: forwardHistory,
-    // backHistory: backHistory,
-    // setBackHistory: setBackHistory
+    setCurrentNodeId: setCurrentNodeId,
+    currentNodeId: currentNodeId,
+    setForwardHistory: setForwardHistory,
+    forwardHistory: forwardHistory,
+    backHistory: backHistory,
+    setBackHistory: setBackHistory
   }
 
   // Upload Card

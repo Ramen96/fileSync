@@ -53,7 +53,9 @@ export default function RecursiveSideItemComponent({
   return childrenOfCurrentNode.map(child => {
     const isFolder = child.metadata?.is_folder === true;
     return isFolder ? (
-      <>
+      <React.Fragment 
+        key={child.metadata.id}
+        >
         <div 
           onClick={() => {
             handleFolderClick(child.id);
@@ -65,12 +67,12 @@ export default function RecursiveSideItemComponent({
           {isExpanded ? (
             <div className="sideItem">
               <img className='sideBarIcon' src={folderIconColor} alt="folderIcon" />
-              <h3 className="sideItemName">{child.name}</h3>
+              <h3 className="sideItemName">{child.metadata.name}</h3>
             </div>
           ) : (
             <div className="sideItem">
               <img className='sideBarIcon' src={folderIconGray} alt="folderIcon" />
-              <h3 className="sideItemName">{child.name}</h3>
+              <h3 className="sideItemName">{child.metadata.name}</h3>
             </div>
           )}
         </div>
@@ -92,67 +94,12 @@ export default function RecursiveSideItemComponent({
           />
         </div>
         )}
-      </>
+      </React.Fragment>
     ) : (
-      // <h1>placeHolder</h1>
-      <div key={child.id} className="sideItem">
+      <div className="sideItem" key={child.metadata.id}>
         <img className='sideBarIcon' src={file} alt="fileIcon" />
-        <h3 className="sideItemName">{child.name}</h3>
+        <h3 className="sideItemName">{child.metadata.name}</h3>
       </div>
     );
   })
-  // return childrenOfCurrentNode.map(child => {
-  //   if (child.type === 'folder') {
-  //     const isExpanded = showStateList.includes(child.id);
-  //     return (
-  //       <React.Fragment key={child.id}>
-  //         <div 
-  //           onClick={() => {
-  //             handleFolderClick(child.id);
-  //           }}
-  //           onDoubleClick={() => {
-  //             // handleDoubleClick(child.id);
-  //           }}
-  //         >
-  //           {isExpanded ? (
-  //             <div className="sideItem">
-  //               <img className='sideBarIcon' src={folderIconColor} alt="folderIcon" />
-  //               <h3 className="sideItemName">{child.name}</h3>
-  //             </div>
-  //           ) : (
-  //             <div className="sideItem">
-  //               <img className='sideBarIcon' src={folderIconGray} alt="folderIcon" />
-  //               <h3 className="sideItemName">{child.name}</h3>
-  //             </div>
-  //           )}
-  //         </div>
-  //         {isExpanded && (
-  //           <div
-  //             className="sideFolderDropDown"
-  //             style={{ display: "block" }}
-  //           >
-  //             <RecursiveSideItemComponent
-  //               childrenOfCurrentNode={getChildNodes(child.id)}
-  //               showStateList={showStateList}
-  //               setShowStateList={setShowStateList}
-  //               getChildNodes={getChildNodes}
-  //               currentNodeId={currentNodeId}
-  //               setCurrentNodeId={setCurrentNodeId}
-  //               setForwardHistory={setForwardHistory}
-  //               backHistory={backHistory}
-  //               setBackHistory={setBackHistory}
-  //             />
-  //           </div>
-  //         )}
-  //       </React.Fragment>
-  //     );
-  //     } else {
-  //       return (
-  //         <div key={child.id} className="sideItem">
-  //           <img className='sideBarIcon' src={file} alt="fileIcon" />
-  //           <h3 className="sideItemName">{child.name}</h3>
-  //         </div>
-  //       );
-  //     }
-  //   });
-  };
+};

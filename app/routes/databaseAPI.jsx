@@ -1,6 +1,3 @@
-import { response } from "express";
-import { data } from "@remix-run/node";
-import { resolveConfig } from "@remix-run/dev/dist/config";
 import { prisma } from "../utils/prisma.server";
 
 export const action = async ({ request }) => {

@@ -22,7 +22,8 @@ export default function RecursiveSideItemComponent({
       method: "POST",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({jackFrost: "heho heho"})
     })
     .then(res => res.json())
     .then(moreData => console.log(moreData))

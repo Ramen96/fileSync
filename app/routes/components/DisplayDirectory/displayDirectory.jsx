@@ -31,6 +31,26 @@ export default function DisplayDirectory({
 
 
   // get nodes
+  async function getChildNodes(idOfItemClicked) {
+    try {
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }, 
+        body: JSON.stringify({
+          currentNodeId: idOfItemClicked,
+          requestType: 'get_child_nodes'
+        })
+      }
+      const response = await fetch('/databaseApi', options)
+      const body = await response.json();
+      return body;
+    } catch (err) {
+      console.error(`error fetching child nodes: ${err}`);
+    }
+  }
+
   if (childrenOfCurrentNode !== null) {
     // childrenOfCurrentNode.map(e => console.log(e.metadata));
   }
@@ -135,7 +155,7 @@ export default function DisplayDirectory({
     childrenOfCurrentNode: childrenOfCurrentNode,
     showStateList: showStateList,
     setShowStateList: setShowStateList,
-    // getChildNodes: getChildNodes,
+    getChildNodes: getChildNodes,
     setCurrentNodeId: setCurrentNodeId,
     currentNodeId: currentNodeId,
     setForwardHistory: setForwardHistory,

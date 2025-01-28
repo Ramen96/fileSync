@@ -17,25 +17,10 @@ export default function RecursiveSideItemComponent({
     setBackHistory
   }) {
 
-  const testApi = async () => {
-    fetch('/databaseApi', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({jackFrost: "heho heho"})
-    })
-    .then(res => res.json())
-    .then(moreData => console.log(moreData))
-    .catch(error => console.error(`error fetching route ${error}`));
-  }
-
-  useEffect(() => {
-    testApi();
-  }, [])
-
   let isExpanded = false;
-  function handleDoubleClick(folderId) {
+
+  async function handleDoubleClick(folderId) {
+    console.log(await getChildNodes(folderId));
     if (isExpanded && folderId === currentNodeId) {
 
     }
@@ -62,7 +47,6 @@ export default function RecursiveSideItemComponent({
     }
   }
 
-
   if (!childrenOfCurrentNode) {
     return <h1>Loading...</h1>
   }
@@ -75,10 +59,10 @@ export default function RecursiveSideItemComponent({
         >
         <div 
           onClick={() => {
-            handleFolderClick(child.id);
+            handleFolderClick(child.metadata.id);
           }}
           onDoubleClick={() => {
-            // handleDoubleClick(child.id);
+            handleDoubleClick(child.metadata.id);
           }}
           >
           {isExpanded ? (
@@ -99,7 +83,7 @@ export default function RecursiveSideItemComponent({
             style={{ display: "block" }}
           >
           <RecursiveSideItemComponent
-            childrenOfCurrentNode={getChildNodes(child.id)}
+            childrenOfCurrentNode={getChildNodes(child.metadata.id)}
             showStateList={showStateList}
             setShowStateList={setShowStateList}
             getChildNodes={getChildNodes}

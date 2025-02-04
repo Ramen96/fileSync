@@ -22,8 +22,12 @@ export default function FolderTree({
   const [ nextChildNodes, setNextChildNodes ] = useState(null);
 
   const childNodes = async (id) => {
-    const children = await getChildNodes(id);
-    return children[0].children
+    try {
+      const children = await getChildNodes(id);
+      return children[0].children
+    } catch (err) {
+      console.error(`error fetching child nodes ${err}`);
+    }
   }
 
   async function handleDoubleClick(folderId) {

@@ -11,7 +11,7 @@ import {
   Upload,
   } from 'lucide-react';
 import UploadCard from './UploadCard/uploadCard';
-import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
+import FolderTree from './folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
 
@@ -24,11 +24,9 @@ export default function DisplayDirectory({
   childrenOfCurrentNode
  }) {
 
-
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
-
 
   // get nodes
   async function getChildNodes(idOfItemClicked) {
@@ -50,11 +48,6 @@ export default function DisplayDirectory({
       console.error(`error fetching child nodes: ${err}`);
     }
   }
-
-  if (childrenOfCurrentNode !== null) {
-    // childrenOfCurrentNode.map(e => console.log(e.metadata));
-  }
-
 
   // Nav buttons
   const handleNavClick = (direction) => {
@@ -151,7 +144,7 @@ export default function DisplayDirectory({
   const [isIcon, setIsIcon] = useState(true);
 
   // Component props 
-  const recursiveSideItemComponentProps = {
+  const folderTreeComponentProps = {
     childrenOfCurrentNode: childrenOfCurrentNode,
     showStateList: showStateList,
     setShowStateList: setShowStateList,
@@ -258,7 +251,7 @@ export default function DisplayDirectory({
               style={{"width": `${dimensions.width}px`}}
               className='dirTreeSideBar'>
                 <div className='sideItemWrapper'>
-                <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+                <FolderTree {...folderTreeComponentProps}/>
                 </div>
               <div className='handle'>
                 <div className='handle-gui'>
@@ -278,6 +271,7 @@ export default function DisplayDirectory({
             isIcon={isIcon}
             handleFolderClick={handleFolderClick}
             handleIdArrState={handleIdArrState}
+            getChildNodes={getChildNodes}
           />
         </div>
       </div>

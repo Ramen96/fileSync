@@ -49,7 +49,7 @@ export default function Folder({
       : 
         <div onClick={() => handleChecked()} className="rowWrapper mainBorder vc" onDoubleClick={() => {
           handleFolderClick(id);
-        }}>
+          }}>
           <div className="centerAllFlex width100">
             <img className="folderImgRow" src={folder} alt="folder" />
             <p className="itemName marginNone textStart">{name}</p>

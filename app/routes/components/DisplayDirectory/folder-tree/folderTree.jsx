@@ -5,7 +5,7 @@ import folderIconGray from "../../../../../assets/yellow-folder.svg";
 import file from "../../../../../assets/file2.svg";
 import "../displayDirectory.css";
 
-export default function RecursiveSideItemComponent({ 
+export default function FolderTree({ 
     childrenOfCurrentNode, 
     showStateList, 
     setShowStateList, 
@@ -17,10 +17,16 @@ export default function RecursiveSideItemComponent({
     setBackHistory
   }) {
 
-  let isExpanded = false;
+  // let isExpanded = false;
+  const [ isExpanded, setIsExpanded ] = useState(false);
+  const [ nextChildNodes, setNextChildNodes ] = useState(null);
+
+  const childNodes = async (id) => {
+    const children = await getChildNodes(id);
+    return children[0].children
+  }
 
   async function handleDoubleClick(folderId) {
-    console.log(await getChildNodes(folderId));
     if (isExpanded && folderId === currentNodeId) {
 
     }
@@ -29,7 +35,10 @@ export default function RecursiveSideItemComponent({
     setForwardHistory([]);
   }
 
-  function handleFolderClick(folderId) {
+  async function handleFolderClick(folderId) {
+    // const children = await childNodes(folderId);
+    setNextChildNodes(await childNodes(folderId));
+    setIsExpanded(!isExpanded);
     const isExpandedCheck = showStateList.includes(folderId);
     if (!isExpandedCheck) {
       setShowStateList(prevState => [...prevState, folderId]);
@@ -53,6 +62,7 @@ export default function RecursiveSideItemComponent({
 
   return childrenOfCurrentNode.map(child => {
     const isFolder = child.metadata?.is_folder === true;
+    // const updatedChildNodes = await childNodes()
     return isFolder ? (
       <React.Fragment 
         key={child.metadata.id}
@@ -82,8 +92,8 @@ export default function RecursiveSideItemComponent({
             className="sideFolderDropDown"
             style={{ display: "block" }}
           >
-          <RecursiveSideItemComponent
-            childrenOfCurrentNode={getChildNodes(child.metadata.id)}
+          <FolderTree
+            childrenOfCurrentNode={nextChildNodes}
             showStateList={showStateList}
             setShowStateList={setShowStateList}
             getChildNodes={getChildNodes}

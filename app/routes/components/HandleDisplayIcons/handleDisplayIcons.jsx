@@ -5,8 +5,11 @@ export default function HandleDisplayIcons({
   childrenOfCurrentNode,
   isIcon,
   handleFolderClick,
-  handleIdArrState
+  handleIdArrState,
+  getChildNodes
 }) {
+
+  
 
   if (!childrenOfCurrentNode) {
     return <h1>Loading...</h1>;

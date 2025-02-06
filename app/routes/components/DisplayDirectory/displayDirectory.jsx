@@ -19,7 +19,7 @@ export default function DisplayDirectory({
   currentNodeId,
   setCurrentNodeId,
   fileUpload,
-  childrenOfCurrentNode
+  childrenOfRootNode
  }) {
 
   // Forward and backward buttons
@@ -143,7 +143,7 @@ export default function DisplayDirectory({
 
   // Component props 
   const folderTreeComponentProps = {
-    childrenOfCurrentNode: childrenOfCurrentNode,
+    childrenOfRootNode: childrenOfRootNode,
     showStateList: showStateList,
     setShowStateList: setShowStateList,
     getChildNodes: getChildNodes,
@@ -181,7 +181,7 @@ export default function DisplayDirectory({
   const handleDeleteButton = () => {
     const ids = [];
     idArr.forEach(element => ids.push(element));
-    console.log(childrenOfCurrentNode);
+    console.log(childrenOfRootNode);
   }
 
   return (
@@ -265,7 +265,7 @@ export default function DisplayDirectory({
         }
         <div className={`width100 padding0 ${isIcon ? 'flexWrap' : ''}`}>
           <HandleDisplayIcons 
-            childrenOfCurrentNode={childrenOfCurrentNode}
+            childrenOfRootNode={childrenOfRootNode}
             isIcon={isIcon}
             handleFolderClick={handleFolderClick}
             handleIdArrState={handleIdArrState}

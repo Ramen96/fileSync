@@ -2,7 +2,7 @@ import Folder from "../DisplayDirectory/Folder/folder";
 import File from "../DisplayDirectory/File/file";
 
 export default function HandleDisplayIcons({ 
-  childrenOfCurrentNode,
+  childrenOfRootNode,
   isIcon,
   handleFolderClick,
   handleIdArrState,
@@ -11,10 +11,10 @@ export default function HandleDisplayIcons({
 
   
 
-  if (!childrenOfCurrentNode) {
+  if (!childrenOfRootNode) {
     return <h1>Loading...</h1>;
   }
-  return childrenOfCurrentNode.map(child => {
+  return childrenOfRootNode.map(child => {
     const isFolder = child.metadata?.is_folder === true;
     
     return isFolder ? (

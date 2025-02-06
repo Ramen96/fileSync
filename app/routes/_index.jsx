@@ -33,7 +33,7 @@ export async function loader() {
 
 export default function Index() {
   const [currentNodeId, setCurrentNodeId] = useState(null);
-  const [childrenOfCurrentNode, setChildrenOfCurrentNode] = useState(null);
+  const [childrenOfRootNode, setChildrenOfCurrentNode] = useState(null);
 
   const db = useLoaderData();
 
@@ -94,7 +94,7 @@ export default function Index() {
 
   // Component props
   const DisplayDirectoryProps = {
-    childrenOfCurrentNode: childrenOfCurrentNode,
+    childrenOfRootNode: childrenOfRootNode,
     setChildrenOfCurrentNode: setChildrenOfCurrentNode,
     fileUpload: fileUpload,
     currentNodeId: currentNodeId,

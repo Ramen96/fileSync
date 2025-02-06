@@ -7,7 +7,7 @@ import "../displayDirectory.css";
 
 
 export default function FolderTree({ 
-    childrenOfCurrentNode, 
+    childrenOfRootNode, 
     showStateList, 
     setShowStateList, 
     getChildNodes,
@@ -49,11 +49,11 @@ export default function FolderTree({
     }
   }
 
-  if (!childrenOfCurrentNode) {
+  if (!childrenOfRootNode) {
     return <h1>Loading...</h1>;
   }
 
-  return childrenOfCurrentNode.map(child => {
+  return childrenOfRootNode.map(child => {
     const isFolder = child.metadata?.is_folder === true;
     return isFolder ? (
       <React.Fragment key={child.metadata.id}>
@@ -75,7 +75,7 @@ export default function FolderTree({
         {isExpanded.has(child.metadata.id) && (
           <div className="sideFolderDropDown" style={{ display: "block" }}>
             <FolderTree
-              childrenOfCurrentNode={childNodesMap.get(child.metadata.id) || []}
+              childrenOfRootNode={childNodesMap.get(child.metadata.id) || []}
               showStateList={showStateList}
               setShowStateList={setShowStateList}
               getChildNodes={getChildNodes}

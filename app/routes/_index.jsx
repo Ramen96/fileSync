@@ -32,7 +32,7 @@ export async function loader() {
 }
 
 export default function Index() {
-  const [currentNodeId, setCurrentNodeId] = useState(null);
+  const [displayNodeId, setDisplayNodeId] = useState(null);
   const [childrenOfRootNode, setChildrenOfRootNode] = useState(null);
 
   const db = useLoaderData();
@@ -42,7 +42,7 @@ export default function Index() {
 
   useEffect(() => {
     setChildrenOfRootNode(childrenOfRoot);
-    setCurrentNodeId(rootNodeId);
+    setDisplayNodeId(rootNodeId);
   }, []);
 
   function fileUpload(event) {
@@ -61,7 +61,7 @@ export default function Index() {
           console.log('item in fileObject', fileObject);
 
           const fileInfo = {
-            parent_id: currentNodeId,  
+            parent_id: displayNodeId,  
           };
 
           // determine if it is a folder or file and parse path on backend to create nodes in db for each file.
@@ -97,13 +97,13 @@ export default function Index() {
     childrenOfRootNode: childrenOfRootNode,
     setChildrenOfRootNode: setChildrenOfRootNode,
     fileUpload: fileUpload,
-    currentNodeId: currentNodeId,
-    setCurrentNodeId: setCurrentNodeId
+    displayNodeId: displayNodeId,
+    setDisplayNodeId: setDisplayNodeId
   }
 
   const sidebarProps = {
     fileUpload: fileUpload,
-    currentNodeId: currentNodeId
+    displayNodeId: displayNodeId
   }
 
   return (

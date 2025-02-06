@@ -16,8 +16,8 @@ import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
 
 export default function DisplayDirectory({ 
-  currentNodeId,
-  setCurrentNodeId,
+  displayNodeId,
+  setDisplayNodeId,
   fileUpload,
   childrenOfRootNode
  }) {
@@ -35,7 +35,7 @@ export default function DisplayDirectory({
           "Content-Type": "application/json"
         }, 
         body: JSON.stringify({
-          currentNodeId: idOfItemClicked,
+          displayNodeId: idOfItemClicked,
           requestType: 'get_child_nodes'
         })
       }
@@ -53,20 +53,20 @@ export default function DisplayDirectory({
     const nextNodeId = forwardHistory[0];
 
     function moveBack() {
-      setForwardHistory([currentNodeId, ...forwardHistory]);
+      setForwardHistory([displayNodeId, ...forwardHistory]);
       setBackHistory(backHistory.slice(0, -1));
-      setCurrentNodeId(prevNodeId);
+      setDisplayNodeId(prevNodeId);
     }
 
     function moveForward() {
-      setBackHistory([...backHistory, currentNodeId]);
+      setBackHistory([...backHistory, displayNodeId]);
       setForwardHistory(forwardHistory.slice(1));
-      setCurrentNodeId(nextNodeId);
+      setDisplayNodeId(nextNodeId);
     }
 
     if (direction === 'backward') {
       if (prevNodeId !== undefined && prevNodeId !== null) {
-        if (currentNodeId !== constructDirTree.root.id) {
+        if (displayNodeId !== constructDirTree.root.id) {
           moveBack();
         }
       }
@@ -79,9 +79,9 @@ export default function DisplayDirectory({
   }
 
   const handleFolderClick = (folderId) => {
-      setBackHistory([...backHistory, currentNodeId]);
+      setBackHistory([...backHistory, displayNodeId]);
       setForwardHistory([]);
-      setCurrentNodeId(folderId);
+      setDisplayNodeId(folderId);
   }
 
   // Sidebar
@@ -147,8 +147,8 @@ export default function DisplayDirectory({
     showStateList: showStateList,
     setShowStateList: setShowStateList,
     getChildNodes: getChildNodes,
-    setCurrentNodeId: setCurrentNodeId,
-    currentNodeId: currentNodeId,
+    setDisplayNodeId: setDisplayNodeId,
+    displayNodeId: displayNodeId,
     setForwardHistory: setForwardHistory,
     forwardHistory: forwardHistory,
     backHistory: backHistory,
@@ -192,7 +192,7 @@ export default function DisplayDirectory({
       }
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
-          // setCurrentNodeId(constructDirTree.root.id)
+          // setDisplayNodeId(constructDirTree.root.id)
           setForwardHistory([]);
           setBackHistory([]);
           }}>

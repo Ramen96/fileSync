@@ -4,7 +4,7 @@ export const action = async ({ request }) => {
   try {
     const body  = await request.json();
     const requestType = body.requestType;
-    const currentNodeId = body.currentNodeId;
+    const displayNodeId = body.displayNodeId;
     const requestMethod = await request.method;
 
     if (requestMethod !== 'POST') {
@@ -14,7 +14,7 @@ export const action = async ({ request }) => {
     if (requestType === 'get_child_nodes') {
       const childNodes = await prisma.hierarchy.findMany({
         where: {
-          id: currentNodeId
+          id: displayNodeId
         }, 
         include: {
           children: {

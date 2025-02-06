@@ -33,7 +33,7 @@ export async function loader() {
 
 export default function Index() {
   const [currentNodeId, setCurrentNodeId] = useState(null);
-  const [childrenOfRootNode, setChildrenOfCurrentNode] = useState(null);
+  const [childrenOfRootNode, setChildrenOfRootNode] = useState(null);
 
   const db = useLoaderData();
 
@@ -41,7 +41,7 @@ export default function Index() {
   const rootNodeId = db.id
 
   useEffect(() => {
-    setChildrenOfCurrentNode(childrenOfRoot);
+    setChildrenOfRootNode(childrenOfRoot);
     setCurrentNodeId(rootNodeId);
   }, []);
 
@@ -95,7 +95,7 @@ export default function Index() {
   // Component props
   const DisplayDirectoryProps = {
     childrenOfRootNode: childrenOfRootNode,
-    setChildrenOfCurrentNode: setChildrenOfCurrentNode,
+    setChildrenOfRootNode: setChildrenOfRootNode,
     fileUpload: fileUpload,
     currentNodeId: currentNodeId,
     setCurrentNodeId: setCurrentNodeId

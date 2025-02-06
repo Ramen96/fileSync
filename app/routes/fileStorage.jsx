@@ -1,130 +1,237 @@
+import { Dir, mkdir } from "node:fs";
 import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import { get } from "node:https";
+import { FolderMinus } from "lucide-react";
+
+const joinPath = (arr) => path.join(...arr);
 
 export const action = async ({ request }) => {
-  const pathTraversalDetection = (path) => {
-    const traversalPatterns = [
-      "../",
-      "%2e%2e%2f",
-      "%2e%2e/",
-      "..%2f",
-      "%2e%2e%5c",
-      "%2e%2e'",
-      "..%5c",
-      "%252e%252e%255c",
-      "..%255c",
-      "..",
-      " / ",
-      "..%c0%af",
-      "..%c1%9c",
-    ];
+  try {
+    const parseRequest = await request.formData();
+    const formData = Object.fromEntries(parseRequest);
+    const metadata = JSON.parse(formData.metadata);
 
-    let traversalDetection = undefined;
+    const pathTraversalDetection = (activePath) => {
+      const traversalPatterns = [
+        "../", "%2e%2e%2f", "%2e%2e/", "..%2f", "%2e%2e%5c",
+        "%2e%2e'", "..%5c", "%252e%252e%255c", "..%255c",
+        "..", " / ", "..%c0%af", "..%c1%9c",
+      ];
+      return traversalPatterns.some(pattern => activePath.includes(pattern));
+    };
 
-    for (let i = 0; i < traversalPatterns.length; i++) {
-      let traversalState = path.includes(traversalPatterns[i]);
-      if (traversalState === true) {
-        traversalDetection = true;
-        break;
-      } else {
-        traversalDetection = false;
+    // Check paths for traversal attempts
+    for (const item of metadata) {
+      if (pathTraversalDetection(item.webkitRelativePath)) {
+        console.error('Path traversal detection flagged: ', item.webkitRelativePath);
+        return new Response(JSON.stringify({ error: 'Invalid path' }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
     }
-    return traversalDetection;
-  };
 
-  const formData = await request.formData();
-  const formDataObject = Object.fromEntries(formData);
-  const webKitRelitivePath = [];
-
-  for (let file in formDataObject) {
-    if (formDataObject[file] instanceof File) {
-      const relitivePath = formDataObject[file].name;
-      webKitRelitivePath.push(relitivePath);
-    } else {
-      throw new Error("Error: Not a file");
-    }
-  }
-
-  const itteratePaths = () => {
-    let pathSafe = false;
-    for (let i = 0; i < webKitRelitivePath.length; i++) {
-      const path = webKitRelitivePath[i];
-      if (pathTraversalDetection(path)) {
-        pathSafe = false;
-        throw new Error("Warning: path traversal is true.");
-      } else {
-        pathSafe = true;
-      }
-    }
-    return pathSafe;
-  };
-
-  if (itteratePaths()) {
-    for (let file in formDataObject) {
-      if (formDataObject[file] instanceof File) {
-        const content = await formDataObject[file].arrayBuffer();
-        const fileRelitvePath = formDataObject[file].name;
-        const fileName = formDataObject[file].name.slice(fileRelitvePath.lastIndexOf("/") + 1, fileRelitvePath.length);
-        const filePath = path.join("./cloud", fileRelitvePath);
-        const fileType = formDataObject[file].type;
-
-        const pathExists = async () => {
-          try {
-            await fs.access(filePath);
-            return false;
-          } catch (err) {
-            if (err.code === "ENOENT") {
-              return true;
-            } else {
-              throw err;
+    const queryWebkitRelativePathChunk = async (parentID, currentArrElementName) => {
+      if (currentArrElementName === './cloud') currentArrElementName = 'Root';
+      const result = await prisma.metadata.findMany({
+        where: {
+          name: currentArrElementName,
+          hierarchy: {
+            is: {
+              parent_id: parentID
             }
           }
-        };
+        },
+        include: {
+          hierarchy: true
+        }
+      });
+      return result;
+    };
 
-        const writeToDb = async () => {
-          await prisma.file_data.create({
+    const checkIfPathExists = async (activePath) => {
+      try {
+        await fs.access(activePath);
+        return true;
+      } catch (err) {
+        if (err.code === "ENOENT") return false;
+        throw err;
+      }
+    };
+
+    const saveFolder = async (activePath, fileType, isFolder) => {
+
+      const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
+        if (chunkIsFolder) {
+          const query = await prisma.metadata.create({
             data: {
-              relitive_path: fileRelitvePath,
-              file_name: fileName,
+              name: currentChunk,
+              is_folder: true,
+              created_at: new Date(),
+              hierarchy: {
+                create: {
+                  parent_id: parentId
+                }
+              }
+            }
+          });
+          return query;
+        } else {
+          const query = await prisma.metadata.create({
+            data: {
+              name: currentChunk,
+              is_folder: false,
+              created_at: new Date(),
               file_type: fileType,
-              save_date: new Date()
+              hierarchy: {
+                create: {
+                  parent_id: parentId
+                }
+              }
             }
           })
+          return query;
+        }
+      }
+
+      if (typeof isFolder !== "boolean") {
+        console.error('Error: isFolder param is not a boolean value');
+        return new Response(JSON.stringify({ error: "isFolder param is not a boolean value" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      try {
+        const checkingPath = await checkIfPathExists(activePath);
+        if (checkingPath) throw Error("File path already exists");
+      } catch (e) {
+        console.error(`Error checking path: ${e}`);
+      }
+      
+      let splitPath = activePath.split('/');
+      splitPath.unshift('Root');
+      try {
+        let currentParentId = null;
+        for (let i = 0; splitPath.length > i; i++) {
+          let reconstructedPathArr = [];
+          const currentChunkName = splitPath[i];
+
+          try {
+            const chunkQuery = await queryWebkitRelativePathChunk(currentParentId, currentChunkName);
+
+            async function handleWriteChunkToDB(chunkIsFolder) {
+              try {
+                const res = await writeChunkToDB(currentChunkName, chunkIsFolder, currentParentId);
+                currentParentId = res.id; 
+              } catch (err) {
+                console.error(`Error writing chunk to DB: ${err}`);
+                throw err;
+              }
+            }
+
+            if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
+              const currentChunkIsFolder = splitPath.length - 1 !== i;
+              await handleWriteChunkToDB(currentChunkIsFolder);
+            } else {
+              currentParentId = chunkQuery[0].hierarchy.id;
+            }
+
+            } catch (err) {
+              if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
+            }
+            splitPath.forEach(e => reconstructedPathArr.push(e));
+            reconstructedPathArr.shift();
+            const reconstructedPath = joinPath(reconstructedPathArr);
+            try {
+              const pathExists = await checkIfPathExists(reconstructedPath);
+              if (!pathExists) {
+                for (let i in formData) {
+                  if (formData[i] instanceof File) {
+                    if (formData[i].name === reconstructedPath) {
+                      try {
+                        const fileBuffer = Buffer.from(await formData[i].arrayBuffer());
+                        await fs.mkdir(path.dirname('cloud/' + reconstructedPath), { recursive: true });
+                        await fs.writeFile('cloud/' + reconstructedPath, fileBuffer);
+                      } catch (err) {
+                        console.error(`Error writing file: ${err}`);
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (err) {
+              if (err)
+              console.error(`Error checking if path exists ${err}`);
+            }
+          }
+        } catch (err) {
+          console.error(`Error checking path: ${err}`);
+        }
+    };
+
+
+    const saveFile = async (fileName, fileType, parentId, file) => {
+
+      const getRootId = await queryWebkitRelativePathChunk(null, 'Root');
+      const rootId = getRootId[0].hierarchy.id;
+
+        if (parentId === null) parentId = rootId;
+
+        try {
+          await prisma.metadata.create({
+            data: {
+              name: fileName,
+              is_folder: false,
+              created_at: new Date(),
+              file_type: fileType,
+              hierarchy: {
+                create: {
+                  parent_id: parentId
+                }
+              }
+            }
+          });
+        } catch (err) {
+          console.error(`error saving file metadata to database ${err}`);
+          throw err;
         }
 
-        pathExists()
-          .then(async (inValidPath) => {
-            if (inValidPath) {
-              console.log("path dose not exist");
-              console.log("writing files");
-              try {
-                await fs.mkdir(path.dirname(filePath), { recursive: true });
-                await fs.writeFile(filePath, Buffer.from(content));
-                await writeToDb();
-              } catch (err) {
-                console.log(err);
-                throw new Error(`Failed to write file ${fileRelitvePath}`);
-              }
-            } else {
-              console.log("file already exists");
-            }
-          })
-          .catch((err) => {
-            console.error("error checking directory", err);
-          });
+        try {
+          await fs.writeFile('cloud/' + fileName, file);
+          console.log(`File saved successfully ${'cloud/' + fileName}`);
+        } catch (err) {
+          console.error(`error saving file to filesystem ${err}`);
+        }
+    };
+
+    for (const item of metadata) {
+      const { parent_id, webkitRelativePath, name, type, is_folder } = item;
+
+      if (!is_folder) {
+        for (let i in formData) {
+          if (formData[i] instanceof File) {
+            const fileBuffer = Buffer.from(await formData[i].arrayBuffer());
+            await saveFile(name, type, parent_id, fileBuffer);
+          }
+        }
       } else {
-        throw new Error("Error: Not a file");
+          await saveFolder(webkitRelativePath, type, is_folder);
       }
     }
-  }
 
-  const placehodler = {};
-  return new Response(JSON.stringify(placehodler), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+
+  } catch (error) {
+    console.error('Action error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
 };

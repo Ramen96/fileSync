@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { DirectoryTree } from "../../../utils/DataStructures/directoryTree";
 import {
   ChevronLeft, 
   ChevronRight,
@@ -12,80 +11,45 @@ import {
   Upload,
   } from 'lucide-react';
 import UploadCard from './UploadCard/uploadCard';
-import File from "./File/file";
-import Folder from "./Folder/folder";
-import RecursiveSideItemComponent from './recursive-side-item-component/recursiveSideItemComponent';
+import FolderTree from './folder-tree/folderTree';
+import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
 
-export default function DisplayDirectory({ files }) {
-  // ###########################################
-  // #### SECTION: Create  data structure ######
-  // ###########################################
+export default function DisplayDirectory({ 
+  hierarchy,
+  metadata,
+  currentNodeId,
+  setCurrentNodeId,
+  fileUpload,
+  childrenOfCurrentNode
+ }) {
 
-  // create tree data set from db and memoize it.
-  const constructDirTree = useMemo(() => {
-    if (!files || files.length === 0) return null;
-
-    const tree = new DirectoryTree();
-
-    // Problem: The db has no ids for folders only files. Folders are represented by strings for the relitive path 
-    // Why this is a problem: A method is needed to be able to delete files/folders and create/delete empty folders. 
-    
-    // Solution: 
-
-    for (let i = 0; i < files.length; i++) {
-      // const dbId = files[i].id;
-      const path = files[i].relitive_path;
-      const type = files[i].file_type === 'folder' ? 'folder' : 'file';
-
-      try {
-        tree.addNodeByPath(path, type)
-      } catch (error) {
-        console.error(`Error adding path ${path}: ${error.message}`);
-      }
-    }
-    return tree;
-  }, [files]);
-
-  console.log(constructDirTree);
-
-  // Setting up states and root node id
-  const [currentNodeId, setCurrentNodeId] = useState(null);
+  // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
 
-  useEffect(() => {
-    if (constructDirTree) {
-      setCurrentNodeId(constructDirTree.root.id);
+  // get nodes
+  async function getChildNodes(idOfItemClicked) {
+    try {
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }, 
+        body: JSON.stringify({
+          currentNodeId: idOfItemClicked,
+          requestType: 'get_child_nodes'
+        })
+      }
+      const response = await fetch('/databaseApi', options)
+      const body = await response.json();
+      return body;
+    } catch (err) {
+      console.error(`error fetching child nodes: ${err}`);
     }
-  }, [constructDirTree]);
-
-  // ###########################################
-  // ############## SECTION: AJAX ##############
-  // ###########################################
-
-  if (!files || files.length === 0) {
-    return <h1 style={{ color: "white" }}>No Files (files is {JSON.stringify(files)})</h1>;
-  }
-  if (!constructDirTree) {
-    return <h1 style={{ color: "white" }}>Loading...</h1>;
   }
 
-  // ###########################################
-  // ######### SECTION: get nodes ##############
-  // ###########################################
-
-  const currentNode = constructDirTree.getNodeById(currentNodeId);
-  const childrenOfCurrentNode = currentNode ? currentNode.children : [];
-  const rootNode = constructDirTree.root.children;
-  const getChildNodes = (id) => {
-    return constructDirTree.getChildNodebyCurrentNodeId(id)
-  }
-
-  // ###########################################
-  // ######### SECTION: Nav buttons ############
-  // ###########################################
-
+  // Nav buttons
   const handleNavClick = (direction) => {
     const prevNodeId = backHistory[backHistory.length - 1];
     const nextNodeId = forwardHistory[0];
@@ -122,17 +86,12 @@ export default function DisplayDirectory({ files }) {
       setCurrentNodeId(folderId);
   }
 
-  // ###########################################
-  // ########### SECTION: Sidebar ##############
-  // ###########################################
-
+  // Sidebar
   const [showStateList ,setShowStateList] = useState([]);
   const [showSideBar, setShowSideBar] = useState(true);
 
-  // ##########################################
-  // ########### SECTION: Resize ##############
-  // ##########################################
 
+  // Resize sidebar
   const [dimensions, setDimensions] = useState({
     width: 250,
   });
@@ -180,17 +139,13 @@ export default function DisplayDirectory({ files }) {
 
   }, [startX, isDragging]);
 
-  // ##########################################
-  // ########### SECTION: Icon/row ############
-  // ##########################################
+
+  // Display files and folders as icons/rows
   const [isIcon, setIsIcon] = useState(true);
 
-  // ###########################################
-  // ####### SECTION: Component props ##########
-  // ###########################################
-
-  const recursiveSideItemComponentProps = {
-    childrenOfCurrentNode: rootNode,
+  // Component props 
+  const folderTreeComponentProps = {
+    childrenOfCurrentNode: childrenOfCurrentNode,
     showStateList: showStateList,
     setShowStateList: setShowStateList,
     getChildNodes: getChildNodes,
@@ -202,10 +157,7 @@ export default function DisplayDirectory({ files }) {
     setBackHistory: setBackHistory
   }
 
-
-  // ###########################################
-  // ######### SECTION: Upload Card ############
-  // ###########################################
+  // Upload Card
   const [displayUploadCard, setDisplayUploadCard] = useState(false);
 
   const handleUploadCardState = () => {
@@ -213,13 +165,11 @@ export default function DisplayDirectory({ files }) {
   }
 
   const uploadCardProps = { 
-    handleUploadCardState: handleUploadCardState
+    handleUploadCardState: handleUploadCardState,
+    fileUpload: fileUpload
   }
 
-  // ###########################################
-  // ######## SECTION: Delete button ###########
-  // ###########################################
-
+  // Delete button
   const [idArr, setIdArr] = useState([]);
 
   const handleIdArrState = (checkState, uuid) => {
@@ -233,15 +183,8 @@ export default function DisplayDirectory({ files }) {
   const handleDeleteButton = () => {
     const ids = [];
     idArr.forEach(element => ids.push(element));
-
-    // need to create class method to delete remove node from data structure
-    // also might need to come up with a different name for uuids to keep db id and class id seperate
-    // console.log(constructDirTree.removeNodebyId(ids));
-    // idArr.forEach(element => constructDirTree.removeNodebyId(element));
     console.log(childrenOfCurrentNode);
   }
-
-  // console.log(constructDirTree);
 
   return (
     <>
@@ -251,7 +194,7 @@ export default function DisplayDirectory({ files }) {
       }
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
-          setCurrentNodeId(constructDirTree.root.id)
+          // setCurrentNodeId(constructDirTree.root.id)
           setForwardHistory([]);
           setBackHistory([]);
           }}>
@@ -300,6 +243,7 @@ export default function DisplayDirectory({ files }) {
         </div>
       </div>
       <div className='mainWindowWrapper prevent-select'>
+        
         {showSideBar
           ? 
             <div 
@@ -307,7 +251,7 @@ export default function DisplayDirectory({ files }) {
               style={{"width": `${dimensions.width}px`}}
               className='dirTreeSideBar'>
                 <div className='sideItemWrapper'>
-                <RecursiveSideItemComponent {...recursiveSideItemComponentProps}/>
+                <FolderTree {...folderTreeComponentProps}/>
                 </div>
               <div className='handle'>
                 <div className='handle-gui'>
@@ -321,54 +265,15 @@ export default function DisplayDirectory({ files }) {
             <div style={{"display": "none"}}>
             </div>
         }
-        {isIcon
-          ? 
-          <div className='width100 padding0 flexWrap'>
-            {childrenOfCurrentNode.map(child => 
-              child.type === 'folder' ? (
-                <Folder 
-                  key={child.id}
-                  name={child.name}
-                  id={child.id}
-                  handleFolderClick={handleFolderClick}
-                  isIcon={isIcon}
-                  handleIdArrState={handleIdArrState}
-                />
-              ) : (
-                <File
-                  key={child.id}
-                  name={child.name}
-                  isIcon={isIcon}
-                  id={child.id}
-                  handleIdArrState={handleIdArrState}
-                />
-              )
-            )}
-          </div>
-          :
-          <div className='width100 padding0'>
-            {childrenOfCurrentNode.map(child => 
-              child.type === 'folder' ? (
-                <Folder 
-                  key={child.id}
-                  name={child.name}
-                  id={child.id}
-                  handleFolderClick={handleFolderClick}
-                  isIcon={isIcon}
-                  handleIdArrState={handleIdArrState}
-                />
-              ) : (
-                <File
-                  key={child.id}
-                  name={child.name}
-                  isIcon={isIcon}
-                  id={child.id}
-                  handleIdArrState={handleIdArrState}
-                />
-              )
-            )}
-          </div>
-        }
+        <div className={`width100 padding0 ${isIcon ? 'flexWrap' : ''}`}>
+          <HandleDisplayIcons 
+            childrenOfCurrentNode={childrenOfCurrentNode}
+            isIcon={isIcon}
+            handleFolderClick={handleFolderClick}
+            handleIdArrState={handleIdArrState}
+            getChildNodes={getChildNodes}
+          />
+        </div>
       </div>
     </>
   );

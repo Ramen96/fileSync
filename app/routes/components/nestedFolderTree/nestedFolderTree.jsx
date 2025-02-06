@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function NestedFolderTree() {
-  return(
+  return (
     <h1>element</h1>
   )
 }

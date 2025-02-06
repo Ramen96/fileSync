@@ -9,7 +9,6 @@ const searchIcon = "../assets/search.svg";
 
 
 export async function loader() {
-  // ToDo: see if there is a way to query prisma and include the children of root in the query
   try {
     const initRoot = await prisma.hierarchy.findFirst({
       where: {
@@ -33,29 +32,18 @@ export async function loader() {
 }
 
 export default function Index() {
-  // need to move state management for nodes here.
   const [currentNodeId, setCurrentNodeId] = useState(null);
   const [childrenOfCurrentNode, setChildrenOfCurrentNode] = useState(null);
 
-  // pulling from db need to create data structure and memoize it
   const db = useLoaderData();
-  // const metadata = db.metadata;
-  // const hierarchy = db.hierarchy;
+
   const childrenOfRoot = db.children;
   const rootNodeId = db.id
-  // console.log(`rootNodeId: ${childrenOfRoot}`);
-  
-  // initialize root node and its children with state
+
   useEffect(() => {
     setChildrenOfCurrentNode(childrenOfRoot);
     setCurrentNodeId(rootNodeId);
   }, []);
-
-  // 1. create function that takes currentNodeId state if null default to rootNodeId.
-  // 2. root of data structure will be currentNodeId/rootNodeId
-  // 3. itterate through hierarchy to find ids with parrent ids matching currentNodeId/rootNodeId
-  // 4. for each match create new child node in data structure
-  // 5. once compleate memoize data structure
 
   function fileUpload(event) {
     const file = event.target.files;
@@ -76,7 +64,7 @@ export default function Index() {
             parent_id: currentNodeId,  
           };
 
-          // determine if it is a folder or file and parce path on backend to create nodes in db for each file.
+          // determine if it is a folder or file and parse path on backend to create nodes in db for each file.
           if (fileObject.webkitRelativePath.length === 0) {
             fileInfo.is_folder = false;
           } else if (fileObject.webkitRelativePath.length > 0) {
@@ -106,10 +94,8 @@ export default function Index() {
 
   // Component props
   const DisplayDirectoryProps = {
-    // metadata: metadata,
-    // hierarchy: hierarchy,
     childrenOfCurrentNode: childrenOfCurrentNode,
-    setChildrenOfCurrentNode, setChildrenOfCurrentNode,
+    setChildrenOfCurrentNode: setChildrenOfCurrentNode,
     fileUpload: fileUpload,
     currentNodeId: currentNodeId,
     setCurrentNodeId: setCurrentNodeId

@@ -16,8 +16,6 @@ import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
 
 export default function DisplayDirectory({ 
-  hierarchy,
-  metadata,
   currentNodeId,
   setCurrentNodeId,
   fileUpload,

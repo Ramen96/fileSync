@@ -1,6 +1,6 @@
 import { data } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";
 import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";

@@ -55,20 +55,22 @@ export default function DisplayDirectory({
     function moveBack() {
       setForwardHistory([displayNodeId, ...forwardHistory]);
       setBackHistory(backHistory.slice(0, -1));
-      setDisplayNodeId(prevNodeId);
+      // setDisplayNodeId(prevNodeId);
+      updateDisplayNodes(prevNodeId);
     }
 
     function moveForward() {
       setBackHistory([...backHistory, displayNodeId]);
       setForwardHistory(forwardHistory.slice(1));
-      setDisplayNodeId(nextNodeId);
+      // setDisplayNodeId(nextNodeId);
+      updateDisplayNodes(nextNodeId);
     }
 
     if (direction === 'backward') {
       if (prevNodeId !== undefined && prevNodeId !== null) {
-        if (displayNodeId !== constructDirTree.root.id) {
+        // if (displayNodeId !== constructDirTree.root.id) {
           moveBack();
-        }
+        // }
       }
       
     } else if (direction === 'forward') {
@@ -81,7 +83,7 @@ export default function DisplayDirectory({
   const handleFolderClick = (folderId) => {
       setBackHistory([...backHistory, displayNodeId]);
       setForwardHistory([]);
-      setDisplayNodeId(folderId);
+      updateDisplayNodes(folderId);
   }
 
   // Sidebar
@@ -215,9 +217,7 @@ export default function DisplayDirectory({
       }
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
-          // setDisplayNodeId(constructDirTree.root.id)
-          setForwardHistory([]);
-          setBackHistory([]);
+          setCurrentDisplayNodes(childrenOfRootNode);
           }}>
           <Home />
         </button>

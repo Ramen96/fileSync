@@ -7,35 +7,17 @@ export default function HandleDisplayIcons({
   isIcon,
   handleFolderClick,
   handleIdArrState,
-  dynamicDisplayNodeIDs, 
-  setDynamicDisplayNodesIDs 
+  currentDisplayNodes,
+  setCurrentDisplayNodes,
+  updateDisplayNodes
 }) {
 
-  const [ currentDisplayNodes, setCurrentDisplayNodes ] = useState(null);
 
   useEffect(() => {
     setCurrentDisplayNodes(childrenOfRootNode);
   }, [childrenOfRootNode]);
   
-  const updateDisplayNodes = async (id) => {
-    try {
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        }, 
-        body: JSON.stringify({
-          displayNodeId: id,
-          requestType: 'get_child_nodes'
-        })
-      }
-      const response = await fetch('/databaseApi', options)
-      const body = await response.json();
-      setCurrentDisplayNodes(body[0].children);
-    } catch (err) {
-      console.error(`error updating nodes for currentDisplayNodes ${err}`);
-    }
-  }
+
 
   if (!currentDisplayNodes) {
     return <h1>Loading...</h1>

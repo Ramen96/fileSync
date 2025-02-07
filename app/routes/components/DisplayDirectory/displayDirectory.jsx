@@ -185,7 +185,27 @@ export default function DisplayDirectory({
   }
 
   // Updating display icon nodes
-  const [ dynamicDisplayNodeIDs, setDynamicDisplayNodesIDs ] = useState(new Set());
+  const [ currentDisplayNodes, setCurrentDisplayNodes ] = useState(null);
+
+  const updateDisplayNodes = async (id) => {
+    try {
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }, 
+        body: JSON.stringify({
+          displayNodeId: id,
+          requestType: 'get_child_nodes'
+        })
+      }
+      const response = await fetch('/databaseApi', options)
+      const body = await response.json();
+      setCurrentDisplayNodes(body[0].children);
+    } catch (err) {
+      console.error(`error updating nodes for currentDisplayNodes ${err}`);
+    }
+  }
 
   return (
     <>
@@ -267,8 +287,9 @@ export default function DisplayDirectory({
         }
         <div className={`width100 padding0 ${isIcon ? 'flexWrap' : ''}`}>
           <HandleDisplayIcons 
-            dynamicDisplayNodeIDs={dynamicDisplayNodeIDs}
-            setDynamicDisplayNodesIDs={setDynamicDisplayNodesIDs}
+            updateDisplayNodes={updateDisplayNodes}
+            currentDisplayNodes={currentDisplayNodes}
+            setCurrentDisplayNodes={setCurrentDisplayNodes}
             childrenOfRootNode={childrenOfRootNode}
             isIcon={isIcon}
             handleFolderClick={handleFolderClick}

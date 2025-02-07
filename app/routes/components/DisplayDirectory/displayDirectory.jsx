@@ -54,30 +54,39 @@ export default function DisplayDirectory({
 
     function moveBack() {
       setForwardHistory([displayNodeId, ...forwardHistory]);
-      setBackHistory(backHistory.slice(0, -1));
+      setBackHistory(prevState => prevState.slice(0, -1));
+      console.log(`forward history ${forwardHistory}`);
+      console.log(`backward history ${backHistory}`);
       // setDisplayNodeId(prevNodeId);
       updateDisplayNodes(prevNodeId);
     }
 
     function moveForward() {
       setBackHistory([...backHistory, displayNodeId]);
-      setForwardHistory(forwardHistory.slice(1));
+      setForwardHistory(prevState => prevState.slice(1));
+      console.log(`forward history ${forwardHistory}`);
+      console.log(`backward history ${backHistory}`);
       // setDisplayNodeId(nextNodeId);
       updateDisplayNodes(nextNodeId);
     }
 
     if (direction === 'backward') {
-      if (prevNodeId !== undefined && prevNodeId !== null) {
-        // if (displayNodeId !== constructDirTree.root.id) {
-          moveBack();
-        // }
-      }
-      
+      moveBack();
     } else if (direction === 'forward') {
-      if (nextNodeId !== undefined) {
-        moveForward();
-      }
+      moveForward();
     }
+    // if (direction === 'backward') {
+    //   if (prevNodeId !== undefined && prevNodeId !== null) {
+    //     // if (displayNodeId !== constructDirTree.root.id) {
+    //       moveBack();
+    //     // }
+    //   }
+      
+    // } else if (direction === 'forward') {
+    //   if (nextNodeId !== undefined) {
+    //     moveForward();
+    //   }
+    // }
   }
 
   const handleFolderClick = (folderId) => {

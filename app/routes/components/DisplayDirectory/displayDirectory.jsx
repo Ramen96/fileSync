@@ -184,6 +184,9 @@ export default function DisplayDirectory({
     console.log(childrenOfRootNode);
   }
 
+  // Updating display icon nodes
+  const [ dynamicDisplayNodeIDs, setDynamicDisplayNodesIDs ] = useState(new Set());
+
   return (
     <>
       {displayUploadCard ?
@@ -260,11 +263,12 @@ export default function DisplayDirectory({
               </div>
             </div> 
           :
-            <div style={{"display": "none"}}>
-            </div>
+            <div style={{"display": "none"}}></div>
         }
         <div className={`width100 padding0 ${isIcon ? 'flexWrap' : ''}`}>
           <HandleDisplayIcons 
+            dynamicDisplayNodeIDs={dynamicDisplayNodeIDs}
+            setDynamicDisplayNodesIDs={setDynamicDisplayNodesIDs}
             childrenOfRootNode={childrenOfRootNode}
             isIcon={isIcon}
             handleFolderClick={handleFolderClick}

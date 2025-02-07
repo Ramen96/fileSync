@@ -6,6 +6,7 @@ export default function Folder({
   name,
   id, 
   handleFolderClick,
+  updateDisplayNodes,
   isIcon,
   handleIdArrState
 }) {
@@ -27,6 +28,7 @@ export default function Folder({
           onClick={() => handleChecked()}
           className="conA" onDoubleClick={() => {
           handleFolderClick(id);
+          updateDisplayNodes(id);
         }}>
           <div 
             className="conB justifyStart">

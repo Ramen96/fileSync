@@ -53,21 +53,14 @@ export default function DisplayDirectory({
     const nextNodeId = forwardHistory[0];
 
     function moveBack() {
-      setForwardHistory([displayNodeId, ...forwardHistory]);
-      setBackHistory(prevState => prevState.slice(0, -1));
-      console.log(`forward history ${forwardHistory}`);
-      console.log(`backward history ${backHistory}`);
-      // setDisplayNodeId(prevNodeId);
+      setForwardHistory([forwardHistory, ...forwardHistory]);
+      console.log(prevNodeId);
       updateDisplayNodes(prevNodeId);
     }
 
     function moveForward() {
-      setBackHistory([...backHistory, displayNodeId]);
-      setForwardHistory(prevState => prevState.slice(1));
-      console.log(`forward history ${forwardHistory}`);
-      console.log(`backward history ${backHistory}`);
-      // setDisplayNodeId(nextNodeId);
-      updateDisplayNodes(nextNodeId);
+      setBackHistory([backHistory, ...backHistory]);
+
     }
 
     if (direction === 'backward') {
@@ -75,25 +68,28 @@ export default function DisplayDirectory({
     } else if (direction === 'forward') {
       moveForward();
     }
-    // if (direction === 'backward') {
-    //   if (prevNodeId !== undefined && prevNodeId !== null) {
-    //     // if (displayNodeId !== constructDirTree.root.id) {
-    //       moveBack();
-    //     // }
-    //   }
-      
-    // } else if (direction === 'forward') {
-    //   if (nextNodeId !== undefined) {
-    //     moveForward();
-    //   }
-    // }
   }
 
   const handleFolderClick = (folderId) => {
-      setBackHistory([...backHistory, displayNodeId]);
+    if (backHistory.length === 0) {
+      setBackHistory(prevState => {  
+        const newState = [...prevState, displayNodeId, folderId];
+        console.log(newState);
+        return newState;
+      });
+      
+    } else {
+      // setBackHistory([...backHistory, folderId]);
+      setBackHistory(prevState => [...prevState, folderId]);
+      // console.log(backHistory)
       setForwardHistory([]);
       updateDisplayNodes(folderId);
+    }
   }
+
+  useEffect(() => {
+    console.log(backHistory);
+  }, [backHistory]);
 
   // Sidebar
   const [showStateList ,setShowStateList] = useState([]);

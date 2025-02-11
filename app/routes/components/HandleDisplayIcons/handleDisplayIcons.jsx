@@ -18,9 +18,9 @@ export default function HandleDisplayIcons({
   }, [childrenOfRootNode]);
   
 
-  useEffect(() => {
-    setCurrentDisplayNodes(currentDisplayNodes)
-  }, [currentDisplayNodes])
+  // useEffect(() => {
+  //   setCurrentDisplayNodes(currentDisplayNodes)
+  // }, [currentDisplayNodes])
 
   if (!currentDisplayNodes) {
     return <h1>Loading...</h1>

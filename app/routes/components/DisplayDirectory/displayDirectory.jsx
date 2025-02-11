@@ -19,7 +19,8 @@ export default function DisplayDirectory({
   displayNodeId,
   setDisplayNodeId,
   fileUpload,
-  childrenOfRootNode
+  childrenOfRootNode,
+  rootNodeId
  }) {
 
   // Forward and backward buttons
@@ -49,24 +50,23 @@ export default function DisplayDirectory({
 
   // Nav buttons
   const handleNavClick = (direction) => {
-    const prevNodeId = backHistory[backHistory.length - 1];
-    const nextNodeId = forwardHistory[0];
-
-    function moveBack() {
-      setForwardHistory([forwardHistory, ...forwardHistory]);
-      console.log(prevNodeId);
-      updateDisplayNodes(prevNodeId);
-    }
-
-    function moveForward() {
-      setBackHistory([backHistory, ...backHistory]);
-
-    }
-
-    if (direction === 'backward') {
-      moveBack();
-    } else if (direction === 'forward') {
-      moveForward();
+    if (direction === 'backward' && backHistory.length > 0) {
+      const prevNodeId = backHistory[backHistory.length - 1];
+      setBackHistory(prev => prev.slice(0, -1));
+      setDisplayNodeId(prevNodeId);
+      prevNodeId === rootNodeId ? 
+        console.log('heho heho')
+      : setForwardHistory(prev => [displayNodeId, ...prev]);
+      updateDisplayNodes(prevNodeId); 
+    } else if (direction === 'forward' && forwardHistory.length > 0) {
+      const nextNodeId = forwardHistory[0];
+      setForwardHistory(prev => prev.slice(1));
+      setBackHistory(prev => [...prev, displayNodeId]);
+      updateDisplayNodes(nextNodeId);
+    } else if (forwardHistory.length === 1) {
+      console.log('heho heho');
+    } else {
+      console.log('heho heho');
     }
   }
 
@@ -74,22 +74,20 @@ export default function DisplayDirectory({
     if (backHistory.length === 0) {
       setBackHistory(prevState => {  
         const newState = [...prevState, displayNodeId, folderId];
-        console.log(newState);
         return newState;
       });
       
     } else {
-      // setBackHistory([...backHistory, folderId]);
       setBackHistory(prevState => [...prevState, folderId]);
-      // console.log(backHistory)
       setForwardHistory([]);
-      updateDisplayNodes(folderId);
     }
+    updateDisplayNodes(folderId);
   }
 
   useEffect(() => {
-    console.log(backHistory);
-  }, [backHistory]);
+    console.log(`forwardHistory: `, forwardHistory);
+    console.log('backHistory: ', backHistory);
+  }, [forwardHistory, backHistory]);
 
   // Sidebar
   const [showStateList ,setShowStateList] = useState([]);
@@ -223,6 +221,8 @@ export default function DisplayDirectory({
       <div className='navWrapper prevent-select'>
         <button className='homeButton pointer' onClick={() => {
           setCurrentDisplayNodes(childrenOfRootNode);
+          setForwardHistory([]);
+          setBackHistory([]);
           }}>
           <Home />
         </button>

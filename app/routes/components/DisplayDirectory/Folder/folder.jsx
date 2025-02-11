@@ -28,7 +28,6 @@ export default function Folder({
           onClick={() => handleChecked()}
           className="conA" onDoubleClick={() => {
           handleFolderClick(id);
-          updateDisplayNodes(id);
         }}>
           <div 
             className="conB justifyStart">

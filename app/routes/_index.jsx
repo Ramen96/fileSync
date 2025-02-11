@@ -98,7 +98,8 @@ export default function Index() {
     setChildrenOfRootNode: setChildrenOfRootNode,
     fileUpload: fileUpload,
     displayNodeId: displayNodeId,
-    setDisplayNodeId: setDisplayNodeId
+    setDisplayNodeId: setDisplayNodeId,
+    rootNodeId: rootNodeId
   }
 
   const sidebarProps = {

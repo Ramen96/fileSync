@@ -26,6 +26,7 @@ export default function DisplayDirectory({
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
+  const [updateId, setUpdateId] = useState(null);
 
   // get nodes
   async function getChildNodes(idOfItemClicked) {
@@ -50,21 +51,22 @@ export default function DisplayDirectory({
 
   // Nav buttons
   const handleNavClick = (direction) => {
-    if (direction === 'backward' && backHistory.length > 0) {
+    // need a way to save the parent id of the current displaying node in memory
+    // problem seems to be an issue with the setting the current node id in history arrays 
+    // then when you try to go back/forward it dose not update to the next node and throws the whole cycle off
+    if (direction === 'backward') {
       const prevNodeId = backHistory[backHistory.length - 1];
-      setBackHistory(prev => prev.slice(0, -1));
+      setUpdateId(prevNodeId);
       setDisplayNodeId(prevNodeId);
-      prevNodeId === rootNodeId ? 
-        console.log('heho heho')
-      : setForwardHistory(prev => [displayNodeId, ...prev]);
-      updateDisplayNodes(prevNodeId); 
-    } else if (direction === 'forward' && forwardHistory.length > 0) {
-      const nextNodeId = forwardHistory[0];
-      setForwardHistory(prev => prev.slice(1));
-      setBackHistory(prev => [...prev, displayNodeId]);
-      updateDisplayNodes(nextNodeId);
-    } else if (forwardHistory.length === 1) {
-      console.log('heho heho');
+      setBackHistory(prev => prev.slice(0, -1));
+      setForwardHistory([prevNodeId, ...forwardHistory]);
+    } else if (direction === 'forward') {
+        const nextNodeId = forwardHistory[0];
+        // setDisplayNodeId(forwardHistory[0]);
+        setUpdateId(nextNodeId);
+        setForwardHistory(prev => prev.slice(1));
+        setBackHistory(prev => [...prev, displayNodeId]);
+        // setBackHistory([...backHistory, displayNodeId]);
     } else {
       console.log('heho heho');
     }
@@ -73,10 +75,10 @@ export default function DisplayDirectory({
   const handleFolderClick = (folderId) => {
     if (backHistory.length === 0) {
       setBackHistory(prevState => {  
-        const newState = [...prevState, displayNodeId, folderId];
+        const newState = [...prevState, rootNodeId, folderId];
         return newState;
       });
-      
+      setForwardHistory([]);
     } else {
       setBackHistory(prevState => [...prevState, folderId]);
       setForwardHistory([]);
@@ -85,9 +87,18 @@ export default function DisplayDirectory({
   }
 
   useEffect(() => {
-    console.log(`forwardHistory: `, forwardHistory);
-    console.log('backHistory: ', backHistory);
-  }, [forwardHistory, backHistory]);
+    updateDisplayNodes(updateId);
+  }, [updateId]);
+
+  // useEffect(() => {
+  //   const prevNodeId = backHistory[backHistory.length - 1];
+  //   updateDisplayNodes(prevNodeId);
+  // }, [backHistory]);
+
+  // useEffect(() => {
+  //   const nextNodeId = forwardHistory[0];
+  //   updateDisplayNodes(nextNodeId);
+  // }, [forwardHistory]);
 
   // Sidebar
   const [showStateList ,setShowStateList] = useState([]);

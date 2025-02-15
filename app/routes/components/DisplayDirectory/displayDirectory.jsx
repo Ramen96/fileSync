@@ -96,7 +96,7 @@ export default function DisplayDirectory({
 
   // Resize sidebar
   const [dimensions, setDimensions] = useState({
-    width: 250,
+    width: 300,
   });
 
   const [isDragging, setIsDragging] = useState(false);
@@ -120,7 +120,7 @@ export default function DisplayDirectory({
       setDimensions(prev => ({
         ...prev,
         width: Math.min(
-          Math.max(250, prev.width + difference),
+          Math.max(300, prev.width + difference),
           1600
         )
       }));

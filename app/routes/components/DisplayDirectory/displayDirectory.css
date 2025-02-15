@@ -169,6 +169,7 @@
   background: rgba(45, 41, 56);
   cursor: pointer;
   border: solid rgb(74, 68, 92) 1px;
+  text-decoration: underline;
 }
 
 .sideFolderWrapper {

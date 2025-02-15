@@ -160,16 +160,16 @@
   color: white;
 }
 
-.sideItemName {
-  margin-left: 0.5rem;
-  font-weight: 500;
-}
-
 .sideItem:hover {
   background: rgba(45, 41, 56);
   cursor: pointer;
   border: solid rgb(74, 68, 92) 1px;
   text-decoration: underline;
+}
+
+.sideItemName {
+  margin-left: 0.5rem;
+  font-weight: 500;
 }
 
 .sideFolderWrapper {

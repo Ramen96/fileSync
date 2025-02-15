@@ -166,7 +166,7 @@
 .sideItem:hover {
   background: rgba(45, 41, 56);
   cursor: pointer;
-  border-radius: 2rem;
+  border-radius: 12px;
   border: solid rgb(74, 68, 92) 1px;
 }
 

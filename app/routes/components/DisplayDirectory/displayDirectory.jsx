@@ -53,9 +53,9 @@ export default function DisplayDirectory({
   const handleNavClick = (direction) => {
     const currentNodeId = currentDisplayNodes[0]?.parent_id;
     const prevNodeId = backHistory[backHistory.length - 1];
-    // const nextNodeId = forwardHistory[1];
+    let nextNodeId = forwardHistory[1];
     
-    if (direction === 'backward' && prevNodeId) {
+    if (direction === 'backward') {
       setBackHistory(prev => prev.slice(0, -1));
       setForwardHistory([prevNodeId, ...forwardHistory]);
       updateDisplayNodes(prevNodeId);
@@ -65,11 +65,12 @@ export default function DisplayDirectory({
           setForwardHistory(prev => prev.slice(1));
           setBackHistory(prev => [...prev, currentNodeId]);
         } else if (forwardHistory[0]) {
-          updateDisplayNodes(forwardHistory[0]);
+          nextNodeId = forwardHistory[0];
+          updateDisplayNodes(nextNodeId);
           setForwardHistory(prev => prev.slice(1));
           setBackHistory(prev => [...prev, currentNodeId]);
         } else {
-          console.error('aksdj;fajk;');
+          console.error(`ERROR: nextNodeId is ${typeof nextNodeId}`);
         }
     } else {
       if (!prevNodeId) {
@@ -82,8 +83,15 @@ export default function DisplayDirectory({
   const handleFolderClick = (folderId) => {
     const currentNodeId = currentDisplayNodes[0]?.parent_id;
     setBackHistory(prevState => {  
-      const newState = [...prevState, currentNodeId];
-      return newState;
+      // const newState = [...prevState, folderId];
+      // return newState;
+      if (!prevState.includes(currentNodeId)) {
+        const newState = [...prevState, currentNodeId, folderId];
+        return newState;
+      } else {
+        const newState = [...prevState, folderId];
+        return newState;
+      }
     });
     setForwardHistory([]);
     updateDisplayNodes(folderId);

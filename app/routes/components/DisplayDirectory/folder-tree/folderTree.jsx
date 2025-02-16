@@ -15,12 +15,13 @@ export default function FolderTree({
     currentNodeId,
     setForwardHistory,
     backHistory,
-    setBackHistory
+    setBackHistory,
+    handleFolderClick
 }) {
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [childNodesMap, setChildNodesMap] = useState(new Map()); 
 
-  async function handleFolderClick(folderId) {
+  async function handleExpandFolder(folderId, parent_id) {
     if (!isExpanded.has(folderId)) {
       if (!childNodesMap.has(folderId)) {
         const children = await getChildNodes(folderId);
@@ -34,18 +35,11 @@ export default function FolderTree({
         return newSet;
       });
     }
-
-    if (!showStateList.includes(folderId)) {
-      setShowStateList(prevState => [...prevState, folderId]);
-      setCurrentNodeId(folderId);
-      setBackHistory([...backHistory, folderId]);
-      setForwardHistory([]);
-    } else if (showStateList.includes(folderId) && folderId === currentNodeId) {
-      setShowStateList(prevState => prevState.filter(id => id !== folderId));
-    } else if (showStateList.includes(folderId) && folderId !== currentNodeId) {
-      setCurrentNodeId(folderId);
-      setBackHistory([...backHistory, folderId]);
-      setForwardHistory([]);     
+    
+    if (isExpanded.has(folderId)) {
+      await handleFolderClick(parent_id);
+    } else {
+      await handleFolderClick(folderId);
     }
   }
 
@@ -58,7 +52,7 @@ export default function FolderTree({
     return isFolder ? (
       <React.Fragment key={child.metadata.id}>
         <div 
-          onClick={() => handleFolderClick(child.metadata.id)}
+          onClick={() => handleExpandFolder(child.metadata.id, child.parent_id)}
         >
           {isExpanded.has(child.metadata.id) ? (
             <div className="sideItem">
@@ -84,6 +78,7 @@ export default function FolderTree({
               setForwardHistory={setForwardHistory}
               backHistory={backHistory}
               setBackHistory={setBackHistory}
+              handleFolderClick={handleFolderClick}
             />
           </div>
         )}

@@ -157,7 +157,8 @@ export default function DisplayDirectory({
     setForwardHistory: setForwardHistory,
     forwardHistory: forwardHistory,
     backHistory: backHistory,
-    setBackHistory: setBackHistory
+    setBackHistory: setBackHistory,
+    handleFolderClick: handleFolderClick
   }
 
   // Upload Card

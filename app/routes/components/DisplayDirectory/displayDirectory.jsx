@@ -83,15 +83,14 @@ export default function DisplayDirectory({
   const handleFolderClick = (folderId) => {
     const currentNodeId = currentDisplayNodes[0]?.parent_id;
     setBackHistory(prevState => {  
-      // const newState = [...prevState, folderId];
-      // return newState;
+      let newState;
       if (!prevState.includes(currentNodeId)) {
-        const newState = [...prevState, currentNodeId, folderId];
-        return newState;
+        newState = [...prevState, currentNodeId, folderId];
       } else {
-        const newState = [...prevState, folderId];
-        return newState;
+        newState = [...prevState, folderId];
       }
+      const filteredArr = newState.filter((item,  index) => newState.indexOf(item) === index);
+      return filteredArr;
     });
     setForwardHistory([]);
     updateDisplayNodes(folderId);

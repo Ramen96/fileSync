@@ -55,24 +55,16 @@ export default function DisplayDirectory({
     const prevNodeId = backHistory[backHistory.length - 1];
     const nextNodeId = forwardHistory[0];
 
-    if (direction === 'backward') {
-      if (!prevNodeId) {
-        console.error(`ERROR: previous node id is ${typeof prevNodeId}`);
-      } else {
-        updateDisplayNodes(prevNodeId);
-        setBackHistory(prevState => prevState.slice(0, -1));
-        setForwardHistory(prevState => [currentNodeId, ...prevState]);
-      }
+    if (direction === 'backward' && prevNodeId) {
+      updateDisplayNodes(prevNodeId);
+      setBackHistory(prevState => prevState.slice(0, -1));
+      setForwardHistory(prevState => [currentNodeId, ...prevState]);
     } 
 
-    if (direction === 'forward') {
-      if (!nextNodeId) {
-        console.error(`ERROR: next node id is ${typeof nextNodeId}`);
-      } else {
-        updateDisplayNodes(nextNodeId);
-        setForwardHistory(prevState => prevState.slice(1));
-        setBackHistory(prevState => [...prevState, currentNodeId]);
-      }
+    if (direction === 'forward' && nextNodeId) {
+      updateDisplayNodes(nextNodeId);
+      setForwardHistory(prevState => prevState.slice(1));
+      setBackHistory(prevState => [...prevState, currentNodeId]);
     }
   }
 

@@ -53,28 +53,25 @@ export default function DisplayDirectory({
   const handleNavClick = (direction) => {
     const currentNodeId = currentDisplayNodes[0]?.parent_id;
     const prevNodeId = backHistory[backHistory.length - 1];
-    let nextNodeId = forwardHistory[1];
-    
+    const nextNodeId = forwardHistory[0];
+
     if (direction === 'backward') {
-      setBackHistory(prev => prev.slice(0, -1));
-      setForwardHistory([prevNodeId, ...forwardHistory]);
-      updateDisplayNodes(prevNodeId);
-    } else if (direction === 'forward') {
-        if (forwardHistory[1]) {
-          updateDisplayNodes(forwardHistory[1]);
-          setForwardHistory(prev => prev.slice(1));
-          setBackHistory(prev => [...prev, currentNodeId]);
-        } else if (forwardHistory[0]) {
-          nextNodeId = forwardHistory[0];
-          updateDisplayNodes(nextNodeId);
-          setForwardHistory(prev => prev.slice(1));
-          setBackHistory(prev => [...prev, currentNodeId]);
-        } else {
-          console.error(`ERROR: nextNodeId is ${typeof nextNodeId}`);
-        }
-    } else {
       if (!prevNodeId) {
-        console.error(`ERROR: prevNodeId is ${typeof prevNodeId}`);
+        console.error(`ERROR: previous node id is ${typeof prevNodeId}`);
+      } else {
+        updateDisplayNodes(prevNodeId);
+        setBackHistory(prevState => prevState.slice(0, -1));
+        setForwardHistory(prevState => [currentNodeId, ...prevState]);
+      }
+    } 
+
+    if (direction === 'forward') {
+      if (!nextNodeId) {
+        console.error(`ERROR: next node id is ${typeof nextNodeId}`);
+      } else {
+        updateDisplayNodes(nextNodeId);
+        setForwardHistory(prevState => prevState.slice(1));
+        setBackHistory(prevState => [...prevState, currentNodeId]);
       }
     }
   }
@@ -82,18 +79,9 @@ export default function DisplayDirectory({
   // Folder Nav
   const handleFolderClick = (folderId) => {
     const currentNodeId = currentDisplayNodes[0]?.parent_id;
-    setBackHistory(prevState => {  
-      let newState;
-      if (!prevState.includes(currentNodeId)) {
-        newState = [...prevState, currentNodeId, folderId];
-      } else {
-        newState = [...prevState, folderId];
-      }
-      const filteredArr = newState.filter((item,  index) => newState.indexOf(item) === index);
-      return filteredArr;
-    });
     setForwardHistory([]);
     updateDisplayNodes(folderId);
+    setBackHistory(prevState => [...prevState, currentNodeId]);
   }
 
   // Sidebar

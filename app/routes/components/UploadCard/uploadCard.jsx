@@ -6,10 +6,9 @@ import {
  } from "lucide-react";
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import UploadItem from "./uploadItem/uploadItem";
-import "./uploadcard.css";
+import UploadItem from "../uploadItem/uploadItem";
+import "../../../css/uploadcard.css";
 import { useState } from "react";
-import { useEffect } from "react";
 export default function UploadCard({
   handleUploadCardState
 }) {

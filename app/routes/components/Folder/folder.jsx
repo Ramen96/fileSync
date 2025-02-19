@@ -1,6 +1,6 @@
 import { useState } from "react";
-import folder from "../../../../../assets/yellow-folder.svg"
-import "../displayDirectory.css";
+import folder from "../../../../assets/yellow-folder.svg"
+import "../../../css/file-folder.css";
 
 export default function Folder({
   name,

@@ -1,22 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
-import folderIconColor from "../../../../../assets/open-yellow-folder.svg";
-import folderIconGray from "../../../../../assets/yellow-folder.svg";
-import file from "../../../../../assets/file2.svg";
-import "../displayDirectory.css";
-
+import folderIconColor from "../../../../assets/open-yellow-folder.svg";
+import folderIconGray from "../../../../assets/yellow-folder.svg";
+import file from "../../../../assets/file2.svg";
+import "../../../css/folderTree.css";
 
 export default function FolderTree({ 
-    childrenOfRootNode, 
-    showStateList, 
-    setShowStateList, 
-    getChildNodes,
-    setCurrentNodeId,
-    currentNodeId,
-    setForwardHistory,
-    backHistory,
-    setBackHistory,
-    handleFolderClick
+  childrenOfRootNode, 
+  showStateList, 
+  setShowStateList, 
+  getChildNodes,
+  setCurrentNodeId,
+  currentNodeId,
+  setForwardHistory,
+  backHistory,
+  setBackHistory,
+  handleFolderClick
 }) {
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [childNodesMap, setChildNodesMap] = useState(new Map()); 

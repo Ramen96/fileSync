@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Folder from "../DisplayDirectory/Folder/folder";
-import File from "../DisplayDirectory/File/file";
+import Folder from "../Folder/folder";
+import File from "../File/file";
 
 export default function HandleDisplayIcons({ 
   childrenOfRootNode,

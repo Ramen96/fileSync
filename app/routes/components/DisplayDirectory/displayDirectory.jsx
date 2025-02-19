@@ -10,8 +10,8 @@ import {
   Download,
   Upload,
   } from 'lucide-react';
-import UploadCard from './UploadCard/uploadCard';
-import FolderTree from './folder-tree/folderTree';
+import UploadCard from '../UploadCard/uploadCard';
+import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "./displayDirectory.css";
 

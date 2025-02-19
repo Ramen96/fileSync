@@ -1,6 +1,5 @@
 import { useNavigate } from "@remix-run/react";
-
-import "./sidebar.css";
+import "../../../css/sidebar.css";
 import { 
   BookmarkPlusIcon,
   ImageIcon,

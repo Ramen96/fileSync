@@ -18,7 +18,7 @@ export default function UploadCard({
   const [multiUpload, setMultiUpload] = useState(false);
   const [fileArr, setFileArr] = useState([]);
 
-  const handleMulitUploadState = () => {
+  const handleMultiUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
   }
 
@@ -70,7 +70,7 @@ export default function UploadCard({
         </div>
         <div className="btn-wrapper">
           <div className="btn" role="button">
-            <label className="btn-lable" htmlFor="new-folder">
+            <label className="btn-label" htmlFor="new-folder">
               <FolderPlus className="margin-r-1" /> New Folder
             </label>
             {multiUpload
@@ -98,7 +98,7 @@ export default function UploadCard({
             }
           </div>
           <div className="btn" role="button">
-            <label className="btn-lable" htmlFor="new-file">
+            <label className="btn-label" htmlFor="new-file">
               <FilePlus className="margin-r-1" /> New File
             </label>
             {multiUpload
@@ -130,7 +130,7 @@ export default function UploadCard({
             <input checked={multiUpload} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
             <span className="checkmark" onClick={(e) => {
                 e.stopPropagation();
-                handleMulitUploadState();
+                handleMultiUploadState();
               }}></span>
           </label>
         </div>

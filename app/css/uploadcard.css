@@ -43,7 +43,7 @@
   border: solid rgb(74, 68, 92) 1px;
 }
 
-.btn-lable {
+.btn-label {
   display: flex;
   width: inherit;
   height: inherit;
@@ -55,7 +55,7 @@
   font-weight: 600;
 }
 
-.btn-lable:hover{
+.btn-label:hover{
   cursor: pointer;
   color:  rgb(23, 191, 99);
   background: radial-gradient(rgba(23, 191, 99, 0.1) 0, rgba(23, 191, 99, 0) 85%);

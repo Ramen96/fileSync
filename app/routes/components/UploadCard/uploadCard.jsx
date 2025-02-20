@@ -136,7 +136,9 @@ export default function UploadCard({
         </div>
         <div className="drag-n-drop">
           <UploadItem {...uploadItemProps}/>
-          <UploadCloudIcon className="uploadCloudIcon" />
+          <div className="cloud-wrapper">
+            <UploadCloudIcon className="uploadCloudIcon" />
+          </div>
         </div>
         <button 
           onClick={() => {

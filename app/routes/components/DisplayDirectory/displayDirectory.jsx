@@ -276,7 +276,7 @@ export default function DisplayDirectory({
           :
             <div style={{"display": "none"}}></div>
         }
-        <div className={`width100 padding0 ${isIcon ? 'flexWrap' : ''}`}>
+        <div className={`${isIcon ? 'gridIconDisplayWrapper' : 'listIconDisplayWrapper'}`}>
           <HandleDisplayIcons 
             updateDisplayNodes={updateDisplayNodes}
             currentDisplayNodes={currentDisplayNodes}

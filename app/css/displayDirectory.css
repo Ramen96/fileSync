@@ -54,10 +54,18 @@
 
 
 /* *********************************** */
-/* ****** SECTION: icon -- row ******* */
+/* ******** SECTION: icon/row ******** */
 /* *********************************** */
 
-.mainWindowItemWrapper {
+.gridIconDisplayWrapper {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.listIconDisplayWrapper {
   width: 100%;
 }
 

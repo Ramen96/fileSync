@@ -11,8 +11,6 @@ export default function UploadItem({
   fileArr
 }) {
 
-  console.log(fileArr);
-
   return fileArr.slice().reverse().map((children) => 
     <div key={uuidv4()} className="metadata-item-container">
       <div className="upload-item-wrapper">

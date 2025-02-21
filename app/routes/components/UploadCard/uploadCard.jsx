@@ -2,7 +2,8 @@ import {
   FolderPlus,
   FilePlus,
   XCircle,
-  UploadCloudIcon
+  UploadCloudIcon,
+  FolderMinus
  } from "lucide-react";
 import { useRef } from "react";
 import UploadItem from "../uploadItem/uploadItem";
@@ -34,16 +35,15 @@ export default function UploadCard({
   }
 
   const handleSubmit = () => {
-    const formDataObject = new FormData();
+    const fileList = new FormData();
+    
+    fileArr.forEach(item => {
+      fileList.append(item.name, item);
+    })
 
-    for (let i = 0; i < fileArr.length; i++) {
-      formDataObject.append(fileArr[i].name, fileArr[i]);
+    for (let i in fileList) {
+      console.log(`${i}: ${fileList[i]}`)
     }
-
-    fetch("fileStorage", {
-      method: "POST",
-      body : formDataObject
-    }).catch(err => console.error(err));
 
     setFileArr([]);
   }

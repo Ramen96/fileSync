@@ -11,7 +11,9 @@ export default function UploadItem({
   fileArr
 }) {
 
-  return fileArr.slice().reverse().map((children) => 
+  console.log(fileArr);
+
+  return fileArr.slice().reverse().map((children, i) => 
     <div key={uuidv4()} className="metadata-item-container">
       <div className="upload-item-wrapper">
         <div className="upload-item">
@@ -25,7 +27,7 @@ export default function UploadItem({
               className="trash-icon-wrapper"
               onClick={() => {
                 setFileArr(
-                  fileArr.filter(item => item.id !== children.id)
+                  fileArr.filter(item => item.name !== children.name)
                 )
               }}>
               <Trash2 className="trash-icon" />

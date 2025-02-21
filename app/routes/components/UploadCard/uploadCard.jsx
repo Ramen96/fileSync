@@ -5,7 +5,6 @@ import {
   UploadCloudIcon
  } from "lucide-react";
 import { useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
 import UploadItem from "../uploadItem/uploadItem";
 import "../../../css/uploadcard.css";
 import { useState } from "react";
@@ -26,10 +25,9 @@ export default function UploadCard({
     const file = event.target.files;
     const fileDataArr = [];
     for (let i = 0; i < file.length; i++) {
-      file[i].id = uuidv4();
       fileDataArr.push(file[i]);
     }
-    setFileArr(fileDataArr);
+    setFileArr([...fileArr, ...fileDataArr]);
     if (inputRef.current.value !== '') {
       inputRef.current.value = '';
     }

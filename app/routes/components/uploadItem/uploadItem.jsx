@@ -13,7 +13,7 @@ export default function UploadItem({
 
   console.log(fileArr);
 
-  return fileArr.slice().reverse().map((children, i) => 
+  return fileArr.slice().reverse().map((children) => 
     <div key={uuidv4()} className="metadata-item-container">
       <div className="upload-item-wrapper">
         <div className="upload-item">

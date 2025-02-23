@@ -7,7 +7,7 @@ import {
  } from "lucide-react";
 import { useRef } from "react";
 import UploadItem from "../uploadItem/uploadItem";
-import "../../../css/uploadcard.css";
+import "../../../css/uploadCard.css";
 import { useState } from "react";
 export default function UploadCard({
   handleUploadCardState

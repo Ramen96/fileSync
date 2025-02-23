@@ -157,7 +157,8 @@ export default function DisplayDirectory({
 
   const uploadCardProps = { 
     handleUploadCardState: handleUploadCardState,
-    fileUpload: fileUpload
+    fileUpload: fileUpload,
+    displayNodeId: displayNodeId
   }
 
   // Delete button

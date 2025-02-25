@@ -129,6 +129,7 @@ export default function UploadCard({
         <button 
           onClick={() => {
             fileUpload(fileArr);
+            setFileArr([]);
           }}
           className="upload-btn">
           Upload

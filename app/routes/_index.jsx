@@ -45,8 +45,8 @@ export default function Index() {
     setDisplayNodeId(rootNodeId);
   }, []);
 
-  function fileUpload(event) {
-    const file = event.target.files;
+  function fileUpload(input) {
+    const file = input instanceof Event ? input.target.files : input;
     const fileList = new FormData();
 
     for (let i = 0; i < file.length; i++) {

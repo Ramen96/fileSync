@@ -11,7 +11,8 @@ import "../../../css/uploadCard.css";
 import { useState } from "react";
 export default function UploadCard({
   handleUploadCardState,
-  displayNodeId
+  displayNodeId,
+  fileUpload
 }) {
 
   const inputRef = useRef(null);
@@ -33,43 +34,6 @@ export default function UploadCard({
     if (inputRef.current.value !== '') {
       inputRef.current.value = '';
     }
-  }
-
-  const handleSubmit = () => {
-    const fileList = new FormData();
-    const dataArr = [];
-
-    fileArr.forEach(item => {
-      if (item instanceof File) {
-        const fileObject = item;
-        const fileInfo = {
-          parent_id: displayNodeId
-        }
-        if (fileObject.webkitRelativePath.length === 0) {
-            fileInfo.is_folder = false;
-          } else if (fileObject.webkitRelativePath.length > 0) {
-            fileInfo.is_folder = true;
-          }
-          fileInfo.name = fileObject.name;
-          fileInfo.webkitRelativePath = fileObject.webkitRelativePath;
-          fileInfo.type = fileObject.type;
-          dataArr.push(fileInfo);
-      }
-    });
-
-    dataArr.forEach(item => {
-      fileList.append(item.name, item);
-    });
-
-    fetch("fileStorage", {
-      method: "POST",
-      body : fileList
-    })
-    .then(res => {
-      if (res.status !== 200) console.log(`Response: ${res.status}`)
-    })
-    .catch(err => console.error(err));
-    setFileArr([]);
   }
 
   const uploadItemProps = {
@@ -164,7 +128,7 @@ export default function UploadCard({
         </div>
         <button 
           onClick={() => {
-            handleSubmit();
+            fileUpload(fileArr);
           }}
           className="upload-btn">
           Upload

@@ -6,7 +6,7 @@ export default function HandleDisplayIcons({
   childrenOfRootNode,
   isIcon,
   handleFolderClick,
-  handleIdArrState,
+  handleDeleteQueue,
   currentDisplayNodes,
   setCurrentDisplayNodes,
   updateDisplayNodes
@@ -31,7 +31,7 @@ export default function HandleDisplayIcons({
         id={child.metadata.id}
         isIcon={isIcon}
         handleFolderClick={handleFolderClick}
-        handleIdArrState={handleIdArrState}
+        handleDeleteQueue={handleDeleteQueue}
       />
     ) : (
       <File 
@@ -39,7 +39,7 @@ export default function HandleDisplayIcons({
         id={child.metadata.id}
         name={child.metadata.name}
         isIcon={isIcon}
-        handleIdArrState={handleIdArrState}
+        handleDeleteQueue={handleDeleteQueue}
       />
     );
   })

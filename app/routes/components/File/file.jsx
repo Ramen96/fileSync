@@ -5,7 +5,7 @@ import "../../../css/file-folder.css";
 export default function File({
   name,
   isIcon,
-  handleIdArrState,
+  handleDeleteQueue,
   id
 }) {
 
@@ -14,11 +14,11 @@ export default function File({
   const handleChecked = () => {
     if (checked === true) {
       setChecked(false);
-      handleIdArrState(checked, id);
+      handleDeleteQueue(checked, id);
       console.log('id', id);
     } else {
       setChecked(true);
-      handleIdArrState(checked, id);
+      handleDeleteQueue(checked, id);
     };
   }
 

@@ -8,7 +8,7 @@ export default function Folder({
   handleFolderClick,
   updateDisplayNodes,
   isIcon,
-  handleIdArrState
+  handleDeleteQueue
 }) {
   
   const [checked, setChecked] = useState(false);

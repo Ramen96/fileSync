@@ -161,20 +161,21 @@ export default function DisplayDirectory({
     displayNodeId: displayNodeId
   }
 
-  // Delete button
-  const [idArr, setIdArr] = useState([]);
+  // Deleting items
+  const [deleteQueue, setDeleteQueue] = useState([]);
 
-  const handleIdArrState = (checkState, uuid) => {
+  const handleDeleteQueue = (checkState, uuid) => {
     if (!checkState) {
-      setIdArr([...idArr, uuid]);
+      // setDeleteQueue([...deleteQueue, uuid]);
+      setDeleteQueue(prevState => [...prevState, uuid]);
     } else {
-      setIdArr(idArr.filter(element => element !== uuid));
+      setDeleteQueue(deleteQueue.filter(element => element !== uuid));
     }
   }
 
   const handleDeleteButton = () => {
     const ids = [];
-    idArr.forEach(element => ids.push(element));
+    deleteQueue.forEach(element => ids.push(element));
     console.log(childrenOfRootNode);
   }
 
@@ -285,7 +286,7 @@ export default function DisplayDirectory({
             childrenOfRootNode={childrenOfRootNode}
             isIcon={isIcon}
             handleFolderClick={handleFolderClick}
-            handleIdArrState={handleIdArrState}
+            handleDeleteQueue={handleDeleteQueue}
             getChildNodes={getChildNodes}
           />
         </div>

@@ -172,10 +172,20 @@ export default function DisplayDirectory({
     }
   }
 
-  const handleDeleteButton = () => {
-    const ids = [];
-    deleteQueue.forEach(element => ids.push(element));
-    console.log(childrenOfRootNode);
+  const handleDeleteButton = async () => {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }, 
+      body: JSON.stringify(deleteQueue)
+    }
+
+    fetch('fileDelete', options)
+    .then(response => {
+      if (response.status !== 200) console.log(`Response: ${response.status}`);
+    })
+    .catch(error => console.error(`Error deleting files: ${error}`));
   }
 
   // Updating display icon nodes

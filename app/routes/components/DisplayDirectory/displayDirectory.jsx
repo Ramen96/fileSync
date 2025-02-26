@@ -164,12 +164,11 @@ export default function DisplayDirectory({
   // Deleting items
   const [deleteQueue, setDeleteQueue] = useState([]);
 
-  const handleDeleteQueue = (checkState, uuid) => {
+  const handleDeleteQueue = (checkState, metadataObject) => {
     if (!checkState) {
-      // setDeleteQueue([...deleteQueue, uuid]);
-      setDeleteQueue(prevState => [...prevState, uuid]);
+      setDeleteQueue(prevState => [...prevState, metadataObject]);
     } else {
-      setDeleteQueue(deleteQueue.filter(element => element !== uuid));
+      setDeleteQueue(deleteQueue.filter(element => element.id !== metadataObject.id));
     }
   }
 

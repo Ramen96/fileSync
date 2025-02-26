@@ -12,13 +12,16 @@ export default function File({
   const [checked, setChecked] = useState(false);
 
   const handleChecked = () => {
+    const metadataObject = {
+      id: id,
+      name: name
+    }
     if (checked === true) {
       setChecked(false);
-      handleDeleteQueue(checked, id);
-      console.log('id', id);
+      handleDeleteQueue(checked, metadataObject);
     } else {
       setChecked(true);
-      handleDeleteQueue(checked, id);
+      handleDeleteQueue(checked, metadataObject);
     };
   }
 

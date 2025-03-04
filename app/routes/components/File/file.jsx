@@ -14,7 +14,8 @@ export default function File({
   const handleChecked = () => {
     const metadataObject = {
       id: id,
-      name: name
+      name: name,
+      type: "file"
     }
     if (checked === true) {
       setChecked(false);

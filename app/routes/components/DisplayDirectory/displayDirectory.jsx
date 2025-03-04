@@ -26,7 +26,7 @@ export default function DisplayDirectory({
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
-  const [ currentDisplayNodes, setCurrentDisplayNodes ] = useState(null);
+  const [currentDisplayNodes, setCurrentDisplayNodes] = useState(null);
 
   // get nodes
   async function getChildNodes(idOfItemClicked) {

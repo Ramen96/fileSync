@@ -12,12 +12,14 @@ export const action = async ({ request }) => {
     const rootId = initRoot.id;
 
     const body = await request.json();
+
+    const getFilePath = (metadata) => {
+      console.log(metadata.id)
+    }
     
     body.forEach(element => {
-      console.log(element);
+      getFilePath(element);
     });
-
-    console.log(`Root id: ${rootId}`);
 
     return new Response(JSON.stringify({
       message: "200"

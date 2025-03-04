@@ -166,11 +166,15 @@ export default function DisplayDirectory({
 
   const handleDeleteQueue = (checkState, metadataObject) => {
     if (!checkState) {
-      setDeleteQueue(prevState => [...prevState, metadataObject]);
+      setDeleteQueue([...deleteQueue, metadataObject]);
     } else {
       setDeleteQueue(deleteQueue.filter(element => element.id !== metadataObject.id));
     }
   }
+
+  useEffect(() => {
+    console.log('deleteQueue: ', deleteQueue);
+  })
 
   const handleDeleteButton = async () => {
     const options = {

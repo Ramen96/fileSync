@@ -172,10 +172,6 @@ export default function DisplayDirectory({
     }
   }
 
-  useEffect(() => {
-    console.log('deleteQueue: ', deleteQueue);
-  })
-
   const handleDeleteButton = async () => {
     const options = {
       method: "POST",

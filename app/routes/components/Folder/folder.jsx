@@ -14,10 +14,17 @@ export default function Folder({
   const [checked, setChecked] = useState(false);
 
   const handleChecked = () => {
+    const metadataObject = {
+      id: id,
+      name: name,
+      type: "folder"
+    }
     if (checked === true) {
       setChecked(false);
+      handleDeleteQueue(checked, metadataObject);
     } else {
       setChecked(true);
+      handleDeleteQueue(checked, metadataObject);
     };
   }
 

@@ -67,6 +67,7 @@ export const action = async ({ request }) => {
         } else {
           filePath = 'cloud/' + pathChunks.reverse().join("/");
           console.log(`filePath: ${filePath}`);
+          return filePath;
         }
 
       } catch (error) {

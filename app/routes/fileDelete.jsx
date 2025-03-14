@@ -53,24 +53,22 @@ export const action = async ({ request }) => {
     }
 
     const pathChunks = [];
+    let filePath;
     const getFilePath = async (metadata) => {
       // Use recursion to get path to root and reconstruct the path
       try {
         const objectId = metadata.id;
-        const isFile = metadata.type === "file" ? true : false;
-        if (isFile) {
-          const fileMetadata = await getParentId(objectId);
-          pathChunks.push(fileMetadata.name);
-          console.log(`pathChunks: ${pathChunks}`);
-          if (fileMetadata.parent_id !== rootId) {
-            console.log(await getMetaData(fileMetadata.parent_id));
-          } else {
-            console.log('in root folder');
-          }
+        const fileMetadata = await getParentId(objectId);
+
+        pathChunks.push(fileMetadata.name);
+
+        if (fileMetadata.parent_id !== rootId) {
+          await getFilePath(await getMetaData(fileMetadata.parent_id));
         } else {
-          console.log('not a file');
-          console.log(metadata);
+          filePath = 'cloud/' + pathChunks.reverse().join("/");
+          console.log(`filePath: ${filePath}`);
         }
+
       } catch (error) {
         console.error(`Error constructing file path ${error}`);
         throw new Error(error);
@@ -79,6 +77,8 @@ export const action = async ({ request }) => {
     body.forEach(element => {
       getFilePath(element);
     });
+
+    // console.log(`pathChunks: ${pathChunks}`);
 
     return new Response(JSON.stringify({
       message: "200"

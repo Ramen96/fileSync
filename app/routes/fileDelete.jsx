@@ -79,7 +79,11 @@ export const action = async ({ request }) => {
 
     body.forEach(async (element) => {
       try {
-        return console.log(await getFilePath(element));
+        // Todo: use file path to delete from system
+        //      -- bug note:  when selecting multiple files to delete the path printed is not the full path
+        //                    it is the path to the parent folder of both items
+        const filePath = await getFilePath(element)
+        return console.log(filePath);
 
       } catch (err) {
         console.log(`Something went wrong in body.foreach, Error: ${err}`);

@@ -66,7 +66,7 @@ export const action = async ({ request }) => {
           await getFilePath(await getMetaData(fileMetadata.parent_id));
         } else {
           filePath = 'cloud/' + pathChunks.reverse().join("/");
-          console.log(`filePath: ${filePath}`);
+          // console.log(`filePath: ${filePath}`);
           return filePath;
         }
 
@@ -75,11 +75,15 @@ export const action = async ({ request }) => {
         throw new Error(error);
       }
     }
-    body.forEach(element => {
-      getFilePath(element);
-    });
 
-    // console.log(`pathChunks: ${pathChunks}`);
+    body.forEach(async (element) => {
+      try {
+        await getFilePath(element);
+        console.log(await getFilePath(element));
+      } catch (err) {
+        console.log(`Something went wrong in body.foreach, Error: ${err}`);
+      }
+    });
 
     return new Response(JSON.stringify({
       message: "200"

@@ -67,7 +67,6 @@ export const action = async ({ request }) => {
         } else {
           filePath = 'cloud/' + pathChunks.reverse().join("/");
           pathChunks = [];
-          // console.log(`filePath123123: ${filePath}`);
           return filePath;
         }
         return filePath;

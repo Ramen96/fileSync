@@ -52,7 +52,7 @@ export const action = async ({ request }) => {
       }
     }
 
-    const pathChunks = [];
+    let pathChunks = [];
     let filePath;
     const getFilePath = async (metadata) => {
       // Use recursion to get path to root and reconstruct the path
@@ -66,9 +66,11 @@ export const action = async ({ request }) => {
           await getFilePath(await getMetaData(fileMetadata.parent_id));
         } else {
           filePath = 'cloud/' + pathChunks.reverse().join("/");
-          // console.log(`filePath: ${filePath}`);
+          pathChunks = [];
+          // console.log(`filePath123123: ${filePath}`);
           return filePath;
         }
+        return filePath;
 
       } catch (error) {
         console.error(`Error constructing file path ${error}`);
@@ -78,8 +80,8 @@ export const action = async ({ request }) => {
 
     body.forEach(async (element) => {
       try {
-        await getFilePath(element);
-        console.log(await getFilePath(element));
+        return console.log(await getFilePath(element));
+
       } catch (err) {
         console.log(`Something went wrong in body.foreach, Error: ${err}`);
       }

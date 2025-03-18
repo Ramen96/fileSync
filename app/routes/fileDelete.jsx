@@ -105,7 +105,8 @@ export const action = async ({ request }) => {
           })
         }
 
-        if (file) {
+        // ToDo: determine if the object is for a file or folder 
+        if (file) { // delete file...
           console.log('Deleting file from system...');
           deleteFile(filePath);
 
@@ -123,6 +124,11 @@ export const action = async ({ request }) => {
         } else {
           console.log('file dose not exist');
         }
+
+        // delete folder
+        //    1. check metadata object to see if it is a folder
+        //    2. if it is a folder check for children recursively
+        //    3. delete folder and its children recursively
 
         console.log(`filePath: ${filePath}`);
       } catch (err) {

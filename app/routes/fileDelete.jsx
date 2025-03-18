@@ -130,7 +130,12 @@ export const action = async ({ request }) => {
         //    2. if it is a folder check for children recursively
         //    3. delete folder and its children recursively
 
-        console.log(`filePath: ${filePath}`);
+        for (let i in element) { // 
+          console.log(`elements: ${element[i]}`);
+          console.log(i);
+          console.log(`body: ${body[0]}`);
+        }
+
       } catch (err) {
         console.log(`Something went wrong in body.foreach, Error: ${err}`);
       }

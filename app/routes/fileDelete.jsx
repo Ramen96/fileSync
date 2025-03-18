@@ -77,6 +77,7 @@ export const action = async ({ request }) => {
     }
 
     body.forEach(async (element) => {
+      const elementID = element.id;
       try {
         // Todo: use file path to delete from system
         //      -- bug note:  when selecting multiple files to delete the path printed is not the full path
@@ -93,10 +94,33 @@ export const action = async ({ request }) => {
           }
         };
 
-        const testPath = await checkIfPathExists(filePath);
+        const file = await checkIfPathExists(filePath); // returns boolean letting you know if file exists
 
-        if (testPath) {
-          console.log('File path exists');
+        const deleteFile = (filePath) => {
+          fs.rm(filePath, { recursive: false }, (err) => {
+            if (err) {
+              console.error(err.message); 
+              return;
+            }
+            console.log(`File deleted successfully: ${filePath}`)
+          })
+        }
+
+        if (file) {
+          console.log('Deleting file from system...');
+          deleteFile(filePath);
+
+          try {
+            await prisma.metadata.delete({
+              where : {
+                id: elementID
+              }
+            });
+            console.log('file deleted from database');
+          } catch (err) {
+            console.error(`Error deleting file: ${filePath} from database ${err}`);
+          }
+
         } else {
           console.log('file dose not exist');
         }

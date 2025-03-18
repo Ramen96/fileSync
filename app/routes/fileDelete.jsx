@@ -1,4 +1,5 @@
 import { prisma } from "../utils/prisma.server"
+import * as fs from "node:fs/promises";
 
 export const action = async ({ request }) => {
   try {
@@ -66,7 +67,6 @@ export const action = async ({ request }) => {
         } else {
           filePath = 'cloud/' + pathChunks.reverse().join("/");
           pathChunks = [];
-          return filePath;
         }
         return filePath;
 
@@ -81,9 +81,27 @@ export const action = async ({ request }) => {
         // Todo: use file path to delete from system
         //      -- bug note:  when selecting multiple files to delete the path printed is not the full path
         //                    it is the path to the parent folder of both items
-        const filePath = await getFilePath(element)
-        return console.log(filePath);
+        const filePath = await getFilePath(element);
 
+        const checkIfPathExists = async (activePath) => {
+          try {
+            await fs.access(activePath);
+            return true;
+          } catch (err) {
+            if (err.code === "ENOENT") return false;
+            throw err;
+          }
+        };
+
+        const testPath = await checkIfPathExists(filePath);
+
+        if (testPath) {
+          console.log('File path exists');
+        } else {
+          console.log('file dose not exist');
+        }
+
+        console.log(`filePath: ${filePath}`);
       } catch (err) {
         console.log(`Something went wrong in body.foreach, Error: ${err}`);
       }

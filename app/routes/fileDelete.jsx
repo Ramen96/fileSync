@@ -79,9 +79,8 @@ export const action = async ({ request }) => {
     body.forEach(async (element) => {
       const elementID = element.id;
       try {
-        // Todo: use file path to delete from system
-        //      -- bug note:  when selecting multiple files to delete the path printed is not the full path
-        //                    it is the path to the parent folder of both items
+        // bug note:  when selecting multiple files to delete the path printed is not the full path
+        // it is the path to the parent folder of both items
         const filePath = await getFilePath(element);
 
         const checkIfPathExists = async (activePath) => {

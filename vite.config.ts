@@ -11,6 +11,13 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
+    proxy: {
+      'ws': {
+        target: 'ws://filesync.home:3030',
+        ws: true,
+        rewriteWsOrigin: true
+      }
+    },
     hmr: {
       protocol: "ws",
       clientPort: 3030,

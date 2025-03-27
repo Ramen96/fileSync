@@ -19,6 +19,7 @@ export default defineConfig({
       }
     },
     hmr: {
+      host: 'ws://filesync.home:3030',
       protocol: "ws",
       clientPort: 3030,
       overlay: false

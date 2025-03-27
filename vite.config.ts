@@ -11,6 +11,11 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
+    hmr: {
+      protocol: "ws",
+      clientPort: 3030,
+      overlay: false
+    }
   },
   plugins: [remix({
     // ignoredRouteFiles: ["**/*.css"],

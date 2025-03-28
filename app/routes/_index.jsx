@@ -1,5 +1,5 @@
-import { data } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { data } from "react-router";
+import { useLoaderData } from "react-router";
 import { useEffect, useState, useMemo } from "react";
 import "../css/index.css";
 import SideBar from "./components/SideBar/sidebar.jsx";

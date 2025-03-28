@@ -1,7 +1,8 @@
-import { type RouteConfig } from "@remix-run/route-config";
-import { remixRoutesOptionAdapter } from "@remix-run/routes-option-adapter";
-import { flatRoutes } from "remix-flat-routes";
+import { type RouteConfig, index, route} from "@react-router/dev/routes";
 
-export default remixRoutesOptionAdapter((defineRoutes) =>
-  flatRoutes("routes", defineRoutes)
-) satisfies RouteConfig;
+export default [
+  index("./routes/_index.jsx"),
+  route("databaseAPI", "./routes/databaseAPI.jsx"),
+  route("fileDelete", "./routes/fileDelete.jsx"),
+  route("fileStorage", "./routes/fileStorage.jsx")
+]

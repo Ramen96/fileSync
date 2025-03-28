@@ -1,6 +1,6 @@
 import { useState } from "react";
-import file from "../../../../assets/file2.svg";
-import "../../../css/file-folder.css";
+import file from "../../../assets/file2.svg";
+import "../../css/file-folder.css";
 
 export default function File({
   name,

@@ -4,7 +4,7 @@ import {
   Trash2
 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
-import "../../../css/uploadItem.css";
+import "../../css/uploadItem.css";
 
 export default function UploadItem({
   setFileArr,

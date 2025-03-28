@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import folderIconColor from "../../../../assets/open-yellow-folder.svg";
-import folderIconGray from "../../../../assets/yellow-folder.svg";
-import file from "../../../../assets/file2.svg";
-import "../../../css/folderTree.css";
+import folderIconColor from "../../../assets/open-yellow-folder.svg";
+import folderIconGray from "../../../assets/yellow-folder.svg";
+import file from "../../../assets/file2.svg";
+import "../../css/folderTree.css";
 
 export default function FolderTree({ 
   childrenOfRootNode, 

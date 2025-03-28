@@ -13,7 +13,7 @@ import {
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
-import "../../../css/displayDirectory.css";
+import "../../css/displayDirectory.css";
 
 export default function DisplayDirectory({ 
   displayNodeId,

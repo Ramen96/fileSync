@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import "../../../css/sidebar.css";
+import "../../css/sidebar.css";
 import { 
   BookmarkPlusIcon,
   ImageIcon,

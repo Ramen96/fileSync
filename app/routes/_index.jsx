@@ -2,8 +2,8 @@ import { data } from "react-router";
 import { useLoaderData } from "react-router";
 import { useEffect, useState, useMemo } from "react";
 import "../css/index.css";
-import SideBar from "./components/SideBar/sidebar.jsx";
-import DisplayDirectory from "./components/DisplayDirectory/displayDirectory.jsx";
+import SideBar from "../components/SideBar/sidebar.jsx";
+import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
 const searchIcon = "../assets/search.svg";
 

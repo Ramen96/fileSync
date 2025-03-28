@@ -5,7 +5,7 @@ export default function App() {
   return (
     <html>
       <head>
-        <link rel="icon" href="assets/folder.svg" type="image/svg+xml" id="favicon" />
+        <link rel="icon" href="../assets/folder.svg" type="image/svg+xml" id="favicon" />
         <title>FileSync</title>
         <Meta />
         <Links />

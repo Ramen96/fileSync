@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
+import LoadingBars from '../Loading/loading';
 import folderIconColor from "../../../assets/open-yellow-folder.svg";
 import folderIconGray from "../../../assets/yellow-folder.svg";
 import file from "../../../assets/file2.svg";
@@ -43,7 +44,7 @@ export default function FolderTree({
   }
 
   if (!childrenOfRootNode) {
-    return <h1>Loading...</h1>;
+    return <LoadingBars />;
   }
 
   return childrenOfRootNode.map(child => {

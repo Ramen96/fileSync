@@ -9,7 +9,8 @@ export default defineConfig({
       'ws': {
         target: 'ws://filesync.home:3030',
         ws: true,
-        rewriteWsOrigin: true
+        // rewriteWsOrigin: true
+        changeOrigin: true
       }
     },
     hmr: {

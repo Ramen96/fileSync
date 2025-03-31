@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "react-router dev",
+    "dev": "concurrently \"react-router dev\" \"node webSocketServer.js\"",
     "build": "react-router build",
     "start": "react-router-serve ./build/server/index.js",
     "setup": "prisma generate && prisma migrate deploy"
@@ -27,15 +27,15 @@
     "react-router": "^7.4.0",
     "react-router-dom": "^7.4.0",
     "sanitize-filename": "^1.6.3",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
     "@react-router/dev": "^7.4.0",
     "@react-router/fs-routes": "^7.4.0",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
+    "concurrently": "^9.1.2",
     "prisma": "^6.0.1",
     "vite": "^5.4.11"
   }

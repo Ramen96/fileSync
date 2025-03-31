@@ -148,7 +148,6 @@ export default function DisplayDirectory({
     handleFolderClick: handleFolderClick
   }
 
-  // Upload Card
   const [displayUploadCard, setDisplayUploadCard] = useState(false);
 
   const handleUploadCardState = () => {

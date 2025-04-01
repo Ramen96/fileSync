@@ -1,7 +1,6 @@
 import React, { 
   useState, 
-  useReducer, 
-  createContext,
+  useContext,
   useEffect, 
   useRef 
 } from 'react';
@@ -16,7 +15,7 @@ import {
   Download,
   Upload,
   } from 'lucide-react';
-import { TaskContext, TaskDispatchContext } from '../../utils/taskContext';
+import { DisplayDirectoryContext, DisplayDirectoryDispatchContext, handleDisplayIconContext } from '../../utils/taskContext';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
@@ -31,6 +30,12 @@ export default function DisplayDirectory({
  }) {
 
 
+
+  // TODO:
+  // 1. Get websockets working with state to reload components when uploading/deleting files
+  // 2. Create state context for websocket... possibly other components too
+
+
   // Context
   // const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
 
@@ -40,6 +45,7 @@ export default function DisplayDirectory({
   socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');
     socket.send('Hello Server!');
+    socket.send('reload_display_window');
   });
 
   socket.addEventListener('message', event => {
@@ -239,99 +245,124 @@ export default function DisplayDirectory({
     }
   }
 
+  const handleDisplayIconsProps = {
+    updateDisplayNodes: updateDisplayNodes,
+    currentDisplayNodes: currentDisplayNodes,
+    setCurrentDisplayNodes: setCurrentDisplayNodes,
+    childrenOfRootNode: childrenOfRootNode,
+    isIcon: isIcon,
+    handleFolderClick: handleFolderClick,
+    handleDeleteQueue: handleDeleteQueue,
+    getChildNodes: getChildNodes,
+  };
+
   return (
     <>
-      {displayUploadCard ?
+      {displayUploadCard ? (
         <UploadCard {...uploadCardProps} />
-        : <div style={{"display": "none"}}></div> 
-      }
-      <div className='navWrapper prevent-select'>
-        <button className='homeButton pointer' onClick={() => {
-          setCurrentDisplayNodes(childrenOfRootNode);
-          setForwardHistory([]);
-          setBackHistory([]);
-          }}>
+      ) : (
+        <div style={{ display: "none" }}></div>
+      )}
+      <div className="navWrapper prevent-select">
+        <button
+          className="homeButton pointer"
+          onClick={() => {
+            setCurrentDisplayNodes(childrenOfRootNode);
+            setForwardHistory([]);
+            setBackHistory([]);
+          }}
+        >
           <Home />
         </button>
-        <button className='homeButton' onClick={() => 
-          showSideBar
-            ? setShowSideBar(false)
-            : setShowSideBar(true)
-          }><Sidebar />
+        <button
+          className="homeButton"
+          onClick={() =>
+            showSideBar ? setShowSideBar(false) : setShowSideBar(true)
+          }
+        >
+          <Sidebar />
         </button>
-        <button className='homeButton circle' onClick={() => handleNavClick('backward')}>
-          <ChevronLeft /> 
+        <button
+          className="homeButton circle"
+          onClick={() => handleNavClick("backward")}
+        >
+          <ChevronLeft />
         </button>
-        <button className='homeButton circle' onClick={() => handleNavClick('forward')}>
+        <button
+          className="homeButton circle"
+          onClick={() => handleNavClick("forward")}
+        >
           <ChevronRight />
         </button>
-        <div className='nav-buttons-right'>
-          <button 
+        <div className="nav-buttons-right">
+          <button
             onClick={() => {
               handleDeleteButton();
             }}
-            className='homeButton'>
+            className="homeButton"
+          >
             <Trash />
           </button>
-          <button className='homeButton'>
+          <button className="homeButton">
             <Download />
           </button>
-          <button 
+          <button
             onClick={() => {
               handleUploadCardState();
             }}
-            className='homeButton'>
+            className="homeButton"
+          >
             <Upload />
           </button>
-          <button 
+          <button
             onClick={() => {
               isIcon ? setIsIcon(false) : setIsIcon(true);
             }}
-            className='homeButton'>
-              {isIcon
-                ? <Grid />
-                : <List />
-              }
+            className="homeButton"
+          >
+            {isIcon ? <Grid /> : <List />}
           </button>
         </div>
       </div>
-      <div className='mainWindowWrapper prevent-select'>
-        
-        {showSideBar
-          ? 
-            <div 
-              onMouseDown={handleMouseDown}
-              style={{"width": `${dimensions.width}px`}}
-              className='dirTreeSideBar'>
-                <div className='sideItemWrapper'>
-                <FolderTree {...folderTreeComponentProps}/>
-                </div>
-              <div className='handle'>
-                <div className='handle-gui'>
-                  <div className='dot'></div>
-                  <div className='dot'></div>
-                  <div className='dot'></div>
-                </div>
+      <div className="mainWindowWrapper prevent-select">
+        {showSideBar ? (
+          <div
+            onMouseDown={handleMouseDown}
+            style={{ width: `${dimensions.width}px` }}
+            className="dirTreeSideBar"
+          >
+            <div className="sideItemWrapper">
+              <FolderTree {...folderTreeComponentProps} />
+            </div>
+            <div className="handle">
+              <div className="handle-gui">
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
               </div>
-            </div> 
-          :
-            <div style={{"display": "none"}}></div>
-        }
-        <div className={`${isIcon ? 'gridIconDisplayWrapper' : 'listIconDisplayWrapper'}`}>
-          {/* <TaskContext.Provider value={tasks}> */}
-            {/* <TaskDispatchContext.Provider value={dispatch}> */}
-              <HandleDisplayIcons 
-                updateDisplayNodes={updateDisplayNodes}
-                currentDisplayNodes={currentDisplayNodes}
-                setCurrentDisplayNodes={setCurrentDisplayNodes}
-                childrenOfRootNode={childrenOfRootNode}
-                isIcon={isIcon}
-                handleFolderClick={handleFolderClick}
-                handleDeleteQueue={handleDeleteQueue}
-                getChildNodes={getChildNodes}
-              />
-            {/* </TaskDispatchContext.Provider> */}
-          {/* </TaskContext.Provider> */}
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "none" }}></div>
+        )}
+        <div
+          className={`${
+            isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"
+          }`}
+        >
+          {/* <handleDisplayIconContext.Provider value={handleDisplayIconsProps}> */}
+            <HandleDisplayIcons
+            {...handleDisplayIconsProps}
+            // updateDisplayNodes={updateDisplayNodes}
+            // currentDisplayNodes={currentDisplayNodes}
+            // setCurrentDisplayNodes={setCurrentDisplayNodes}
+            // childrenOfRootNode={childrenOfRootNode}
+            // isIcon={isIcon}
+            // handleFolderClick={handleFolderClick}
+            // handleDeleteQueue={handleDeleteQueue}
+            // getChildNodes={getChildNodes}
+            />
+          {/* </handleDisplayIconContext.Provider> */}
         </div>
       </div>
     </>

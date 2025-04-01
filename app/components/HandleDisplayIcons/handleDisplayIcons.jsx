@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Folder from "../Folder/folder";
 import File from "../File/file";
 import LoadingBars from "../Loading/loading";

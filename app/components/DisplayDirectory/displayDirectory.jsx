@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { 
+  useState, 
+  useReducer, 
+  createContext,
+  useEffect, 
+  useRef 
+} from 'react';
 import {
   ChevronLeft, 
   ChevronRight,
@@ -10,6 +16,7 @@ import {
   Download,
   Upload,
   } from 'lucide-react';
+import { TaskContext, TaskDispatchContext } from '../../utils/taskContext';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
@@ -22,6 +29,30 @@ export default function DisplayDirectory({
   childrenOfRootNode,
   rootNodeId
  }) {
+
+
+  // Context
+  // const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+
+  // Websocket connection
+  const socket = new WebSocket('ws://filesync.home:3030');
+
+  socket.addEventListener('open', event => {
+    console.log('WebSocket connection established!');
+    socket.send('Hello Server!');
+  });
+
+  socket.addEventListener('message', event => {
+    console.log('Message from server: ', event.data);
+  });
+
+  socket.addEventListener('close', event => {
+    console.log('WebSocket connection closed:', event.code, event.reason);
+  });
+
+  socket.addEventListener('error', error => {
+    console.error('WebSocket error:', error);
+  });
 
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
@@ -287,16 +318,20 @@ export default function DisplayDirectory({
             <div style={{"display": "none"}}></div>
         }
         <div className={`${isIcon ? 'gridIconDisplayWrapper' : 'listIconDisplayWrapper'}`}>
-          <HandleDisplayIcons 
-            updateDisplayNodes={updateDisplayNodes}
-            currentDisplayNodes={currentDisplayNodes}
-            setCurrentDisplayNodes={setCurrentDisplayNodes}
-            childrenOfRootNode={childrenOfRootNode}
-            isIcon={isIcon}
-            handleFolderClick={handleFolderClick}
-            handleDeleteQueue={handleDeleteQueue}
-            getChildNodes={getChildNodes}
-          />
+          {/* <TaskContext.Provider value={tasks}> */}
+            {/* <TaskDispatchContext.Provider value={dispatch}> */}
+              <HandleDisplayIcons 
+                updateDisplayNodes={updateDisplayNodes}
+                currentDisplayNodes={currentDisplayNodes}
+                setCurrentDisplayNodes={setCurrentDisplayNodes}
+                childrenOfRootNode={childrenOfRootNode}
+                isIcon={isIcon}
+                handleFolderClick={handleFolderClick}
+                handleDeleteQueue={handleDeleteQueue}
+                getChildNodes={getChildNodes}
+              />
+            {/* </TaskDispatchContext.Provider> */}
+          {/* </TaskContext.Provider> */}
         </div>
       </div>
     </>

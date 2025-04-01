@@ -2,3 +2,4 @@ node_modules/
 build/
 cloud/
 .env
+.react-router/

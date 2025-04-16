@@ -40,7 +40,7 @@ export default function DisplayDirectory({
   // const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
 
   // Websocket connection
-  const socket = new WebSocket('ws://filesync.home:3030');
+  const socket = new WebSocket('ws://fileSync.home:3030');
 
   socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');
@@ -194,7 +194,8 @@ export default function DisplayDirectory({
   const uploadCardProps = { 
     handleUploadCardState: handleUploadCardState,
     fileUpload: fileUpload,
-    displayNodeId: displayNodeId
+    displayNodeId: displayNodeId,
+    handleUploadCardState: handleUploadCardState
   }
 
   // Deleting items
@@ -350,19 +351,7 @@ export default function DisplayDirectory({
             isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"
           }`}
         >
-          {/* <handleDisplayIconContext.Provider value={handleDisplayIconsProps}> */}
-            <HandleDisplayIcons
-            {...handleDisplayIconsProps}
-            // updateDisplayNodes={updateDisplayNodes}
-            // currentDisplayNodes={currentDisplayNodes}
-            // setCurrentDisplayNodes={setCurrentDisplayNodes}
-            // childrenOfRootNode={childrenOfRootNode}
-            // isIcon={isIcon}
-            // handleFolderClick={handleFolderClick}
-            // handleDeleteQueue={handleDeleteQueue}
-            // getChildNodes={getChildNodes}
-            />
-          {/* </handleDisplayIconContext.Provider> */}
+          <HandleDisplayIcons {...handleDisplayIconsProps} />
         </div>
       </div>
     </>

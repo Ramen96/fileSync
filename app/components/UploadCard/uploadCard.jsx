@@ -12,7 +12,7 @@ import { useState } from "react";
 export default function UploadCard({
   handleUploadCardState,
   displayNodeId,
-  fileUpload
+  fileUpload,
 }) {
 
   const inputRef = useRef(null);
@@ -130,6 +130,7 @@ export default function UploadCard({
           onClick={() => {
             fileUpload(fileArr);
             setFileArr([]);
+            handleUploadCardState();
           }}
           className="upload-btn">
           Upload

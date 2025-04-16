@@ -26,18 +26,20 @@ export default function DisplayDirectory({
   setDisplayNodeId,
   fileUpload,
   childrenOfRootNode,
-  rootNodeId
+  rootNodeId,
+  pendingFileOperation, 
+  setPendingFileOperation
  }) {
-
-
 
   // TODO:
   // 1. Get websockets working with state to reload components when uploading/deleting files
   // 2. Create state context for websocket... possibly other components too
 
+  // Logic for reloading display window after upload/delete
+  const [cacheId, setCacheId] = useState(null);
 
-  // Context
-  // const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+  useEffect(() => { // trigger state update in depending components
+  }, [pendingFileOperation]);
 
   // Websocket connection
   const socket = new WebSocket('ws://fileSync.home:3030');
@@ -182,8 +184,10 @@ export default function DisplayDirectory({
     forwardHistory: forwardHistory,
     backHistory: backHistory,
     setBackHistory: setBackHistory,
-    handleFolderClick: handleFolderClick
-  }
+    handleFolderClick: handleFolderClick,
+    pendingFileOperation: pendingFileOperation,
+    setPendingFileOperation: setPendingFileOperation,
+  };
 
   const [displayUploadCard, setDisplayUploadCard] = useState(false);
 
@@ -195,7 +199,11 @@ export default function DisplayDirectory({
     handleUploadCardState: handleUploadCardState,
     fileUpload: fileUpload,
     displayNodeId: displayNodeId,
-    handleUploadCardState: handleUploadCardState
+    handleUploadCardState: handleUploadCardState,
+    cacheId: cacheId, 
+    setCacheId: setCacheId,
+    setPendingFileOperation: setPendingFileOperation,
+    pendingFileOperation: pendingFileOperation
   }
 
   // Deleting items
@@ -255,6 +263,8 @@ export default function DisplayDirectory({
     handleFolderClick: handleFolderClick,
     handleDeleteQueue: handleDeleteQueue,
     getChildNodes: getChildNodes,
+    pendingFileOperation: pendingFileOperation, 
+    setPendingFileOperation: setPendingFileOperation
   };
 
   return (

@@ -10,7 +10,9 @@ export default function HandleDisplayIcons({
   handleDeleteQueue,
   currentDisplayNodes,
   setCurrentDisplayNodes,
-  updateDisplayNodes
+  updateDisplayNodes,
+  pendingFileOperation, 
+  setPendingFileOperation
 }) {
 
   useEffect(() => {
@@ -18,7 +20,7 @@ export default function HandleDisplayIcons({
   }, [childrenOfRootNode]);
 
   
-  if (!currentDisplayNodes) {
+  if (!currentDisplayNodes || pendingFileOperation) {
     return <LoadingBars />
   }
 

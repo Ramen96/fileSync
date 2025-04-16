@@ -34,6 +34,7 @@ export async function loader() {
 export default function Index() {
   const [displayNodeId, setDisplayNodeId] = useState(null);
   const [childrenOfRootNode, setChildrenOfRootNode] = useState(null);
+  const [pendingFileOperation, setPendingFileOperation] = useState(false);
 
   const db = useLoaderData();
 
@@ -87,7 +88,9 @@ export default function Index() {
       body : fileList
     })
     .then(res => {
-      if (res.status !== 200) console.log(`Response: ${res.status}`)
+      res.status === 200 ?
+        setPendingFileOperation(!pendingFileOperation)
+      : console.log(`Response: ${res.status}`)
     })
     .catch(err => console.error(err));
   }
@@ -99,7 +102,9 @@ export default function Index() {
     fileUpload: fileUpload,
     displayNodeId: displayNodeId,
     setDisplayNodeId: setDisplayNodeId,
-    rootNodeId: rootNodeId
+    rootNodeId: rootNodeId,
+    pendingFileOperation: pendingFileOperation,
+    setPendingFileOperation: setPendingFileOperation
   }
 
   const sidebarProps = {

@@ -13,8 +13,11 @@ export default function UploadCard({
   handleUploadCardState,
   displayNodeId,
   fileUpload,
+  cacheId,
+  setCacheId,
+  setPendingFileOperation,
+  pendingFileOperation,
 }) {
-
   const inputRef = useRef(null);
 
   const [multiUpload, setMultiUpload] = useState(false);
@@ -22,7 +25,7 @@ export default function UploadCard({
 
   const handleMultiUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
-  }
+  };
 
   const createFileDataObject = (event) => {
     const file = event.target.files;
@@ -31,27 +34,28 @@ export default function UploadCard({
       fileDataArr.push(file[i]);
     }
     setFileArr([...fileArr, ...fileDataArr]);
-    if (inputRef.current.value !== '') {
-      inputRef.current.value = '';
+    if (inputRef.current.value !== "") {
+      inputRef.current.value = "";
     }
-  }
+  };
 
   const uploadItemProps = {
     fileArr: fileArr,
-    setFileArr: setFileArr
-  }
+    setFileArr: setFileArr,
+  };
 
-  return(
+  return (
     <div className="blur-background">
       <div className="upload-card-wrapper">
         <div className="title-wrapper">
           <div className="h1-wrapper">
             <h1 className="h1">New Upload</h1>
-            <XCircle 
+            <XCircle
               onClick={() => {
                 handleUploadCardState();
               }}
-              className="x-circle" />
+              className="x-circle"
+            />
           </div>
         </div>
         <div className="btn-wrapper">
@@ -59,83 +63,96 @@ export default function UploadCard({
             <label className="btn-label" htmlFor="new-folder">
               <FolderPlus className="margin-r-1" /> New Folder
             </label>
-            {multiUpload
-              ? <input 
-                  ref={inputRef}
-                  style={{"display":"none"}} 
-                  id="new-folder" 
-                  type="file" 
-                  webkitdirectory="" 
-                  multiple 
-                  onChange={(e) => {
-                    createFileDataObject(e);
-                  }}
-                />
-              : <input 
-                  ref={inputRef}
-                  style={{"display":"none"}} 
-                  id="new-folder" 
-                  type="file" 
-                  webkitdirectory="" 
-                  onChange={(e) => {
-                    createFileDataObject(e);
-                  }}
-                />
-            }
+            {multiUpload ? (
+              <input
+                ref={inputRef}
+                style={{ display: "none" }}
+                id="new-folder"
+                type="file"
+                webkitdirectory=""
+                multiple
+                onChange={(e) => {
+                  createFileDataObject(e);
+                }}
+              />
+            ) : (
+              <input
+                ref={inputRef}
+                style={{ display: "none" }}
+                id="new-folder"
+                type="file"
+                webkitdirectory=""
+                onChange={(e) => {
+                  createFileDataObject(e);
+                }}
+              />
+            )}
           </div>
           <div className="btn" role="button">
             <label className="btn-label" htmlFor="new-file">
               <FilePlus className="margin-r-1" /> New File
             </label>
-            {multiUpload
-              ? <input 
-                  ref={inputRef}
-                  id="new-file" 
-                  style={{"display":"none"}} 
-                  type="file" 
-                  multiple 
-                  onChange={(e) => {
-                    createFileDataObject(e);
-                  }}
-                />
-              : <input 
-                  ref={inputRef}
-                  id="new-file" 
-                  style={{"display":"none"}} 
-                  type="file" 
-                  onChange={(e) => {
-                    createFileDataObject(e);
-                  }}
-                />
-            }
+            {multiUpload ? (
+              <input
+                ref={inputRef}
+                id="new-file"
+                style={{ display: "none" }}
+                type="file"
+                multiple
+                onChange={(e) => {
+                  createFileDataObject(e);
+                }}
+              />
+            ) : (
+              <input
+                ref={inputRef}
+                id="new-file"
+                style={{ display: "none" }}
+                type="file"
+                onChange={(e) => {
+                  createFileDataObject(e);
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="upload-multiple">
-          Upload Multiple? 
-          <label className="cb-con test" >
-            <input checked={multiUpload} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-            <span className="checkmark" onClick={(e) => {
+          Upload Multiple?
+          <label className="cb-con test">
+            <input
+              checked={multiUpload}
+              onChange={(e) => console.log(e.target.value)}
+              className="checkbox"
+              type="checkbox"
+            />
+            <span
+              className="checkmark"
+              onClick={(e) => {
                 e.stopPropagation();
                 handleMultiUploadState();
-              }}></span>
+              }}
+            ></span>
           </label>
         </div>
         <div className="drag-n-drop">
-          <UploadItem {...uploadItemProps}/>
+          <UploadItem {...uploadItemProps} />
           <div className="cloud-wrapper">
             <UploadCloudIcon className="uploadCloudIcon" />
           </div>
         </div>
-        <button 
+        <button
           onClick={() => {
+            setCacheId(displayNodeId);
+            setPendingFileOperation(!pendingFileOperation);
             fileUpload(fileArr);
             setFileArr([]);
             handleUploadCardState();
           }}
-          className="upload-btn">
+          className="upload-btn"
+        >
           Upload
         </button>
       </div>
     </div>
-  )
+  );
 }

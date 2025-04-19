@@ -1,19 +1,21 @@
 import { useState, useEffect, useContext } from "react";
+import { DisplayDirectoryContext, displayIconContext } from "../../utils/context";
 import Folder from "../Folder/folder";
 import File from "../File/file";
 import LoadingBars from "../Loading/loading";
 
-export default function HandleDisplayIcons({ 
-  childrenOfRootNode,
-  isIcon,
-  handleFolderClick,
-  handleDeleteQueue,
-  currentDisplayNodes,
-  setCurrentDisplayNodes,
-  updateDisplayNodes,
-  pendingFileOperation, 
-  setPendingFileOperation
-}) {
+export default function HandleDisplayIcons() {
+  const {
+    childrenOfRootNode,
+    isIcon,
+    handleFolderClick,
+    handleDeleteQueue,
+    currentDisplayNodes,
+    setCurrentDisplayNodes,
+    updateDisplayNodes,
+    pendingFileOperation,
+    setPendingFileOperation,
+  } = useContext(displayIconContext);
 
   useEffect(() => {
     setCurrentDisplayNodes(childrenOfRootNode);

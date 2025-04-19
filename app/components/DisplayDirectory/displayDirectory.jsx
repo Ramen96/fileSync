@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload } from 'lucide-react';
-import { IndexContext } from '../../utils/context';
+import { IndexContext, displayIconContext, uploadCardContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
@@ -184,14 +184,14 @@ export default function DisplayDirectory() {
   }
 
   const uploadCardProps = { 
-    handleUploadCardState: handleUploadCardState,
-    fileUpload: fileUpload,
-    displayNodeId: displayNodeId,
-    handleUploadCardState: handleUploadCardState,
-    cacheId: cacheId, 
-    setCacheId: setCacheId,
-    setPendingFileOperation: setPendingFileOperation,
-    pendingFileOperation: pendingFileOperation
+    handleUploadCardState,
+    fileUpload,
+    displayNodeId,
+    handleUploadCardState,
+    cacheId, 
+    setCacheId,
+    setPendingFileOperation,
+    pendingFileOperation
   }
 
   // Deleting items
@@ -243,22 +243,24 @@ export default function DisplayDirectory() {
   }
 
   const handleDisplayIconsProps = {
-    updateDisplayNodes: updateDisplayNodes,
-    currentDisplayNodes: currentDisplayNodes,
-    setCurrentDisplayNodes: setCurrentDisplayNodes,
-    childrenOfRootNode: childrenOfRootNode,
-    isIcon: isIcon,
-    handleFolderClick: handleFolderClick,
-    handleDeleteQueue: handleDeleteQueue,
-    getChildNodes: getChildNodes,
-    pendingFileOperation: pendingFileOperation, 
-    setPendingFileOperation: setPendingFileOperation
+    updateDisplayNodes,
+    currentDisplayNodes,
+    setCurrentDisplayNodes,
+    childrenOfRootNode,
+    isIcon,
+    handleFolderClick,
+    handleDeleteQueue,
+    getChildNodes,
+    pendingFileOperation,
+    setPendingFileOperation,
   };
 
   return (
     <>
       {displayUploadCard ? (
-        <UploadCard {...uploadCardProps} />
+        <uploadCardContext.Provider value={uploadCardProps}>
+          <UploadCard />
+        </uploadCardContext.Provider>
       ) : (
         <div style={{ display: "none" }}></div>
       )}
@@ -349,7 +351,9 @@ export default function DisplayDirectory() {
             isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"
           }`}
         >
-          <HandleDisplayIcons {...handleDisplayIconsProps} />
+          <displayIconContext.Provider value={handleDisplayIconsProps}>
+            <HandleDisplayIcons />
+          </displayIconContext.Provider>
         </div>
       </div>
     </>

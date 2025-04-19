@@ -5,19 +5,21 @@ import {
   UploadCloudIcon,
   FolderMinus
  } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useContext } from "react";
+import { uploadCardContext } from "../../utils/context";
 import UploadItem from "../uploadItem/uploadItem";
 import "../../css/uploadCard.css";
 import { useState } from "react";
-export default function UploadCard({
-  handleUploadCardState,
-  displayNodeId,
-  fileUpload,
-  cacheId,
-  setCacheId,
-  setPendingFileOperation,
-  pendingFileOperation,
-}) {
+export default function UploadCard() {
+  const {
+    handleUploadCardState,
+    displayNodeId,
+    fileUpload,
+    cacheId,
+    setCacheId,
+    setPendingFileOperation,
+    pendingFileOperation,
+  } = useContext(uploadCardContext);
   const inputRef = useRef(null);
 
   const [multiUpload, setMultiUpload] = useState(false);

@@ -5,7 +5,7 @@ import "../css/index.css";
 import SideBar from "../components/SideBar/sidebar.jsx";
 import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
-import { IndexContext } from "../utils/taskContext.js";
+import { IndexContext } from "../utils/context.js";
 const searchIcon = "../assets/search.svg";
 
 export async function loader() {

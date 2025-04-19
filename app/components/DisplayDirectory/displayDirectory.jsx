@@ -1,21 +1,6 @@
-import React, { 
-  useState, 
-  useContext,
-  useEffect, 
-  useRef 
-} from 'react';
-import {
-  ChevronLeft, 
-  ChevronRight,
-  Home,
-  Sidebar,
-  Grid,
-  List,
-  Trash,
-  Download,
-  Upload,
-  } from 'lucide-react';
-  import { IndexContext } from '../../utils/taskContext';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload } from 'lucide-react';
+import { IndexContext } from '../../utils/taskContext';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';

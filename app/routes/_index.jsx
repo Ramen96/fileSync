@@ -1,6 +1,6 @@
 import { data } from "react-router";
 import { useLoaderData } from "react-router";
-import { useEffect, useState, useContext, createContext } from "react";
+import { useEffect, useState } from "react";
 import "../css/index.css";
 import SideBar from "../components/SideBar/sidebar.jsx";
 import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";

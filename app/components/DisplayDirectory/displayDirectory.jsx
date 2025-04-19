@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload } from 'lucide-react';
-import { DisplayDirectoryContext, IndexContext } from '../../utils/context';
+import { IndexContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
@@ -162,19 +162,19 @@ export default function DisplayDirectory() {
 
   // Component props 
   const folderTreeComponentProps = {
-    childrenOfRootNode,
-    showStateList,
-    setShowStateList,
-    getChildNodes,
-    setDisplayNodeId,
-    displayNodeId,
-    setForwardHistory,
-    forwardHistory,
-    backHistory,
-    setBackHistory,
-    handleFolderClick,
-    pendingFileOperation,
-    setPendingFileOperation
+     childrenOfRootNode: childrenOfRootNode,
+     showStateList: showStateList,
+     setShowStateList: setShowStateList,
+     getChildNodes: getChildNodes,
+     setDisplayNodeId: setDisplayNodeId,
+     displayNodeId: displayNodeId,
+     setForwardHistory: setForwardHistory,
+     forwardHistory: forwardHistory,
+     backHistory: backHistory,
+     setBackHistory: setBackHistory,
+     handleFolderClick: handleFolderClick,
+     pendingFileOperation: pendingFileOperation,
+     setPendingFileOperation: setPendingFileOperation,
   };
 
   const [displayUploadCard, setDisplayUploadCard] = useState(false);
@@ -331,9 +331,7 @@ export default function DisplayDirectory() {
             className="dirTreeSideBar"
           >
             <div className="sideItemWrapper">
-              <DisplayDirectoryContext.Provider value={folderTreeComponentProps}>
-                <FolderTree />
-              </DisplayDirectoryContext.Provider>
+              <FolderTree {...folderTreeComponentProps} />
             </div>
             <div className="handle">
               <div className="handle-gui">

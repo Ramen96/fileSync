@@ -1,19 +1,24 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { DisplayDirectoryContext } from '../../utils/context';
 import LoadingBars from '../Loading/loading';
 import folderIconColor from "../../../assets/open-yellow-folder.svg";
 import folderIconGray from "../../../assets/yellow-folder.svg";
 import file from "../../../assets/file2.svg";
 import "../../css/folderTree.css";
 
-export default function FolderTree() {
-  const { 
-    childrenOfRootNode, showStateList, setShowStateList,
-    getChildNodes, setCurrentNodeId, currentNodeId,
-    setForwardHistory, backHistory, setBackHistory, 
-    handleFolderClick, pendingFileOperation, setPendingFileOperation,
-  } = useContext(DisplayDirectoryContext);
-
+export default function FolderTree({
+  childrenOfRootNode,
+  showStateList,
+  setShowStateList,
+  getChildNodes,
+  setCurrentNodeId,
+  currentNodeId,
+  setForwardHistory,
+  backHistory,
+  setBackHistory,
+  handleFolderClick,
+  pendingFileOperation,
+  setPendingFileOperation,
+}) {
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [childNodesMap, setChildNodesMap] = useState(new Map());
 

@@ -15,21 +15,24 @@ import {
   Download,
   Upload,
   } from 'lucide-react';
-import { DisplayDirectoryContext, DisplayDirectoryDispatchContext, handleDisplayIconContext } from '../../utils/taskContext';
+  import { IndexContext } from '../../utils/taskContext';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "../../css/displayDirectory.css";
 
-export default function DisplayDirectory({ 
-  displayNodeId,
-  setDisplayNodeId,
-  fileUpload,
-  childrenOfRootNode,
-  rootNodeId,
-  pendingFileOperation, 
-  setPendingFileOperation
- }) {
+export default function DisplayDirectory() {
+  const {
+    childrenOfRootNode,
+    setChildrenOfRootNode,
+    fileUpload,
+    displayNodeId,
+    setDisplayNodeId,
+    rootNodeId,
+    pendingFileOperation,
+    setPendingFileOperation,
+  } = useContext(IndexContext);
+
 
   // TODO:
   // 1. Get websockets working with state to reload components when uploading/deleting files

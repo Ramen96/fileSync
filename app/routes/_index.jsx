@@ -1,12 +1,12 @@
 import { data } from "react-router";
 import { useLoaderData } from "react-router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useContext, createContext } from "react";
 import "../css/index.css";
 import SideBar from "../components/SideBar/sidebar.jsx";
 import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
+import { IndexContext } from "../utils/taskContext.js";
 const searchIcon = "../assets/search.svg";
-
 
 export async function loader() {
   try {
@@ -95,16 +95,15 @@ export default function Index() {
     .catch(err => console.error(err));
   }
 
-  // Component props
-  const DisplayDirectoryProps = {
-    childrenOfRootNode: childrenOfRootNode,
-    setChildrenOfRootNode: setChildrenOfRootNode,
-    fileUpload: fileUpload,
-    displayNodeId: displayNodeId,
-    setDisplayNodeId: setDisplayNodeId,
-    rootNodeId: rootNodeId,
-    pendingFileOperation: pendingFileOperation,
-    setPendingFileOperation: setPendingFileOperation
+const DisplayDirectoryProps = {
+    childrenOfRootNode, 
+    setChildrenOfRootNode, 
+    fileUpload, 
+    displayNodeId, 
+    setDisplayNodeId, 
+    rootNodeId, 
+    pendingFileOperation, 
+    setPendingFileOperation 
   }
 
   const sidebarProps = {
@@ -128,7 +127,9 @@ export default function Index() {
           />
         </div>
         <div className="mainWindow main-bg">
-          <DisplayDirectory {...DisplayDirectoryProps} />
+          <IndexContext.Provider value={DisplayDirectoryProps}>
+            <DisplayDirectory />
+          </IndexContext.Provider>
         </div>
       </div>
     </>

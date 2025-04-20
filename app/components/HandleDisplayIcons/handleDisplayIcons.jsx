@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { DisplayDirectoryContext, displayIconContext } from "../../utils/context";
+import { DisplayDirectoryContext } from "../../utils/context";
 import Folder from "../Folder/folder";
 import File from "../File/file";
 import LoadingBars from "../Loading/loading";
@@ -15,7 +15,7 @@ export default function HandleDisplayIcons() {
     updateDisplayNodes,
     pendingFileOperation,
     setPendingFileOperation,
-  } = useContext(displayIconContext);
+  } = useContext(DisplayDirectoryContext);
 
   useEffect(() => {
     setCurrentDisplayNodes(childrenOfRootNode);

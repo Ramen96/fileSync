@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload } from 'lucide-react';
-import { IndexContext, displayIconContext, uploadCardContext, wsContext } from '../../utils/context';
+import { DisplayDirectoryContext, IndexContext, displayIconContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
@@ -155,16 +155,6 @@ export default function DisplayDirectory() {
     displayUploadCard ? setDisplayUploadCard(false) : setDisplayUploadCard(true);
   }
 
-  const uploadCardProps = { 
-    fileUpload,
-    displayNodeId,
-    handleUploadCardState,
-    cacheId, 
-    setCacheId,
-    setPendingFileOperation,
-    pendingFileOperation
-  }
-
   // Deleting items
   const [deleteQueue, setDeleteQueue] = useState([]);
 
@@ -213,7 +203,7 @@ export default function DisplayDirectory() {
     }
   }
 
-  const handleDisplayIconsProps = {
+  const displayDirectoryContextProps = {
     updateDisplayNodes,
     currentDisplayNodes,
     setCurrentDisplayNodes,
@@ -224,14 +214,15 @@ export default function DisplayDirectory() {
     getChildNodes,
     pendingFileOperation,
     setPendingFileOperation,
+    handleUploadCardState
   };
 
   return (
     <>
       {displayUploadCard ? (
-        <uploadCardContext.Provider value={uploadCardProps}>
+        <DisplayDirectoryContext.Provider value={displayDirectoryContextProps}>
           <UploadCard />
-        </uploadCardContext.Provider>
+        </DisplayDirectoryContext.Provider>
       ) : (
         <div style={{ display: "none" }}></div>
       )}
@@ -322,9 +313,9 @@ export default function DisplayDirectory() {
             isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"
           }`}
         >
-          <displayIconContext.Provider value={handleDisplayIconsProps}>
+          <DisplayDirectoryContext.Provider value={displayDirectoryContextProps}>
             <HandleDisplayIcons />
-          </displayIconContext.Provider>
+          </DisplayDirectoryContext.Provider>
         </div>
       </div>
     </>

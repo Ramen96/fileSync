@@ -1,19 +1,23 @@
 import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon, FolderMinus } from "lucide-react";
 import { useRef, useContext } from "react";
-import { uploadCardContext } from "../../utils/context";
+import { uploadCardContext, IndexContext } from "../../utils/context";
 import UploadItem from "../uploadItem/uploadItem";
 import "../../css/uploadCard.css";
 import { useState } from "react";
 export default function UploadCard() {
   const {
     handleUploadCardState,
-    displayNodeId,
+  } = useContext(uploadCardContext);
+
+  const {
     fileUpload,
+    displayNodeId,
     cacheId,
     setCacheId,
-    setPendingFileOperation,
     pendingFileOperation,
-  } = useContext(uploadCardContext);
+    setPendingFileOperation
+  } =  useContext(IndexContext)
+
   const inputRef = useRef(null);
 
   const [multiUpload, setMultiUpload] = useState(false);

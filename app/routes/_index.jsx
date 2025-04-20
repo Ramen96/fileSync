@@ -129,7 +129,7 @@ export default function Index() {
     .catch(err => console.error(err));
   }
 
-const DisplayDirectoryProps = {
+const indexContextProps = {
     childrenOfRootNode, 
     setChildrenOfRootNode, 
     fileUpload, 
@@ -163,7 +163,7 @@ const DisplayDirectoryProps = {
           />
         </div>
         <div className="mainWindow main-bg">
-          <IndexContext.Provider value={DisplayDirectoryProps}>
+          <IndexContext.Provider value={indexContextProps}>
             <DisplayDirectory />
           </IndexContext.Provider>
         </div>

@@ -202,13 +202,10 @@ export default function DisplayDirectory() {
     updateDisplayNodes,
     currentDisplayNodes,
     setCurrentDisplayNodes,
-    childrenOfRootNode,
     isIcon,
     handleFolderClick,
     handleDeleteQueue,
     getChildNodes,
-    pendingFileOperation,
-    setPendingFileOperation,
     handleUploadCardState
   };
 

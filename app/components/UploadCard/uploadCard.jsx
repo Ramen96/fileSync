@@ -1,13 +1,13 @@
 import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon, FolderMinus } from "lucide-react";
 import { useRef, useContext } from "react";
-import { uploadCardContext, IndexContext } from "../../utils/context";
+import { DisplayDirectoryContext, IndexContext } from "../../utils/context";
 import UploadItem from "../uploadItem/uploadItem";
 import "../../css/uploadCard.css";
 import { useState } from "react";
 export default function UploadCard() {
   const {
     handleUploadCardState,
-  } = useContext(uploadCardContext);
+  } = useContext(DisplayDirectoryContext);
 
   const {
     fileUpload,

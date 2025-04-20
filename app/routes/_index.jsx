@@ -151,7 +151,7 @@ const indexContextProps = {
     <>
       <SideBar {...sidebarProps} />
       <div className="main">
-        <div className="searchbarwrapper flex-jc-ai  main-bg">
+        <div className="searchBarWrapper flex-jc-ai  main-bg">
           <button className="submitButton">
             <img className="searchIcon" src={searchIcon} alt="search icon" />
           </button>

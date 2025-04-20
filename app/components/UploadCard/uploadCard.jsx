@@ -12,7 +12,6 @@ export default function UploadCard() {
   const {
     fileUpload,
     displayNodeId,
-    cacheId,
     setCacheId,
     pendingFileOperation,
     setPendingFileOperation

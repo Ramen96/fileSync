@@ -9,15 +9,10 @@ import "../../css/displayDirectory.css";
 export default function DisplayDirectory() {
   const {
     childrenOfRootNode,
-    setChildrenOfRootNode,
-    fileUpload,
     displayNodeId,
     setDisplayNodeId,
-    rootNodeId,
     pendingFileOperation,
     setPendingFileOperation,
-    cacheId,
-    setCacheId
   } = useContext(IndexContext);
 
 

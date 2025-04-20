@@ -14,7 +14,6 @@ export default function HandleDisplayIcons() {
     setCurrentDisplayNodes,
     updateDisplayNodes,
     pendingFileOperation,
-    setPendingFileOperation,
   } = useContext(DisplayDirectoryContext);
 
   useEffect(() => {

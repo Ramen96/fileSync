@@ -31,8 +31,6 @@ export default function DisplayDirectory() {
   }, [pendingFileOperation]);
 
   // Websocket connection
-  // const socket = new WebSocket('ws://fileSync.home:3030');
-
   socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');
     socket.send('Hello Server!');
@@ -185,7 +183,6 @@ export default function DisplayDirectory() {
   }
 
   const uploadCardProps = { 
-    handleUploadCardState,
     fileUpload,
     displayNodeId,
     handleUploadCardState,

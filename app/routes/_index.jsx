@@ -1,12 +1,12 @@
 import { data } from "react-router";
 import { useLoaderData } from "react-router";
 import { useEffect, useState, useContext } from "react";
-import "../css/index.css";
+import { IndexContext, wsContext } from "../utils/context.js";
+import { prisma } from "../utils/prisma.server.js";
 import SideBar from "../components/SideBar/sidebar.jsx";
 import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";
-import { prisma } from "../utils/prisma.server.js";
-import { IndexContext, wsContext } from "../utils/context.js";
 const searchIcon = "../assets/search.svg";
+import "../css/index.css";
 
 export async function loader() {
   try {

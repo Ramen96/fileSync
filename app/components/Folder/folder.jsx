@@ -6,7 +6,6 @@ export default function Folder({
   name,
   id,
   handleFolderClick,
-  updateDisplayNodes,
   isIcon,
   handleDeleteQueue,
 }) {

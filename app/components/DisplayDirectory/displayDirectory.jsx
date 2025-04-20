@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload } from 'lucide-react';
-import { IndexContext, displayIconContext, uploadCardContext } from '../../utils/context';
+import { IndexContext, displayIconContext, uploadCardContext, wsContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
@@ -18,6 +18,7 @@ export default function DisplayDirectory() {
     setPendingFileOperation,
   } = useContext(IndexContext);
 
+  const socket = useContext(wsContext);
 
   // TODO:
   // 1. Get websockets working with state to reload components when uploading/deleting files
@@ -30,7 +31,7 @@ export default function DisplayDirectory() {
   }, [pendingFileOperation]);
 
   // Websocket connection
-  const socket = new WebSocket('ws://fileSync.home:3030');
+  // const socket = new WebSocket('ws://fileSync.home:3030');
 
   socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');

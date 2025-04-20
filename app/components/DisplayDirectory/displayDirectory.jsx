@@ -16,38 +16,11 @@ export default function DisplayDirectory() {
     rootNodeId,
     pendingFileOperation,
     setPendingFileOperation,
+    cacheId,
+    setCacheId
   } = useContext(IndexContext);
 
-  const socket = useContext(wsContext);
 
-  // TODO:
-  // 1. Get websockets working with state to reload components when uploading/deleting files
-  // 2. Create state context for websocket... possibly other components too
-
-  // Logic for reloading display window after upload/delete
-  const [cacheId, setCacheId] = useState(null);
-
-  useEffect(() => { // trigger state update in depending components
-  }, [pendingFileOperation]);
-
-  // Websocket connection
-  socket.addEventListener('open', event => {
-    console.log('WebSocket connection established!');
-    socket.send('Hello Server!');
-    socket.send('reload_display_window');
-  });
-
-  socket.addEventListener('message', event => {
-    console.log('Message from server: ', event.data);
-  });
-
-  socket.addEventListener('close', event => {
-    console.log('WebSocket connection closed:', event.code, event.reason);
-  });
-
-  socket.addEventListener('error', error => {
-    console.error('WebSocket error:', error);
-  });
 
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);

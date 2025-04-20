@@ -1,11 +1,11 @@
 import { data } from "react-router";
 import { useLoaderData } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "../css/index.css";
 import SideBar from "../components/SideBar/sidebar.jsx";
 import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";
 import { prisma } from "../utils/prisma.server.js";
-import { IndexContext } from "../utils/context.js";
+import { IndexContext, wsContext } from "../utils/context.js";
 const searchIcon = "../assets/search.svg";
 
 export async function loader() {
@@ -45,6 +45,40 @@ export default function Index() {
     setChildrenOfRootNode(childrenOfRoot);
     setDisplayNodeId(rootNodeId);
   }, []);
+
+
+  const socket = useContext(wsContext);
+
+  // TODO:
+  // 1. Get websockets working with state to reload components when uploading/deleting files
+  // 2. Create state context for websocket... possibly other components too
+
+  // Logic for reloading display window after upload/delete
+  const [cacheId, setCacheId] = useState(null);
+
+  useEffect(() => { // trigger state update in depending components
+  }, [pendingFileOperation]);
+
+  // Websocket connection
+  socket.addEventListener('open', event => {
+    console.log('WebSocket connection established!');
+    socket.send('Hello Server!');
+    socket.send('reload_display_window');
+  });
+
+  socket.addEventListener('message', event => {
+    console.log('Message from server: ', event.data);
+  });
+
+  socket.addEventListener('close', event => {
+    console.log('WebSocket connection closed:', event.code, event.reason);
+  });
+
+  socket.addEventListener('error', error => {
+    console.error('WebSocket error:', error);
+  });
+
+
 
   function fileUpload(input) {
     const file = input instanceof Event ? input.target.files : input;
@@ -103,7 +137,9 @@ const DisplayDirectoryProps = {
     setDisplayNodeId, 
     rootNodeId, 
     pendingFileOperation, 
-    setPendingFileOperation 
+    setPendingFileOperation,
+    cacheId,
+    setCacheId 
   }
 
   const sidebarProps = {

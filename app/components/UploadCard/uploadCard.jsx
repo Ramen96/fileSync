@@ -1,6 +1,6 @@
 import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon, FolderMinus } from "lucide-react";
 import { useRef, useContext } from "react";
-import { DisplayDirectoryContext, IndexContext } from "../../utils/context";
+import { DisplayDirectoryContext, IndexContext, wsContext } from "../../utils/context";
 import UploadItem from "../uploadItem/uploadItem";
 import "../../css/uploadCard.css";
 import { useState } from "react";
@@ -12,10 +12,20 @@ export default function UploadCard() {
   const {
     fileUpload,
     displayNodeId,
-    setCacheId,
     pendingFileOperation,
-    setPendingFileOperation
+    setPendingFileOperation,
+    // wsTriggerReload
   } =  useContext(IndexContext)
+
+  const socket = useContext(wsContext);
+   const wsTriggerReload = (id) => {
+    socket.send(
+      JSON.stringify({
+        action: "reload",
+        id: id
+      })
+    );
+  }
 
   const inputRef = useRef(null);
 
@@ -141,11 +151,11 @@ export default function UploadCard() {
         </div>
         <button
           onClick={() => {
-            setCacheId(displayNodeId);
-            setPendingFileOperation(!pendingFileOperation);
+            // setPendingFileOperation(true);
             fileUpload(fileArr);
             setFileArr([]);
             handleUploadCardState();
+            wsTriggerReload(displayNodeId);
           }}
           className="upload-btn"
         >

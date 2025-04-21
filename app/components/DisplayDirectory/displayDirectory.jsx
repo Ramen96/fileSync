@@ -13,9 +13,8 @@ export default function DisplayDirectory() {
     setDisplayNodeId,
     pendingFileOperation,
     setPendingFileOperation,
+    reloadTrigger
   } = useContext(IndexContext);
-
-
 
   // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
@@ -198,6 +197,12 @@ export default function DisplayDirectory() {
     }
   }
 
+  useEffect(() => {
+    if (displayNodeId) {
+      updateDisplayNodes(displayNodeId);
+    }
+  }, [displayNodeId, reloadTrigger]);
+
   const displayDirectoryContextProps = {
     updateDisplayNodes,
     currentDisplayNodes,
@@ -206,7 +211,7 @@ export default function DisplayDirectory() {
     handleFolderClick,
     handleDeleteQueue,
     getChildNodes,
-    handleUploadCardState
+    handleUploadCardState,
   };
 
   return (

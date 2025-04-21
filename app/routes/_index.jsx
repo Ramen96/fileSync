@@ -49,25 +49,27 @@ export default function Index() {
 
   const socket = useContext(wsContext);
 
-  // TODO:
-  // 1. Get websockets working with state to reload components when uploading/deleting files
-  // 2. Create state context for websocket... possibly other components too
-
   // Logic for reloading display window after upload/delete
-  const [cacheId, setCacheId] = useState(null);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
+ 
 
-  useEffect(() => { // trigger state update in depending components
-  }, [pendingFileOperation]);
 
   // Websocket connection
   socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');
-    socket.send('Hello Server!');
-    socket.send('reload_display_window');
+    socket.send(JSON.stringify({ action: 'connection', message: 'Hello Server!'}));
   });
 
   socket.addEventListener('message', event => {
-    console.log('Message from server: ', event.data);
+    const msgObject = JSON.parse(event.data);
+    console.log('WebSocket message received:', event.data);
+    if (msgObject?.message === 'reload') {
+      setDisplayNodeId(msgObject.id);
+      setReloadTrigger(prev => prev + 1);
+
+    } else if (msgObject.message === false) {
+      console.log('message: ', msgObject.message);
+    }
   });
 
   socket.addEventListener('close', event => {
@@ -77,8 +79,6 @@ export default function Index() {
   socket.addEventListener('error', error => {
     console.error('WebSocket error:', error);
   });
-
-
 
   function fileUpload(input) {
     const file = input instanceof Event ? input.target.files : input;
@@ -121,13 +121,17 @@ export default function Index() {
       method: "POST",
       body : fileList
     })
-    .then(res => {
-      res.status === 200 ?
-        setPendingFileOperation(!pendingFileOperation)
-      : console.log(`Response: ${res.status}`)
+    .then((res) => {
+      if (res.status !== 200) {
+        console.log(`Response: ${res.status}`);
+        setPendingFileOperation(false);
+      }
     })
-    .catch(err => console.error(err));
-  }
+    .catch((err) => {
+      console.error(err);
+      setPendingFileOperation(false);
+    });
+  };
 
 const indexContextProps = {
     childrenOfRootNode, 
@@ -138,8 +142,8 @@ const indexContextProps = {
     rootNodeId, 
     pendingFileOperation, 
     setPendingFileOperation,
-    cacheId,
-    setCacheId 
+    // wsTriggerReload,
+    reloadTrigger 
   }
 
   const sidebarProps = {

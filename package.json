@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"react-router dev\" \"node webSocketServer.js\"",
+    "dev": "react-router dev",
     "build": "react-router build",
     "start": "react-router-serve ./build/server/index.js",
     "setup": "prisma generate && prisma migrate deploy"

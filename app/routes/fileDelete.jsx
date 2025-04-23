@@ -1,4 +1,6 @@
 import { prisma } from "../utils/prisma.server"
+import { wss } from "../../webSocketServer";
+import WebSocket from "ws";
 import * as fs from "node:fs/promises";
 
 export const action = async ({ request }) => {
@@ -11,6 +13,8 @@ export const action = async ({ request }) => {
 
     const rootId = initRoot.id;
     const body = await request.json();
+    const deleteQueue = body?.deleteQueue;
+    const displayNodeId = body?.displayNodeId;
 
     const getParentId = async (objectId) => {
       try {
@@ -76,7 +80,7 @@ export const action = async ({ request }) => {
       }
     }
 
-    body.forEach(async (element) => {
+    deleteQueue.forEach(async (element) => {
       const elementID = element.id;
       try {
         // bug note:  when selecting multiple files to delete the path printed is not the full path
@@ -140,6 +144,22 @@ export const action = async ({ request }) => {
         console.log(`Something went wrong in body.foreach, Error: ${err}`);
       }
     });
+
+    try {
+      const socket = wss;
+      socket.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(
+            JSON.stringify({
+              message: "reload",
+              id: body?.displayNodeId
+            })
+          );
+        }
+      });
+    } catch (wsError) {
+      console.error('WebSocket error: ', wsError);
+    }
 
     return new Response(JSON.stringify({
       message: "200"

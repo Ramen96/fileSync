@@ -168,12 +168,22 @@ export default function DisplayDirectory() {
       headers: {
         "Content-Type": "application/json"
       }, 
-      body: JSON.stringify(deleteQueue)
+      body: JSON.stringify({
+        deleteQueue: deleteQueue, 
+        displayNodeId: displayNodeId
+      })
     }
 
     fetch('fileDelete', options)
     .then(response => {
-      if (response.status !== 200) console.log(`Response: ${response.status}`);
+      if (response.ok) {
+        console.log("File successfully deleted");
+        setPendingFileOperation(true);
+        setReloadTrigger(prev => prev + 1);
+      } else {
+        console.log(`Failed to delete file with status: ${response.status}`);
+        setReloadTrigger(prev => prev + 1);
+      }
     })
     .catch(error => console.error(`Error deleting files: ${error}`));
   }

@@ -52,8 +52,6 @@ export default function Index() {
   // Logic for reloading display window after upload/delete
   const [reloadTrigger, setReloadTrigger] = useState(0);
  
-
-
   // Websocket connection
   socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');
@@ -122,9 +120,11 @@ export default function Index() {
       body : fileList
     })
     .then((res) => {
-      if (res.status !== 200) {
-        console.log(`Response: ${res.status}`);
-        setPendingFileOperation(false);
+      if (res.ok) {
+        console.log("Upload successful");
+      } else {
+        console.log(`Upload failed with status: ${res.status}`);
+        setReloadTrigger(prev => prev + 1);
       }
     })
     .catch((err) => {
@@ -142,8 +142,8 @@ const indexContextProps = {
     rootNodeId, 
     pendingFileOperation, 
     setPendingFileOperation,
-    // wsTriggerReload,
-    reloadTrigger 
+    reloadTrigger,
+    setReloadTrigger
   }
 
   const sidebarProps = {

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload, RefreshCcwIcon } from 'lucide-react';
 import { DisplayDirectoryContext, IndexContext, displayIconContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
@@ -8,12 +8,14 @@ import "../../css/displayDirectory.css";
 
 export default function DisplayDirectory() {
   const {
+    rootNodeId,
     childrenOfRootNode,
     displayNodeId,
     setDisplayNodeId,
     pendingFileOperation,
     setPendingFileOperation,
-    reloadTrigger
+    reloadTrigger,
+    setReloadTrigger
   } = useContext(IndexContext);
 
   // Forward and backward buttons
@@ -200,7 +202,10 @@ export default function DisplayDirectory() {
   useEffect(() => {
     if (displayNodeId) {
       updateDisplayNodes(displayNodeId);
+    } else {
+      updateDisplayNodes(rootNodeId)
     }
+    setPendingFileOperation(false);
   }, [displayNodeId, reloadTrigger]);
 
   const displayDirectoryContextProps = {

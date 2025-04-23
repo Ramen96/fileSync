@@ -2,6 +2,7 @@ import { Dir, mkdir } from "node:fs";
 import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import WebSocket from "ws";
 import { get } from "node:https";
 import { wss } from "../../webSocketServer";
 
@@ -223,15 +224,22 @@ export const action = async ({ request }) => {
       }
     }
 
-    const socket = wss;
-    socket.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({
-          message: 'reload',
-          id: wsReturnedParentId
-        }))
-      }
-    })
+    try {
+      const socket = wss;
+      socket.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(
+            JSON.stringify({
+              message: "reload",
+              id: wsReturnedParentId || metadata[0]?.parent_id
+            })
+          );
+        }
+      });
+    } catch (wsError) {
+      console.error('WebSocket error: ', wsError);
+    }
+    
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

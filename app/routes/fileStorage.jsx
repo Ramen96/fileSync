@@ -240,7 +240,10 @@ export const action = async ({ request }) => {
 
   } catch (error) {
     console.error('Action error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      status: 'failed'
+    }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
     });

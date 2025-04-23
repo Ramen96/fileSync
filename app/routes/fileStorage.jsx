@@ -3,7 +3,7 @@ import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { get } from "node:https";
-import { FolderMinus } from "lucide-react";
+import { wss } from "../../webSocketServer";
 
 const joinPath = (arr) => path.join(...arr);
 
@@ -12,6 +12,7 @@ export const action = async ({ request }) => {
     const parseRequest = await request.formData();
     const formData = Object.fromEntries(parseRequest);
     const metadata = JSON.parse(formData.metadata);
+    const wsReturnedParentId = metadata.parent_id;
 
     const pathTraversalDetection = (activePath) => {
       const traversalPatterns = [
@@ -221,6 +222,16 @@ export const action = async ({ request }) => {
           await saveFolder(webkitRelativePath, type, is_folder);
       }
     }
+
+    const socket = wss;
+    socket.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({
+          message: 'reload',
+          id: wsReturnedParentId
+        }))
+      }
+    })
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

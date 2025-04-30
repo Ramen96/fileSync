@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { wsContext } from '../../utils/context';
 import LoadingBars from '../Loading/loading';
 import folderIconColor from "../../../assets/open-yellow-folder.svg";
 import folderIconGray from "../../../assets/yellow-folder.svg";
@@ -17,8 +18,11 @@ export default function FolderTree({
   setBackHistory,
   handleFolderClick,
   pendingFileOperation,
+  displayNodeId,
   setPendingFileOperation,
 }) {
+
+  const socket = useContext(wsContext);
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [childNodesMap, setChildNodesMap] = useState(new Map());
 
@@ -49,6 +53,22 @@ export default function FolderTree({
   if (!childrenOfRootNode || pendingFileOperation) {
     return <LoadingBars />;
   }
+
+  socket.addEventListener("message", async (event) => {
+    const data = JSON.parse(event?.data);
+    const message = data?.message;
+
+    if (message === 'reload') {
+      // fetch data 
+      try {
+        const reloadId = data?.id;
+        const newChildNodes = await getChildNodes(reloadId);
+        setChildNodesMap(newChildNodes);
+      } catch (error) {
+        console.log(`Error fetching data ${error}`);
+      }
+    }
+  });
 
   return childrenOfRootNode.map((child) => {
     const isFolder = child.metadata?.is_folder === true;

@@ -128,21 +128,21 @@ export default function DisplayDirectory() {
   // Display files and folders as icons/rows
   const [isIcon, setIsIcon] = useState(true);
 
-  // Component props 
+  // Folder Tree Component props 
   const folderTreeComponentProps = {
-     childrenOfRootNode: childrenOfRootNode,
-     showStateList: showStateList,
-     setShowStateList: setShowStateList,
-     getChildNodes: getChildNodes,
-     setDisplayNodeId: setDisplayNodeId,
-     displayNodeId: displayNodeId,
-     setForwardHistory: setForwardHistory,
-     forwardHistory: forwardHistory,
-     backHistory: backHistory,
-     setBackHistory: setBackHistory,
-     handleFolderClick: handleFolderClick,
-     pendingFileOperation: pendingFileOperation,
-     setPendingFileOperation: setPendingFileOperation,
+    childrenOfRootNode: childrenOfRootNode,
+    showStateList: showStateList,
+    setShowStateList: setShowStateList,
+    getChildNodes: getChildNodes,
+    setDisplayNodeId: setDisplayNodeId,
+    displayNodeId: displayNodeId,
+    setForwardHistory: setForwardHistory,
+    forwardHistory: forwardHistory,
+    backHistory: backHistory,
+    setBackHistory: setBackHistory,
+    handleFolderClick: handleFolderClick,
+    pendingFileOperation: pendingFileOperation,
+    setPendingFileOperation: setPendingFileOperation,
   };
 
   const [displayUploadCard, setDisplayUploadCard] = useState(false);

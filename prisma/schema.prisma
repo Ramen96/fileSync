@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["strictUndefinedChecks", "relationJoins"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins", "strictUndefinedChecks"]
 }
 
 datasource db {
@@ -18,9 +18,9 @@ model metadata {
 }
 
 model hierarchy {
-  id              String      @id @db.Uuid
-  parent_id       String?     @db.Uuid
-  metadata        metadata    @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  parent          hierarchy?  @relation("hierarchyTohierarchy", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  children        hierarchy[] @relation("hierarchyTohierarchy")
+  id        String      @id @db.Uuid
+  parent_id String?     @db.Uuid
+  metadata  metadata    @relation(fields: [id], references: [id], onDelete: Cascade)
+  parent    hierarchy?  @relation("hierarchyTohierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
+  children  hierarchy[] @relation("hierarchyTohierarchy")
 }

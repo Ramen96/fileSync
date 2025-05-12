@@ -17,7 +17,7 @@ export default function HandleDisplayIcons() {
   const {
     childrenOfRootNode,
     pendingFileOperation
-  } = useContext(IndexContext)
+  } = useContext(IndexContext);
 
   useEffect(() => {
     setCurrentDisplayNodes(childrenOfRootNode);

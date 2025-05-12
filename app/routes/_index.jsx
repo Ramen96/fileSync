@@ -26,25 +26,7 @@ export async function loader() {
 
     return data(initRoot);
   } catch (error) {
-    // Initalize root folder if there is not one already
-    // This dose not work right now try moving it somewhere else
-    try {
-      const createRoot = await prisma.metadata.create({
-        data: {
-          name: 'Root',
-          created_at: new Date(),
-          is_folder: true,
-          hierarchy: {
-            create: {
-              parent_id: null
-            }
-          }
-        }
-      });
-      return createRoot;
-    } catch (error) {
-      console.error('Error initalizing database', error);
-    }
+    
     console.error("Error fetching data:", error);
     return data({}, { status: 500 });
   }
@@ -131,7 +113,6 @@ export default function Index() {
       }
       return dataArr;
     }
-
     
     fileList.append('metadata', JSON.stringify(metadata()));
     fetch("fileStorage", {
@@ -152,7 +133,7 @@ export default function Index() {
     });
   };
 
-const indexContextProps = {
+  const indexContextProps = {
     childrenOfRootNode, 
     setChildrenOfRootNode, 
     fileUpload, 

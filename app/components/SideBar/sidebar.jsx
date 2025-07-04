@@ -44,6 +44,33 @@ export default function SideBar({ fileUpload, currentNodeId }) {
     }
   ];
 
+  const dropdownOptions = [
+    {
+      id: 5,
+      name: 'Upload File',
+      icon: <FileUpIcon className="dropdownIcon" />,
+      uploadMultiple: false
+    },
+    {
+      id: 6,
+      name: 'Upload Folder',
+      icon: <FolderUpIcon className="dropdownIcon" />,
+      uploadMultiple: true
+    },
+    {
+      id: 7,
+      name: 'New Folder',
+      icon: <FolderPlus className="dropdownIcon" />,
+      uploadMultiple: false
+    },
+    {
+      id: 8,
+      name: 'New Document',
+      icon: <FilePlus className="dropdownIcon" />,
+      uploadMultiple: false
+    },
+  ];
+
   return (
     <div className="sidebar">
       <button onClick={routeHome} className="logo animate35s">
@@ -60,33 +87,23 @@ export default function SideBar({ fileUpload, currentNodeId }) {
           </div>
           <div className="dropdown-content">
             <ul className="dropdown-items">
-              <li className="dropdown-element">
-                <div role="button" className="drp-btn-e">
-                  <FileUpIcon className="dropdownIcon" />
-                  <label htmlFor="uploadFile"><h4 className="pointer">Upload File</h4></label>
-                  <input onChange={fileUpload} style={{ "display": "none" }} type="file" id="uploadFile" />
-                </div>
-              </li>
-              <li className="dropdown-element">
-                <div role="button" className="drp-btn-e">
-                  <FolderUpIcon className="dropdownIcon" />
-                  <label htmlFor="uploadFolder"><h4 className="pointer">Upload Folder</h4></label>
-                  <input style={{ "display": "none" }} onChange={fileUpload} type="file" multiple={true} webkitdirectory="true" id="uploadFolder" />
-                </div>
-              </li>
-              <div className="spacer"></div>
-              <li className="dropdown-element">
-                <div role="button" className="drp-btn-e">
-                  <FolderPlus className="dropdownIcon" />
-                  <h4>New Folder</h4>
-                </div>
-              </li>
-              <li className="dropdown-element">
-                <div role="button" className="drp-btn-e">
-                  <FilePlus className="dropdownIcon" />
-                  <h4>New Document</h4>
-                </div>
-              </li>
+              {dropdownOptions.map((e) => {
+                return (
+                  <li key={e.id} className="dropdown-element">
+                    <div role="button" className="drp-btn-e">
+                      {e.icon}
+                      <label htmlFor={e.id}><h4 className="pointer">{e.name}</h4></label>
+                      <input 
+                        onChange={fileUpload} 
+                        style={{ "display": "none" }} 
+                        type="file" 
+                        id={e.id} 
+                        {...(e.uploadMultiple ? {multiple: true, webkitdirectory: "true"}: {})}
+                      />
+                    </div>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         </button>

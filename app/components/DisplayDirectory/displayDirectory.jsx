@@ -30,7 +30,7 @@ export default function DisplayDirectory() {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
-        }, 
+        },
         body: JSON.stringify({
           displayNodeId: idOfItemClicked,
           requestType: 'get_child_nodes'
@@ -54,7 +54,7 @@ export default function DisplayDirectory() {
       updateDisplayNodes(prevNodeId);
       setBackHistory(prevState => prevState.slice(0, -1));
       setForwardHistory(prevState => [currentNodeId, ...prevState]);
-    } 
+    }
 
     if (direction === 'forward' && nextNodeId) {
       updateDisplayNodes(nextNodeId);
@@ -72,7 +72,7 @@ export default function DisplayDirectory() {
   }
 
   // Sidebar
-  const [showStateList ,setShowStateList] = useState([]);
+  const [showStateList, setShowStateList] = useState([]);
   const [showSideBar, setShowSideBar] = useState(true);
 
   // Resize sidebar
@@ -164,25 +164,25 @@ export default function DisplayDirectory() {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
-      }, 
+      },
       body: JSON.stringify({
-        deleteQueue: deleteQueue, 
+        deleteQueue: deleteQueue,
         displayNodeId: displayNodeId
       })
     }
 
     fetch('fileDelete', options)
-    .then(response => {
-      if (response.ok) {
-        console.log("File successfully deleted");
-        setPendingFileOperation(true);
-        setReloadTrigger(prev => prev + 1);
-      } else {
-        console.log(`Failed to delete file with status: ${response.status}`);
-        setReloadTrigger(prev => prev + 1);
-      }
-    })
-    .catch(error => console.error(`Error deleting files: ${error}`));
+      .then(response => {
+        if (response.ok) {
+          console.log("File successfully deleted");
+          setPendingFileOperation(true);
+          setReloadTrigger(prev => prev + 1);
+        } else {
+          console.log(`Failed to delete file with status: ${response.status}`);
+          setReloadTrigger(prev => prev + 1);
+        }
+      })
+      .catch(error => console.error(`Error deleting files: ${error}`));
   }
 
   // Updating display icon nodes
@@ -192,7 +192,7 @@ export default function DisplayDirectory() {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
-        }, 
+        },
         body: JSON.stringify({
           displayNodeId: id,
           requestType: 'get_child_nodes'
@@ -272,7 +272,7 @@ export default function DisplayDirectory() {
       id: 'download',
       icon: Download,
       className: 'homeButton',
-      onClick: () => {} // Add download functionality
+      onClick: () => { } // Add download functionality
     },
     {
       id: 'upload',
@@ -314,17 +314,17 @@ export default function DisplayDirectory() {
       ) : (
         <div style={{ display: "none" }}></div>
       )}
-      
+
       <div className="navWrapper prevent-select">
         {/* Left navigation buttons */}
         {leftNavButtons.map(renderButton)}
-        
+
         {/* Right navigation buttons */}
         <div className="nav-buttons-right">
           {rightNavButtons.map(renderButton)}
         </div>
       </div>
-      
+
       <div className="mainWindowWrapper prevent-select">
         {showSideBar ? (
           <div
@@ -346,11 +346,10 @@ export default function DisplayDirectory() {
         ) : (
           <div style={{ display: "none" }}></div>
         )}
-        
+
         <div
-          className={`${
-            isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"
-          }`}
+          className={`${isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"
+            }`}
         >
           <DisplayDirectoryContext.Provider value={displayDirectoryContextProps}>
             <HandleDisplayIcons />

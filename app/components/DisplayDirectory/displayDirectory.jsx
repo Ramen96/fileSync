@@ -75,7 +75,6 @@ export default function DisplayDirectory() {
   const [showStateList ,setShowStateList] = useState([]);
   const [showSideBar, setShowSideBar] = useState(true);
 
-
   // Resize sidebar
   const [dimensions, setDimensions] = useState({
     width: 300,
@@ -83,7 +82,6 @@ export default function DisplayDirectory() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStateX] = useState(0)
-
 
   const lastX = useRef(0);
 
@@ -123,7 +121,6 @@ export default function DisplayDirectory() {
     }
 
   }, [startX, isDragging]);
-
 
   // Display files and folders as icons/rows
   const [isIcon, setIsIcon] = useState(true);
@@ -229,6 +226,85 @@ export default function DisplayDirectory() {
     handleUploadCardState,
   };
 
+  // MAPPED OBJECTS FOR REPEATING HTML ELEMENTS
+
+  // Left navigation buttons configuration
+  const leftNavButtons = [
+    {
+      id: 'home',
+      icon: Home,
+      className: 'homeButton pointer',
+      onClick: () => {
+        setCurrentDisplayNodes(childrenOfRootNode);
+        setForwardHistory([]);
+        setBackHistory([]);
+      }
+    },
+    {
+      id: 'sidebar',
+      icon: Sidebar,
+      className: 'homeButton',
+      onClick: () => showSideBar ? setShowSideBar(false) : setShowSideBar(true)
+    },
+    {
+      id: 'backward',
+      icon: ChevronLeft,
+      className: 'homeButton circle',
+      onClick: () => handleNavClick("backward")
+    },
+    {
+      id: 'forward',
+      icon: ChevronRight,
+      className: 'homeButton circle',
+      onClick: () => handleNavClick("forward")
+    }
+  ];
+
+  // Right navigation buttons configuration
+  const rightNavButtons = [
+    {
+      id: 'delete',
+      icon: Trash,
+      className: 'homeButton',
+      onClick: handleDeleteButton
+    },
+    {
+      id: 'download',
+      icon: Download,
+      className: 'homeButton',
+      onClick: () => {} // Add download functionality
+    },
+    {
+      id: 'upload',
+      icon: Upload,
+      className: 'homeButton',
+      onClick: handleUploadCardState
+    },
+    {
+      id: 'view-toggle',
+      icon: isIcon ? Grid : List,
+      className: 'homeButton',
+      onClick: () => isIcon ? setIsIcon(false) : setIsIcon(true)
+    }
+  ];
+
+  // Handle dots for resize handle
+  const handleDots = Array.from({ length: 3 }, (_, i) => ({ id: `dot-${i}` }));
+
+  // Render button helper function
+  const renderButton = (buttonConfig) => {
+    const IconComponent = buttonConfig.icon;
+    return (
+      <button
+        key={buttonConfig.id}
+        className={buttonConfig.className}
+        onClick={buttonConfig.onClick}
+      >
+        <IconComponent />
+      </button>
+    );
+  };
+
   return (
     <>
       {displayUploadCard ? (
@@ -238,67 +314,17 @@ export default function DisplayDirectory() {
       ) : (
         <div style={{ display: "none" }}></div>
       )}
+      
       <div className="navWrapper prevent-select">
-        <button
-          className="homeButton pointer"
-          onClick={() => {
-            setCurrentDisplayNodes(childrenOfRootNode);
-            setForwardHistory([]);
-            setBackHistory([]);
-          }}
-        >
-          <Home />
-        </button>
-        <button
-          className="homeButton"
-          onClick={() =>
-            showSideBar ? setShowSideBar(false) : setShowSideBar(true)
-          }
-        >
-          <Sidebar />
-        </button>
-        <button
-          className="homeButton circle"
-          onClick={() => handleNavClick("backward")}
-        >
-          <ChevronLeft />
-        </button>
-        <button
-          className="homeButton circle"
-          onClick={() => handleNavClick("forward")}
-        >
-          <ChevronRight />
-        </button>
+        {/* Left navigation buttons */}
+        {leftNavButtons.map(renderButton)}
+        
+        {/* Right navigation buttons */}
         <div className="nav-buttons-right">
-          <button
-            onClick={() => {
-              handleDeleteButton();
-            }}
-            className="homeButton"
-          >
-            <Trash />
-          </button>
-          <button className="homeButton">
-            <Download />
-          </button>
-          <button
-            onClick={() => {
-              handleUploadCardState();
-            }}
-            className="homeButton"
-          >
-            <Upload />
-          </button>
-          <button
-            onClick={() => {
-              isIcon ? setIsIcon(false) : setIsIcon(true);
-            }}
-            className="homeButton"
-          >
-            {isIcon ? <Grid /> : <List />}
-          </button>
+          {rightNavButtons.map(renderButton)}
         </div>
       </div>
+      
       <div className="mainWindowWrapper prevent-select">
         {showSideBar ? (
           <div
@@ -311,15 +337,16 @@ export default function DisplayDirectory() {
             </div>
             <div className="handle">
               <div className="handle-gui">
-                <div className="dot"></div>
-                <div className="dot"></div>
-                <div className="dot"></div>
+                {handleDots.map(dot => (
+                  <div key={dot.id} className="dot"></div>
+                ))}
               </div>
             </div>
           </div>
         ) : (
           <div style={{ display: "none" }}></div>
         )}
+        
         <div
           className={`${
             isIcon ? "gridIconDisplayWrapper" : "listIconDisplayWrapper"

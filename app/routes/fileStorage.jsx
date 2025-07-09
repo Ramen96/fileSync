@@ -1,20 +1,32 @@
-import { Dir, mkdir } from "node:fs";
 import { prisma } from "../utils/prisma.server";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import WebSocket from "ws";
-import { get } from "node:https";
 import { wss } from "../../webSocketServer";
 
 const joinPath = (arr) => path.join(...arr);
 
 export const action = async ({ request }) => {
   try {
-    const parseRequest = await request.formData();
-    const formData = Object.fromEntries(parseRequest);
-    const metadata = JSON.parse(formData.metadata);
-    const wsReturnedParentId = metadata.parent_id;
+    console.log("Starting file upload process...");
 
+    // Parse the form data
+    const formData = await request.formData();
+    console.log("FormData parsed successfully");
+
+    // Get metadata
+    const metadataString = formData.get('metadata');
+    if (!metadataString) {
+      throw new Error('No metadata provided');
+    }
+
+    const metadata = JSON.parse(metadataString);
+    console.log("Metadata parsed:", metadata);
+
+    const wsReturnedParentId = metadata[0]?.parent_id;
+    console.log("Parent ID:", wsReturnedParentId);
+
+    // Path traversal detection
     const pathTraversalDetection = (activePath) => {
       const traversalPatterns = [
         "../", "%2e%2e%2f", "%2e%2e/", "..%2f", "%2e%2e%5c",
@@ -26,7 +38,7 @@ export const action = async ({ request }) => {
 
     // Check paths for traversal attempts
     for (const item of metadata) {
-      if (pathTraversalDetection(item.webkitRelativePath)) {
+      if (item.webkitRelativePath && pathTraversalDetection(item.webkitRelativePath)) {
         console.error('Path traversal detection flagged: ', item.webkitRelativePath);
         return new Response(JSON.stringify({ error: 'Invalid path' }), {
           status: 400,
@@ -35,221 +47,170 @@ export const action = async ({ request }) => {
       }
     }
 
-    const queryWebkitRelativePathChunk = async (parentID, currentArrElementName) => {
-      if (currentArrElementName === './cloud') currentArrElementName = 'Root';
-      const result = await prisma.metadata.findMany({
-        where: {
-          name: currentArrElementName,
-          hierarchy: {
-            is: {
-              parent_id: parentID
-            }
-          }
-        },
-        include: {
-          hierarchy: true
-        }
+    // Helper function to get root node
+    const getRootNode = async () => {
+      const rootNode = await prisma.hierarchy.findFirst({
+        where: { parent_id: null },
+        include: { metadata: true }
       });
-      return result;
+      return rootNode;
     };
 
-    const checkIfPathExists = async (activePath) => {
+    // Helper function to find node by name and parent
+    const findNodeByNameAndParent = async (name, parentId) => {
       try {
-        await fs.access(activePath);
-        return true;
-      } catch (err) {
-        if (err.code === "ENOENT") return false;
-        throw err;
+        const result = await prisma.metadata.findFirst({
+          where: {
+            name: name,
+            hierarchy: {
+              parent_id: parentId
+            }
+          },
+          include: {
+            hierarchy: true
+          }
+        });
+        return result;
+      } catch (error) {
+        console.error('Error finding node:', error);
+        return null;
       }
     };
 
-    const saveFolder = async (activePath, fileType, isFolder) => {
+    // Helper function to create directory structure
+    const createDirectoryStructure = async (filePath, parentId) => {
+      const pathSegments = filePath.split('/').filter(segment => segment.length > 0);
+      let currentParentId = parentId;
 
-      const writeChunkToDB = async (currentChunk, chunkIsFolder, parentId) => {
-        if (chunkIsFolder) {
-          const query = await prisma.metadata.create({
+      // Create each directory in the path
+      for (let i = 0; i < pathSegments.length - 1; i++) {
+        const segmentName = pathSegments[i];
+
+        // Check if directory already exists
+        let existingNode = await findNodeByNameAndParent(segmentName, currentParentId);
+
+        if (!existingNode) {
+          // Create new directory node
+          const newDirectory = await prisma.metadata.create({
             data: {
-              name: currentChunk,
+              name: segmentName,
               is_folder: true,
               created_at: new Date(),
               hierarchy: {
                 create: {
-                  parent_id: parentId
+                  parent_id: currentParentId
                 }
               }
+            },
+            include: {
+              hierarchy: true
             }
           });
-          return query;
+          currentParentId = newDirectory.hierarchy.id;
         } else {
-          const query = await prisma.metadata.create({
-            data: {
-              name: currentChunk,
-              is_folder: false,
-              created_at: new Date(),
-              file_type: fileType,
-              hierarchy: {
-                create: {
-                  parent_id: parentId
-                }
-              }
-            }
-          })
-          return query;
+          currentParentId = existingNode.hierarchy.id;
         }
       }
 
-      if (typeof isFolder !== "boolean") {
-        console.error('Error: isFolder param is not a boolean value');
-        return new Response(JSON.stringify({ error: "isFolder param is not a boolean value" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" }
-        });
-      }
+      return currentParentId;
+    };
 
+    // Helper function to save file
+    const saveFile = async (fileName, fileType, parentId, fileBuffer) => {
       try {
-        const checkingPath = await checkIfPathExists(activePath);
-        if (checkingPath) throw Error("File path already exists");
-      } catch (e) {
-        console.error(`Error checking path: ${e}`);
-      }
-      
-      let splitPath = activePath.split('/');
-      splitPath.unshift('Root');
-      try {
-        let currentParentId = null;
-        for (let i = 0; splitPath.length > i; i++) {
-          let reconstructedPathArr = [];
-          const currentChunkName = splitPath[i];
-
-          try {
-            const chunkQuery = await queryWebkitRelativePathChunk(currentParentId, currentChunkName);
-
-            async function handleWriteChunkToDB(chunkIsFolder) {
-              try {
-                const res = await writeChunkToDB(currentChunkName, chunkIsFolder, currentParentId);
-                currentParentId = res.id; 
-              } catch (err) {
-                console.error(`Error writing chunk to DB: ${err}`);
-                throw err;
+        // Create metadata entry
+        const fileMetadata = await prisma.metadata.create({
+          data: {
+            name: fileName,
+            is_folder: false,
+            created_at: new Date(),
+            file_type: fileType,
+            hierarchy: {
+              create: {
+                parent_id: parentId
               }
-            }
-
-            if (JSON.stringify(chunkQuery) === JSON.stringify([])) {
-              const currentChunkIsFolder = splitPath.length - 1 !== i;
-              await handleWriteChunkToDB(currentChunkIsFolder);
-            } else {
-              currentParentId = chunkQuery[0].hierarchy.id;
-            }
-
-            } catch (err) {
-              if (err) console.log(`Error caught file/folder dose not exist in db ${err}`);
-            }
-            splitPath.forEach(e => reconstructedPathArr.push(e));
-            reconstructedPathArr.shift();
-            const reconstructedPath = joinPath(reconstructedPathArr);
-            try {
-              const pathExists = await checkIfPathExists(reconstructedPath);
-              if (!pathExists) {
-                for (let i in formData) {
-                  if (formData[i] instanceof File) {
-                    if (formData[i].name === reconstructedPath) {
-                      try {
-                        const fileBuffer = Buffer.from(await formData[i].arrayBuffer());
-                        await fs.mkdir(path.dirname('cloud/' + reconstructedPath), { recursive: true });
-                        await fs.writeFile('cloud/' + reconstructedPath, fileBuffer);
-                      } catch (err) {
-                        console.error(`Error writing file: ${err}`);
-                      }
-                    }
-                  }
-                }
-              }
-            } catch (err) {
-              if (err)
-              console.error(`Error checking if path exists ${err}`);
             }
           }
-        } catch (err) {
-          console.error(`Error checking path: ${err}`);
-        }
+        });
+
+        // Ensure cloud directory exists
+        await fs.mkdir('cloud', { recursive: true });
+
+        // Save file to filesystem
+        const filePath = path.join('cloud', fileName);
+        await fs.writeFile(filePath, fileBuffer);
+
+        console.log(`File saved successfully: ${filePath}`);
+        return fileMetadata;
+      } catch (error) {
+        console.error(`Error saving file ${fileName}:`, error);
+        throw error;
+      }
     };
 
+    // Get root node for fallback
+    const rootNode = await getRootNode();
+    if (!rootNode) {
+      throw new Error('Root node not found');
+    }
 
-    const saveFile = async (fileName, fileType, parentId, file) => {
-
-      const getRootId = await queryWebkitRelativePathChunk(null, 'Root');
-      const rootId = getRootId[0].hierarchy.id;
-
-        if (parentId === null) parentId = rootId;
-
-        try {
-          await prisma.metadata.create({
-            data: {
-              name: fileName,
-              is_folder: false,
-              created_at: new Date(),
-              file_type: fileType,
-              hierarchy: {
-                create: {
-                  parent_id: parentId
-                }
-              }
-            }
-          });
-        } catch (err) {
-          console.error(`error saving file metadata to database ${err}`);
-          throw err;
-        }
-
-        try {
-          await fs.writeFile('cloud/' + fileName, file);
-          console.log(`File saved successfully ${'cloud/' + fileName}`);
-        } catch (err) {
-          console.error(`error saving file to filesystem ${err}`);
-        }
-    };
-
+    // Process each file
     for (const item of metadata) {
       const { parent_id, webkitRelativePath, name, type, is_folder } = item;
 
-      if (!is_folder) {
-        for (let i in formData) {
-          if (formData[i] instanceof File) {
-            const fileBuffer = Buffer.from(await formData[i].arrayBuffer());
-            await saveFile(name, type, parent_id, fileBuffer);
-          }
-        }
+      // Use provided parent_id or fallback to root
+      let targetParentId = parent_id || rootNode.id;
+
+      // Get the actual file from FormData
+      const file = formData.get(name);
+      if (!file || !(file instanceof File)) {
+        console.error(`File not found in FormData: ${name}`);
+        continue;
+      }
+
+      const fileBuffer = Buffer.from(await file.arrayBuffer());
+
+      if (is_folder && webkitRelativePath) {
+        // Handle folder upload - create directory structure
+        const finalParentId = await createDirectoryStructure(webkitRelativePath, targetParentId);
+        await saveFile(name, type, finalParentId, fileBuffer);
       } else {
-          await saveFolder(webkitRelativePath, type, is_folder);
+        // Handle single file upload
+        await saveFile(name, type, targetParentId, fileBuffer);
       }
     }
 
+    // Send WebSocket notification
     try {
-      const socket = wss;
-      socket.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(
-            JSON.stringify({
-              message: "reload",
-              id: wsReturnedParentId || metadata[0]?.parent_id
-            })
-          );
-        }
-      });
+      if (wss && wss.clients) {
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(
+              JSON.stringify({
+                message: "reload",
+                id: wsReturnedParentId || rootNode.id
+              })
+            );
+          }
+        });
+      }
     } catch (wsError) {
       console.error('WebSocket error: ', wsError);
     }
-    
 
-    return new Response(JSON.stringify({ success: true }), {
+    console.log("File upload completed successfully");
+    return new Response(JSON.stringify({
+      success: true,
+      message: "Files uploaded successfully"
+    }), {
       status: 200,
       headers: { "Content-Type": "application/json" }
     });
 
   } catch (error) {
     console.error('Action error:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
+    return new Response(JSON.stringify({
+      error: error.message || "Internal server error",
       status: 'failed'
     }), {
       status: 500,

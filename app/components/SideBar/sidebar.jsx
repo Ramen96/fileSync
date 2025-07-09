@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 const folderIcon = "../assets/folder.svg";
 
-export default function SideBar({ fileUpload, currentNodeId }) {
+export default function SideBar({ fileUpload, displayNodeId }) {
   const navigate = useNavigate();
   const routeHome = () => navigate("/");
 
@@ -49,27 +49,39 @@ export default function SideBar({ fileUpload, currentNodeId }) {
       id: 5,
       name: 'Upload File',
       icon: <FileUpIcon className="dropdownIcon" />,
-      uploadMultiple: false
+      uploadMultiple: false,
+      webkitdirectory: false
     },
     {
       id: 6,
       name: 'Upload Folder',
       icon: <FolderUpIcon className="dropdownIcon" />,
-      uploadMultiple: true
+      uploadMultiple: true,
+      webkitdirectory: true
     },
     {
       id: 7,
       name: 'New Folder',
       icon: <FolderPlus className="dropdownIcon" />,
-      uploadMultiple: false
+      uploadMultiple: false,
+      webkitdirectory: false
     },
     {
       id: 8,
       name: 'New Document',
       icon: <FilePlus className="dropdownIcon" />,
-      uploadMultiple: false
+      uploadMultiple: false,
+      webkitdirectory: false
     },
   ];
+
+  const handleFileUpload = (event) => {
+    if (!displayNodeId) {
+      console.error('No display node ID available');
+      return;
+    }
+    fileUpload(event);
+  };
 
   return (
     <div className="sidebar">
@@ -78,7 +90,6 @@ export default function SideBar({ fileUpload, currentNodeId }) {
         <h1>FileSync</h1>
       </button>
       <section className="nbWrapper">
-
         {/* ********************* SECTION: Dropdown ********************** */}
         <button className="newButton animate3s dropdown">
           <div className="centerSVG">
@@ -87,29 +98,31 @@ export default function SideBar({ fileUpload, currentNodeId }) {
           </div>
           <div className="dropdown-content">
             <ul className="dropdown-items">
-              {dropdownOptions.map((e) => {
+              {dropdownOptions.map((option) => {
                 return (
-                  <li key={e.id} className="dropdown-element">
+                  <li key={option.id} className="dropdown-element">
                     <div role="button" className="drp-btn-e">
-                      {e.icon}
-                      <label htmlFor={e.id}><h4 className="pointer">{e.name}</h4></label>
-                      <input 
-                        onChange={fileUpload} 
-                        style={{ "display": "none" }} 
-                        type="file" 
-                        id={e.id} 
-                        {...(e.uploadMultiple ? {multiple: true, webkitdirectory: "true"}: {})}
+                      {option.icon}
+                      <label htmlFor={option.id}>
+                        <h4 className="pointer">{option.name}</h4>
+                      </label>
+                      <input
+                        onChange={handleFileUpload}
+                        style={{ "display": "none" }}
+                        type="file"
+                        id={option.id}
+                        multiple={option.uploadMultiple}
+                        {...(option.webkitdirectory ? { webkitdirectory: "true" } : {})}
                       />
                     </div>
                   </li>
-                )
+                );
               })}
             </ul>
           </div>
         </button>
       </section>
       {/* ************************************************************** */}
-
       {/* ********************* SECTION: Nav *************************** */}
       <div>
         <ul className="selectorWrapper">

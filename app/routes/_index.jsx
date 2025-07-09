@@ -13,7 +13,7 @@ export async function loader() {
     const initRoot = await prisma.hierarchy.findFirst({
       where: {
         parent_id: null,
-      }, 
+      },
       include: {
         metadata: true,
         children: {
@@ -26,7 +26,6 @@ export async function loader() {
 
     return data(initRoot);
   } catch (error) {
-    
     console.error("Error fetching data:", error);
     return data({}, { status: 500 });
   }
@@ -38,118 +37,144 @@ export default function Index() {
   const [pendingFileOperation, setPendingFileOperation] = useState(false);
 
   const db = useLoaderData();
-
   const childrenOfRoot = db.children;
-  const rootNodeId = db.id
-
-  useEffect(() => {
-    setChildrenOfRootNode(childrenOfRoot);
-    setDisplayNodeId(rootNodeId);
-  }, []);
-
+  const rootNodeId = db.id;
 
   const socket = useContext(wsContext);
 
   // Logic for reloading display window after upload/delete
   const [reloadTrigger, setReloadTrigger] = useState(0);
- 
-  // Websocket connection
-  socket.addEventListener('open', event => {
-    console.log('WebSocket connection established!');
-    socket.send(JSON.stringify({ action: 'connection', message: 'Hello Server!'}));
-  });
 
-  socket.addEventListener('message', event => {
-    const msgObject = JSON.parse(event.data);
-    console.log('WebSocket message received:', event.data);
-    if (msgObject?.message === 'reload') {
-      setDisplayNodeId(msgObject.id);
-      setReloadTrigger(prev => prev + 1);
+  useEffect(() => {
+    setChildrenOfRootNode(childrenOfRoot);
+    setDisplayNodeId(rootNodeId);
+  }, [childrenOfRoot, rootNodeId]);
 
-    } else if (msgObject.message === false) {
-      console.log('message: ', msgObject.message);
+  // WebSocket connection with cleanup
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleOpen = (event) => {
+      console.log('WebSocket connection established!');
+      socket.send(JSON.stringify({ action: 'connection', message: 'Hello Server!' }));
+    };
+
+    const handleMessage = (event) => {
+      const msgObject = JSON.parse(event.data);
+      console.log('WebSocket message received:', event.data);
+      if (msgObject?.message === 'reload') {
+        setDisplayNodeId(msgObject.id);
+        setReloadTrigger(prev => prev + 1);
+      } else if (msgObject.message === false) {
+        console.log('message: ', msgObject.message);
+      }
+    };
+
+    const handleClose = (event) => {
+      console.log('WebSocket connection closed:', event.code, event.reason);
+    };
+
+    const handleError = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    socket.addEventListener('open', handleOpen);
+    socket.addEventListener('message', handleMessage);
+    socket.addEventListener('close', handleClose);
+    socket.addEventListener('error', handleError);
+
+    return () => {
+      socket.removeEventListener('open', handleOpen);
+      socket.removeEventListener('message', handleMessage);
+      socket.removeEventListener('close', handleClose);
+      socket.removeEventListener('error', handleError);
+    };
+  }, [socket]);
+
+  function fileUpload(event) {
+    // Ensure we have a valid displayNodeId before proceeding
+    if (!displayNodeId) {
+      console.error('No display node ID available for upload');
+      return;
     }
-  });
 
-  socket.addEventListener('close', event => {
-    console.log('WebSocket connection closed:', event.code, event.reason);
-  });
+    setPendingFileOperation(true);
 
-  socket.addEventListener('error', error => {
-    console.error('WebSocket error:', error);
-  });
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+      setPendingFileOperation(false);
+      return;
+    }
 
-  function fileUpload(input) {
-    const file = input instanceof Event ? input.target.files : input;
     const fileList = new FormData();
 
-    for (let i = 0; i < file.length; i++) {
-      fileList.append(file[i].name, file[i]);
+    for (let i = 0; i < files.length; i++) {
+      fileList.append(files[i].name, files[i]);
     }
 
     const metadata = () => {
       const dataArr = [];
-      for (let i in file) {
-        if (file[i] instanceof File) {
-          const fileObject = file[i];
-          console.log('item in fileObject', fileObject);
+      for (let i = 0; i < files.length; i++) {
+        const fileObject = files[i];
+        console.log('item in fileObject', fileObject);
 
-          const fileInfo = {
-            parent_id: displayNodeId,  
-          };
+        const fileInfo = {
+          parent_id: displayNodeId,
+        };
 
-          // determine if it is a folder or file and parse path on backend to create nodes in db for each file.
-          if (fileObject.webkitRelativePath.length === 0) {
-            fileInfo.is_folder = false;
-          } else if (fileObject.webkitRelativePath.length > 0) {
-            fileInfo.is_folder = true;
-          }
-
-          fileInfo.name = fileObject.name;
-          fileInfo.webkitRelativePath = fileObject.webkitRelativePath;
-          fileInfo.type = fileObject.type;
-          dataArr.push(fileInfo);
+        // determine if it is a folder or file and parse path on backend to create nodes in db for each file.
+        if (fileObject.webkitRelativePath.length === 0) {
+          fileInfo.is_folder = false;
+        } else if (fileObject.webkitRelativePath.length > 0) {
+          fileInfo.is_folder = true;
         }
+
+        fileInfo.name = fileObject.name;
+        fileInfo.webkitRelativePath = fileObject.webkitRelativePath;
+        fileInfo.type = fileObject.type;
+        dataArr.push(fileInfo);
       }
       return dataArr;
-    }
-    
+    };
+
     fileList.append('metadata', JSON.stringify(metadata()));
+
     fetch("fileStorage", {
       method: "POST",
-      body : fileList
+      body: fileList
     })
-    .then((res) => {
-      if (res.ok) {
-        console.log("Upload successful");
-      } else {
-        console.log(`Upload failed with status: ${res.status}`);
+      .then((res) => {
+        if (res.ok) {
+          console.log("Upload successful");
+        } else {
+          console.log(`Upload failed with status: ${res.status}`);
+        }
+        setPendingFileOperation(false);
         setReloadTrigger(prev => prev + 1);
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      setPendingFileOperation(false);
-    });
-  };
+      })
+      .catch((err) => {
+        console.error(err);
+        setPendingFileOperation(false);
+      });
+  }
 
   const indexContextProps = {
-    childrenOfRootNode, 
-    setChildrenOfRootNode, 
-    fileUpload, 
-    displayNodeId, 
-    setDisplayNodeId, 
-    rootNodeId, 
-    pendingFileOperation, 
+    childrenOfRootNode,
+    setChildrenOfRootNode,
+    fileUpload,
+    displayNodeId,
+    setDisplayNodeId,
+    rootNodeId,
+    pendingFileOperation,
     setPendingFileOperation,
     reloadTrigger,
     setReloadTrigger
-  }
+  };
 
   const sidebarProps = {
     fileUpload: fileUpload,
-    displayNodeId: displayNodeId
-  }
+    displayNodeId: displayNodeId // Fixed prop name
+  };
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { data } from "react-router";
 import { useLoaderData } from "react-router";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { IndexContext, wsContext } from "../utils/context.js";
 import { prisma } from "../utils/prisma.server.js";
 import SideBar from "../components/SideBar/sidebar.jsx";
@@ -35,6 +35,7 @@ export default function Index() {
   const [displayNodeId, setDisplayNodeId] = useState(null);
   const [childrenOfRootNode, setChildrenOfRootNode] = useState(null);
   const [pendingFileOperation, setPendingFileOperation] = useState(false);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   const db = useLoaderData();
   const childrenOfRoot = db.children;
@@ -42,58 +43,97 @@ export default function Index() {
 
   const socket = useContext(wsContext);
 
-  // Logic for reloading display window after upload/delete
-  const [reloadTrigger, setReloadTrigger] = useState(0);
+  const displayNodeIdRef = useRef(displayNodeId);
+  const pendingFileOperationRef = useRef(pendingFileOperation);
+  const reloadTriggerRef = useRef(reloadTrigger);
+
+  useEffect(() => {
+    displayNodeIdRef.current = displayNodeId;
+  }, [displayNodeId]);
+
+  useEffect(() => {
+    pendingFileOperationRef.current = pendingFileOperation;
+  }, [pendingFileOperation]);
+
+  useEffect(() => {
+    reloadTriggerRef.current = reloadTrigger;
+  }, [reloadTrigger]);
 
   useEffect(() => {
     setChildrenOfRootNode(childrenOfRoot);
     setDisplayNodeId(rootNodeId);
   }, [childrenOfRoot, rootNodeId]);
 
-  // WebSocket connection with cleanup
+const handleWebSocketMessage = useCallback((event) => {
+  try {
+    const msgObject = JSON.parse(event.data);
+    console.log('WebSocket message received:', event.data);
+    if (msgObject?.message === 'reload') {
+      setPendingFileOperation(true);
+      setDisplayNodeId(msgObject.id);
+      setReloadTrigger(prev => prev + 1);
+      setTimeout(() => {
+        setPendingFileOperation(false);
+      }, 500);
+    } else if (msgObject.message === false) {
+      console.log('message: ', msgObject.message);
+      setPendingFileOperation(false);
+    }
+  } catch (error) {
+    console.error('Error parsing WebSocket message:', error);
+    setPendingFileOperation(false);
+  }
+}, []);
+  // const handleWebSocketMessage = useCallback((event) => {
+  //   try {
+  //     const msgObject = JSON.parse(event.data);
+  //     console.log('WebSocket message received:', event.data);
+      
+  //     if (msgObject?.message === 'reload') {
+  //       setDisplayNodeId(msgObject.id);
+  //       setReloadTrigger(prev => prev + 1);
+  //     } else if (msgObject.message === false) {
+  //       console.log('message: ', msgObject.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error parsing WebSocket message:', error);
+  //   }
+  // }, []);
+
+  const handleWebSocketOpen = useCallback((event) => {
+    console.log('WebSocket connection established!');
+    if (socket) {
+      socket.send(JSON.stringify({ action: 'connection', message: 'Hello Server!' }));
+    }
+  }, [socket]);
+
+  const handleWebSocketClose = useCallback((event) => {
+    console.log('WebSocket connection closed:', event.code, event.reason);
+  }, []);
+
+  const handleWebSocketError = useCallback((error) => {
+    console.error('WebSocket error:', error);
+  }, []);
+
   useEffect(() => {
     if (!socket) return;
 
-    const handleOpen = (event) => {
-      console.log('WebSocket connection established!');
-      socket.send(JSON.stringify({ action: 'connection', message: 'Hello Server!' }));
-    };
-
-    const handleMessage = (event) => {
-      const msgObject = JSON.parse(event.data);
-      console.log('WebSocket message received:', event.data);
-      if (msgObject?.message === 'reload') {
-        setDisplayNodeId(msgObject.id);
-        setReloadTrigger(prev => prev + 1);
-      } else if (msgObject.message === false) {
-        console.log('message: ', msgObject.message);
-      }
-    };
-
-    const handleClose = (event) => {
-      console.log('WebSocket connection closed:', event.code, event.reason);
-    };
-
-    const handleError = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    socket.addEventListener('open', handleOpen);
-    socket.addEventListener('message', handleMessage);
-    socket.addEventListener('close', handleClose);
-    socket.addEventListener('error', handleError);
+    socket.addEventListener('open', handleWebSocketOpen);
+    socket.addEventListener('message', handleWebSocketMessage);
+    socket.addEventListener('close', handleWebSocketClose);
+    socket.addEventListener('error', handleWebSocketError);
 
     return () => {
-      socket.removeEventListener('open', handleOpen);
-      socket.removeEventListener('message', handleMessage);
-      socket.removeEventListener('close', handleClose);
-      socket.removeEventListener('error', handleError);
+      socket.removeEventListener('open', handleWebSocketOpen);
+      socket.removeEventListener('message', handleWebSocketMessage);
+      socket.removeEventListener('close', handleWebSocketClose);
+      socket.removeEventListener('error', handleWebSocketError);
     };
-  }, [socket]);
+  }, [socket, handleWebSocketOpen, handleWebSocketMessage, handleWebSocketClose, handleWebSocketError]);
 
-  function fileUpload(event) {
-    // Ensure we have a valid displayNodeId before proceeding
-    if (!displayNodeId) {
+  const fileUpload = useCallback((event) => {
+    const currentDisplayNodeId = displayNodeIdRef.current;
+    if (!currentDisplayNodeId) {
       console.error('No display node ID available for upload');
       return;
     }
@@ -119,10 +159,9 @@ export default function Index() {
         console.log('item in fileObject', fileObject);
 
         const fileInfo = {
-          parent_id: displayNodeId,
+          parent_id: currentDisplayNodeId,
         };
 
-        // determine if it is a folder or file and parse path on backend to create nodes in db for each file.
         if (fileObject.webkitRelativePath.length === 0) {
           fileInfo.is_folder = false;
         } else if (fileObject.webkitRelativePath.length > 0) {
@@ -156,7 +195,7 @@ export default function Index() {
         console.error(err);
         setPendingFileOperation(false);
       });
-  }
+  }, []);
 
   const indexContextProps = {
     childrenOfRootNode,
@@ -173,14 +212,14 @@ export default function Index() {
 
   const sidebarProps = {
     fileUpload: fileUpload,
-    displayNodeId: displayNodeId // Fixed prop name
+    displayNodeId: displayNodeId
   };
 
   return (
     <>
       <SideBar {...sidebarProps} />
       <div className="main">
-        <div className="searchBarWrapper flex-jc-ai  main-bg">
+        <div className="searchBarWrapper flex-jc-ai main-bg">
           <button className="submitButton">
             <img className="searchIcon" src={searchIcon} alt="search icon" />
           </button>

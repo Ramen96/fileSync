@@ -19,20 +19,87 @@ export default function FolderTree({
   handleFolderClick,
   displayNodeId,
   setPendingFileOperation,
+  pendingFileOperation,
+  reloadTrigger,
 }) {
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [localPendingFileOperation, setLocalPendingFileOperation] = useState(false);
 
+  const [forceRender, setForceRender] = useState(0);
+  const [cacheVersion, setCacheVersion] = useState(0);
+
+  const forceUpdate = useCallback(() => {
+    setForceRender(prev => prev + 1);
+  }, []);
+
   const childNodesMapRef = useRef(new Map());
   const isExpandedRef = useRef(new Set());
   const pendingOperationsRef = useRef(new Set());
-  
+  const mountedRef = useRef(true);
+
   useEffect(() => {
     isExpandedRef.current = isExpanded;
   }, [isExpanded]);
 
-  const getChildNodesWithCache = useCallback(async (folderId) => {
-    if (childNodesMapRef.current.has(folderId)) {
+  useEffect(() => {
+    if (reloadTrigger > 0) {
+      console.log('FolderTree: Clearing cache and refreshing expanded folders due to reload trigger');
+      setLocalPendingFileOperation(true);
+      setCacheVersion(prev => prev + 1);
+      childNodesMapRef.current.clear();
+      pendingOperationsRef.current.clear();
+
+      const refreshExpandedFolders = async () => {
+        const expandedArray = Array.from(isExpandedRef.current);
+
+        if (expandedArray.length > 0) {
+          try {
+            const refreshPromises = expandedArray.map(async (folderId) => {
+              try {
+                const children = await getChildNodes(folderId);
+                const childrenData = children[0]?.children || [];
+                if (mountedRef.current) {
+                  childNodesMapRef.current.set(folderId, childrenData);
+                }
+                return { folderId, success: true };
+              } catch (error) {
+                console.error(`Error refreshing folder ${folderId}:`, error);
+                return { folderId, success: false };
+              }
+            });
+            await Promise.all(refreshPromises);
+            if (mountedRef.current) {
+              setForceRender(prev => prev + 1);
+            }
+          } catch (error) {
+            console.error('Error during bulk folder refresh:', error);
+          }
+        }
+        setTimeout(() => {
+          if (mountedRef.current) {
+            setLocalPendingFileOperation(false);
+          }
+        }, 100);
+      };
+
+      refreshExpandedFolders();
+    }
+  }, [reloadTrigger, getChildNodes]);
+
+  useEffect(() => {
+    if (!pendingFileOperation && localPendingFileOperation) {
+      setLocalPendingFileOperation(false);
+    }
+  }, [pendingFileOperation, localPendingFileOperation]);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const getChildNodesWithCache = useCallback(async (folderId, forceRefresh = false) => {
+    if (!forceRefresh && childNodesMapRef.current.has(folderId)) {
       return childNodesMapRef.current.get(folderId);
     }
 
@@ -44,9 +111,11 @@ export default function FolderTree({
       pendingOperationsRef.current.add(folderId);
       const children = await getChildNodes(folderId);
       const childrenData = children[0]?.children || [];
-      
-      childNodesMapRef.current.set(folderId, childrenData);
-      
+
+      if (mountedRef.current) {
+        childNodesMapRef.current.set(folderId, childrenData);
+      }
+
       return childrenData;
     } catch (error) {
       console.error(`Error fetching child nodes for ${folderId}:`, error);
@@ -58,55 +127,28 @@ export default function FolderTree({
 
   const handleExpandFolder = useCallback(async (folderId, parent_id) => {
     const wasExpanded = isExpandedRef.current.has(folderId);
-    
+
     if (!wasExpanded) {
       try {
         await getChildNodesWithCache(folderId);
-        setIsExpanded(prevSet => new Set([...prevSet, folderId]));
+        if (mountedRef.current) {
+          setIsExpanded(prevSet => new Set([...prevSet, folderId]));
+        }
         await handleFolderClick(folderId);
       } catch (error) {
         console.error(`Error expanding folder ${folderId}:`, error);
       }
     } else {
-      // Collapsing folder
-      setIsExpanded(prevSet => {
-        const newSet = new Set(prevSet);
-        newSet.delete(folderId);
-        return newSet;
-      });
+      if (mountedRef.current) {
+        setIsExpanded(prevSet => {
+          const newSet = new Set(prevSet);
+          newSet.delete(folderId);
+          return newSet;
+        });
+      }
       await handleFolderClick(parent_id);
     }
   }, [getChildNodesWithCache, handleFolderClick]);
-
-  const handleWebSocketMessage = useCallback(async (event) => {
-    try {
-      const data = JSON.parse(event?.data);
-      const message = data?.message;
-
-      if (message === "reload") {
-        setLocalPendingFileOperation(true);
-        const reloadId = data?.id;
-        
-        childNodesMapRef.current.delete(reloadId);
-        
-        await getChildNodesWithCache(reloadId);
-        setLocalPendingFileOperation(false);
-      }
-    } catch (error) {
-      console.error(`Error handling WebSocket message:`, error);
-      setLocalPendingFileOperation(false);
-    }
-  }, [getChildNodesWithCache]);
-
-  useEffect(() => {
-    // const socket = wsContext; // or however you get your WebSocket instance
-    // if (socket) {
-    //   socket.addEventListener("message", handleWebSocketMessage);
-    //   return () => {
-    //     socket.removeEventListener("message", handleWebSocketMessage);
-    //   };
-    // }
-  }, [handleWebSocketMessage]);
 
   const getCachedChildren = useCallback((folderId) => {
     return childNodesMapRef.current.get(folderId) || [];
@@ -115,7 +157,7 @@ export default function FolderTree({
   const renderFolderItem = useCallback((child) => {
     const folderId = child.metadata.id;
     const isOpen = isExpanded.has(folderId);
-    
+
     return (
       <React.Fragment key={folderId}>
         <div onClick={() => handleExpandFolder(folderId, child.parent_id)}>
@@ -135,20 +177,23 @@ export default function FolderTree({
               showStateList={showStateList}
               setShowStateList={setShowStateList}
               getChildNodes={getChildNodes}
-              currentNodeId={currentNodeId}
               setCurrentNodeId={setCurrentNodeId}
+              currentNodeId={currentNodeId}
               setForwardHistory={setForwardHistory}
               backHistory={backHistory}
               setBackHistory={setBackHistory}
               handleFolderClick={handleFolderClick}
               displayNodeId={displayNodeId}
               setPendingFileOperation={setPendingFileOperation}
+              pendingFileOperation={pendingFileOperation}
+              reloadTrigger={reloadTrigger}
+              key={`${folderId}-${cacheVersion}`}
             />
           </div>
         )}
       </React.Fragment>
     );
-  }, [isExpanded, handleExpandFolder, getCachedChildren, showStateList, setShowStateList, getChildNodes, currentNodeId, setCurrentNodeId, setForwardHistory, backHistory, setBackHistory, handleFolderClick, displayNodeId, setPendingFileOperation]);
+  }, [isExpanded, handleExpandFolder, getCachedChildren, showStateList, setShowStateList, getChildNodes, setCurrentNodeId, currentNodeId, setForwardHistory, backHistory, setBackHistory, handleFolderClick, displayNodeId, setPendingFileOperation, pendingFileOperation, reloadTrigger]);
 
   const renderFileItem = useCallback((child) => (
     <div className="sideItem" key={child.metadata.id}>
@@ -157,7 +202,7 @@ export default function FolderTree({
     </div>
   ), []);
 
-  if (!childrenOfRootNode || localPendingFileOperation) {
+  if (!childrenOfRootNode || localPendingFileOperation || pendingFileOperation) {
     return <LoadingBars />;
   }
 

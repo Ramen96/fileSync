@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload, RefreshCcwIcon } from 'lucide-react';
 import { DisplayDirectoryContext, IndexContext, displayIconContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
@@ -18,13 +18,33 @@ export default function DisplayDirectory() {
     setReloadTrigger
   } = useContext(IndexContext);
 
-  // Forward and backward buttons
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
   const [currentDisplayNodes, setCurrentDisplayNodes] = useState(null);
 
-  // get nodes
-  async function getChildNodes(idOfItemClicked) {
+  const currentDisplayNodesRef = useRef(null);
+  const displayNodeIdRef = useRef(displayNodeId);
+  const backHistoryRef = useRef(backHistory);
+  const forwardHistoryRef = useRef(forwardHistory);
+
+  useEffect(() => {
+    currentDisplayNodesRef.current = currentDisplayNodes;
+  }, [currentDisplayNodes]);
+
+  useEffect(() => {
+    displayNodeIdRef.current = displayNodeId;
+  }, [displayNodeId]);
+
+  useEffect(() => {
+    backHistoryRef.current = backHistory;
+  }, [backHistory]);
+
+  useEffect(() => {
+    forwardHistoryRef.current = forwardHistory;
+  }, [forwardHistory]);
+
+  // Memoized API call for getting child nodes
+  const getChildNodes = useCallback(async (idOfItemClicked) => {
     try {
       const options = {
         method: "POST",
@@ -36,19 +56,41 @@ export default function DisplayDirectory() {
           requestType: 'get_child_nodes'
         })
       }
-      const response = await fetch('/databaseApi', options)
+      const response = await fetch('/databaseApi', options);
       const body = await response.json();
       return body;
     } catch (err) {
       console.error(`error fetching child nodes: ${err}`);
+      return [];
     }
-  }
+  }, []);
 
-  // Nav buttons
-  const handleNavClick = (direction) => {
-    const currentNodeId = currentDisplayNodes[0]?.parent_id;
-    const prevNodeId = backHistory[backHistory.length - 1];
-    const nextNodeId = forwardHistory[0];
+  // Memoized display nodes update
+  const updateDisplayNodes = useCallback(async (id) => {
+    try {
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          displayNodeId: id,
+          requestType: 'get_child_nodes'
+        })
+      }
+      const response = await fetch('/databaseApi', options);
+      const body = await response.json();
+      setCurrentDisplayNodes(body[0]?.children || []);
+    } catch (err) {
+      console.error(`error updating nodes for currentDisplayNodes ${err}`);
+    }
+  }, []);
+
+  const handleNavClick = useCallback((direction) => {
+    const currentNodes = currentDisplayNodesRef.current;
+    const currentNodeId = currentNodes?.[0]?.parent_id;
+    const prevNodeId = backHistoryRef.current[backHistoryRef.current.length - 1];
+    const nextNodeId = forwardHistoryRef.current[0];
 
     if (direction === 'backward' && prevNodeId) {
       updateDisplayNodes(prevNodeId);
@@ -61,15 +103,15 @@ export default function DisplayDirectory() {
       setForwardHistory(prevState => prevState.slice(1));
       setBackHistory(prevState => [...prevState, currentNodeId]);
     }
-  }
+  }, [updateDisplayNodes]);
 
-  // Folder Nav
-  const handleFolderClick = (folderId) => {
-    const currentNodeId = currentDisplayNodes[0]?.parent_id;
+  const handleFolderClick = useCallback((folderId) => {
+    const currentNodes = currentDisplayNodesRef.current;
+    const currentNodeId = currentNodes?.[0]?.parent_id;
     setForwardHistory([]);
     updateDisplayNodes(folderId);
     setBackHistory(prevState => [...prevState, currentNodeId]);
-  }
+  }, [updateDisplayNodes]);
 
   // Sidebar
   const [showStateList, setShowStateList] = useState([]);
@@ -81,18 +123,21 @@ export default function DisplayDirectory() {
   });
 
   const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStateX] = useState(0)
-
+  const isDraggingRef = useRef(false);
   const lastX = useRef(0);
 
-  function handleMouseDown(e) {
+  useEffect(() => {
+    isDraggingRef.current = isDragging;
+  }, [isDragging]);
+
+  const handleMouseDown = useCallback((e) => {
     setIsDragging(true);
     lastX.current = e.clientX;
-  }
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (!isDragging) return;
+      if (!isDraggingRef.current) return;
 
       const difference = e.clientX - lastX.current;
       lastX.current = e.clientX;
@@ -119,13 +164,82 @@ export default function DisplayDirectory() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     }
-
-  }, [startX, isDragging]);
+  }, [isDragging]);
 
   // Display files and folders as icons/rows
   const [isIcon, setIsIcon] = useState(true);
 
-  // Folder Tree Component props 
+  const [displayUploadCard, setDisplayUploadCard] = useState(false);
+
+  const handleUploadCardState = useCallback(() => {
+    setDisplayUploadCard(prev => !prev);
+  }, []);
+
+  // Deleting items
+  const [deleteQueue, setDeleteQueue] = useState([]);
+
+  const handleDeleteQueue = useCallback((checkState, metadataObject) => {
+    if (!checkState) {
+      setDeleteQueue(prev => [...prev, metadataObject]);
+    } else {
+      setDeleteQueue(prev => prev.filter(element => element.id !== metadataObject.id));
+    }
+  }, []);
+
+  const handleDeleteButton = useCallback(async () => {
+    const currentDisplayNodeId = displayNodeIdRef.current;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        deleteQueue: deleteQueue,
+        displayNodeId: currentDisplayNodeId
+      })
+    }
+
+    try {
+      const response = await fetch('fileDelete', options);
+      if (response.ok) {
+        console.log("File successfully deleted");
+        setPendingFileOperation(true);
+        setReloadTrigger(prev => prev + 1);
+      } else {
+        console.log(`Failed to delete file with status: ${response.status}`);
+        setReloadTrigger(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error(`Error deleting files: ${error}`);
+    }
+  }, [deleteQueue, setPendingFileOperation, setReloadTrigger]);
+
+useEffect(() => {
+  const nodeIdToUpdate = displayNodeId || rootNodeId;
+  if (nodeIdToUpdate) {
+    updateDisplayNodes(nodeIdToUpdate);
+  }
+  
+  if (reloadTrigger > 0) {
+    const timer = setTimeout(() => {
+      setPendingFileOperation(false);
+    }, 200);
+    
+    return () => clearTimeout(timer);
+  } else {
+    setPendingFileOperation(false);
+  }
+}, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
+
+
+  // useEffect(() => {
+  //   const nodeIdToUpdate = displayNodeId || rootNodeId;
+  //   if (nodeIdToUpdate) {
+  //     updateDisplayNodes(nodeIdToUpdate);
+  //   }
+  //   setPendingFileOperation(false);
+  // }, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
+
   const folderTreeComponentProps = {
     childrenOfRootNode: childrenOfRootNode,
     showStateList: showStateList,
@@ -140,80 +254,8 @@ export default function DisplayDirectory() {
     handleFolderClick: handleFolderClick,
     pendingFileOperation: pendingFileOperation,
     setPendingFileOperation: setPendingFileOperation,
+    reloadTrigger: reloadTrigger
   };
-
-  const [displayUploadCard, setDisplayUploadCard] = useState(false);
-
-  const handleUploadCardState = () => {
-    displayUploadCard ? setDisplayUploadCard(false) : setDisplayUploadCard(true);
-  }
-
-  // Deleting items
-  const [deleteQueue, setDeleteQueue] = useState([]);
-
-  const handleDeleteQueue = (checkState, metadataObject) => {
-    if (!checkState) {
-      setDeleteQueue([...deleteQueue, metadataObject]);
-    } else {
-      setDeleteQueue(deleteQueue.filter(element => element.id !== metadataObject.id));
-    }
-  }
-
-  const handleDeleteButton = async () => {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        deleteQueue: deleteQueue,
-        displayNodeId: displayNodeId
-      })
-    }
-
-    fetch('fileDelete', options)
-      .then(response => {
-        if (response.ok) {
-          console.log("File successfully deleted");
-          setPendingFileOperation(true);
-          setReloadTrigger(prev => prev + 1);
-        } else {
-          console.log(`Failed to delete file with status: ${response.status}`);
-          setReloadTrigger(prev => prev + 1);
-        }
-      })
-      .catch(error => console.error(`Error deleting files: ${error}`));
-  }
-
-  // Updating display icon nodes
-  const updateDisplayNodes = async (id) => {
-    try {
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          displayNodeId: id,
-          requestType: 'get_child_nodes'
-        })
-      }
-      const response = await fetch('/databaseApi', options)
-      const body = await response.json();
-      setCurrentDisplayNodes(body[0].children);
-    } catch (err) {
-      console.error(`error updating nodes for currentDisplayNodes ${err}`);
-    }
-  }
-
-  useEffect(() => {
-    if (displayNodeId) {
-      updateDisplayNodes(displayNodeId);
-    } else {
-      updateDisplayNodes(rootNodeId)
-    }
-    setPendingFileOperation(false);
-  }, [displayNodeId, reloadTrigger]);
 
   const displayDirectoryContextProps = {
     updateDisplayNodes,
@@ -226,9 +268,6 @@ export default function DisplayDirectory() {
     handleUploadCardState,
   };
 
-  // MAPPED OBJECTS FOR REPEATING HTML ELEMENTS
-
-  // Left navigation buttons configuration
   const leftNavButtons = [
     {
       id: 'home',
@@ -244,7 +283,7 @@ export default function DisplayDirectory() {
       id: 'sidebar',
       icon: Sidebar,
       className: 'homeButton',
-      onClick: () => showSideBar ? setShowSideBar(false) : setShowSideBar(true)
+      onClick: () => setShowSideBar(prev => !prev)
     },
     {
       id: 'backward',
@@ -260,7 +299,6 @@ export default function DisplayDirectory() {
     }
   ];
 
-  // Right navigation buttons configuration
   const rightNavButtons = [
     {
       id: 'delete',
@@ -272,7 +310,7 @@ export default function DisplayDirectory() {
       id: 'download',
       icon: Download,
       className: 'homeButton',
-      onClick: () => { } // Add download functionality
+      onClick: () => { } 
     },
     {
       id: 'upload',
@@ -284,14 +322,12 @@ export default function DisplayDirectory() {
       id: 'view-toggle',
       icon: isIcon ? Grid : List,
       className: 'homeButton',
-      onClick: () => isIcon ? setIsIcon(false) : setIsIcon(true)
+      onClick: () => setIsIcon(prev => !prev)
     }
   ];
 
-  // Handle dots for resize handle
   const handleDots = Array.from({ length: 3 }, (_, i) => ({ id: `dot-${i}` }));
 
-  // Render button helper function
   const renderButton = (buttonConfig) => {
     const IconComponent = buttonConfig.icon;
     return (
@@ -316,10 +352,7 @@ export default function DisplayDirectory() {
       )}
 
       <div className="navWrapper prevent-select">
-        {/* Left navigation buttons */}
         {leftNavButtons.map(renderButton)}
-
-        {/* Right navigation buttons */}
         <div className="nav-buttons-right">
           {rightNavButtons.map(renderButton)}
         </div>

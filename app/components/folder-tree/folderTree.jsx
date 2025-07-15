@@ -24,7 +24,6 @@ export default function FolderTree({
 }) {
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [localPendingFileOperation, setLocalPendingFileOperation] = useState(false);
-
   const [forceRender, setForceRender] = useState(0);
   const [cacheVersion, setCacheVersion] = useState(0);
 
@@ -41,6 +40,7 @@ export default function FolderTree({
     isExpandedRef.current = isExpanded;
   }, [isExpanded]);
 
+  // Clear cache and refresh when reloadTrigger changes
   useEffect(() => {
     if (reloadTrigger > 0) {
       console.log('FolderTree: Clearing cache and refreshing expanded folders due to reload trigger');
@@ -75,9 +75,12 @@ export default function FolderTree({
             console.error('Error during bulk folder refresh:', error);
           }
         }
+        
+        // Force a re-render to pick up the new childrenOfRootNode
         setTimeout(() => {
           if (mountedRef.current) {
             setLocalPendingFileOperation(false);
+            setForceRender(prev => prev + 1);
           }
         }, 100);
       };
@@ -85,6 +88,13 @@ export default function FolderTree({
       refreshExpandedFolders();
     }
   }, [reloadTrigger, getChildNodes]);
+
+  // Force re-render when childrenOfRootNode changes
+  useEffect(() => {
+    if (childrenOfRootNode) {
+      setForceRender(prev => prev + 1);
+    }
+  }, [childrenOfRootNode]);
 
   useEffect(() => {
     if (!pendingFileOperation && localPendingFileOperation) {
@@ -159,7 +169,7 @@ export default function FolderTree({
     const isOpen = isExpanded.has(folderId);
 
     return (
-      <React.Fragment key={folderId}>
+      <React.Fragment key={`${folderId}-${cacheVersion}-${forceRender}`}>
         <div onClick={() => handleExpandFolder(folderId, child.parent_id)}>
           <div className="sideItem">
             <img
@@ -187,27 +197,31 @@ export default function FolderTree({
               setPendingFileOperation={setPendingFileOperation}
               pendingFileOperation={pendingFileOperation}
               reloadTrigger={reloadTrigger}
-              key={`${folderId}-${cacheVersion}`}
+              key={`${folderId}-${cacheVersion}-${forceRender}`}
             />
           </div>
         )}
       </React.Fragment>
     );
-  }, [isExpanded, handleExpandFolder, getCachedChildren, showStateList, setShowStateList, getChildNodes, setCurrentNodeId, currentNodeId, setForwardHistory, backHistory, setBackHistory, handleFolderClick, displayNodeId, setPendingFileOperation, pendingFileOperation, reloadTrigger]);
+  }, [isExpanded, handleExpandFolder, getCachedChildren, showStateList, setShowStateList, getChildNodes, setCurrentNodeId, currentNodeId, setForwardHistory, backHistory, setBackHistory, handleFolderClick, displayNodeId, setPendingFileOperation, pendingFileOperation, reloadTrigger, cacheVersion, forceRender]);
 
   const renderFileItem = useCallback((child) => (
-    <div className="sideItem" key={child.metadata.id}>
+    <div className="sideItem" key={`${child.metadata.id}-${cacheVersion}-${forceRender}`}>
       <img className="sideBarIcon" src={file} alt="fileIcon" />
       <h3 className="sideItemName">{child.metadata.name}</h3>
     </div>
-  ), []);
+  ), [cacheVersion, forceRender]);
 
   if (!childrenOfRootNode || localPendingFileOperation || pendingFileOperation) {
     return <LoadingBars />;
   }
 
-  return childrenOfRootNode.map((child) => {
-    const isFolder = child.metadata?.is_folder === true;
-    return isFolder ? renderFolderItem(child) : renderFileItem(child);
-  });
+  return (
+    <div key={`root-${cacheVersion}-${forceRender}`}>
+      {childrenOfRootNode.map((child) => {
+        const isFolder = child.metadata?.is_folder === true;
+        return isFolder ? renderFolderItem(child) : renderFileItem(child);
+      })}
+    </div>
+  );
 }

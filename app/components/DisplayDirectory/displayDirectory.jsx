@@ -231,15 +231,6 @@ useEffect(() => {
   }
 }, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
 
-
-  // useEffect(() => {
-  //   const nodeIdToUpdate = displayNodeId || rootNodeId;
-  //   if (nodeIdToUpdate) {
-  //     updateDisplayNodes(nodeIdToUpdate);
-  //   }
-  //   setPendingFileOperation(false);
-  // }, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
-
   const folderTreeComponentProps = {
     childrenOfRootNode: childrenOfRootNode,
     showStateList: showStateList,

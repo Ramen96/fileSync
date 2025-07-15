@@ -64,41 +64,56 @@ export default function Index() {
     setDisplayNodeId(rootNodeId);
   }, [childrenOfRoot, rootNodeId]);
 
-const handleWebSocketMessage = useCallback((event) => {
-  try {
-    const msgObject = JSON.parse(event.data);
-    console.log('WebSocket message received:', event.data);
-    if (msgObject?.message === 'reload') {
-      setPendingFileOperation(true);
-      setDisplayNodeId(msgObject.id);
-      setReloadTrigger(prev => prev + 1);
-      setTimeout(() => {
+  useEffect(() => {
+    const refreshRootChildren = async () => {
+      if (reloadTrigger > 0) {
+        try {
+          const options = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              displayNodeId: rootNodeId,
+              requestType: 'get_child_nodes'
+            })
+          };
+          
+          const response = await fetch('/databaseApi', options);
+          const body = await response.json();
+          
+          if (body[0]?.children) {
+            setChildrenOfRootNode(body[0].children);
+          }
+        } catch (error) {
+          console.error("Error refreshing root children:", error);
+        }
+      }
+    };
+
+    refreshRootChildren();
+  }, [reloadTrigger, rootNodeId]);
+
+  const handleWebSocketMessage = useCallback((event) => {
+    try {
+      const msgObject = JSON.parse(event.data);
+      console.log('WebSocket message received:', event.data);
+      if (msgObject?.message === 'reload') {
+        setPendingFileOperation(true);
+        setDisplayNodeId(msgObject.id);
+        setReloadTrigger(prev => prev + 1);
+        setTimeout(() => {
+          setPendingFileOperation(false);
+        }, 500);
+      } else if (msgObject.message === false) {
+        console.log('message: ', msgObject.message);
         setPendingFileOperation(false);
-      }, 500);
-    } else if (msgObject.message === false) {
-      console.log('message: ', msgObject.message);
+      }
+    } catch (error) {
+      console.error('Error parsing WebSocket message:', error);
       setPendingFileOperation(false);
     }
-  } catch (error) {
-    console.error('Error parsing WebSocket message:', error);
-    setPendingFileOperation(false);
-  }
-}, []);
-  // const handleWebSocketMessage = useCallback((event) => {
-  //   try {
-  //     const msgObject = JSON.parse(event.data);
-  //     console.log('WebSocket message received:', event.data);
-      
-  //     if (msgObject?.message === 'reload') {
-  //       setDisplayNodeId(msgObject.id);
-  //       setReloadTrigger(prev => prev + 1);
-  //     } else if (msgObject.message === false) {
-  //       console.log('message: ', msgObject.message);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error parsing WebSocket message:', error);
-  //   }
-  // }, []);
+  }, []);
 
   const handleWebSocketOpen = useCallback((event) => {
     console.log('WebSocket connection established!');

@@ -22,14 +22,19 @@ export default function FolderTree({
   pendingFileOperation,
   reloadTrigger,
 }) {
+  console.log(`=== FOLDERTREE COMPONENT RENDER ===`);
+  console.log(`childrenOfRootNode:`, childrenOfRootNode);
+  console.log(`pendingFileOperation:`, pendingFileOperation);
+  console.log(`reloadTrigger:`, reloadTrigger);
+  
   const [isExpanded, setIsExpanded] = useState(new Set());
   const [localPendingFileOperation, setLocalPendingFileOperation] = useState(false);
   const [forceRender, setForceRender] = useState(0);
   const [cacheVersion, setCacheVersion] = useState(0);
 
-  const forceUpdate = useCallback(() => {
+  const forceUpdate = () => {
     setForceRender(prev => prev + 1);
-  }, []);
+  };
 
   const childNodesMapRef = useRef(new Map());
   const isExpandedRef = useRef(new Set());
@@ -109,21 +114,34 @@ export default function FolderTree({
   }, []);
 
   const getChildNodesWithCache = useCallback(async (folderId, forceRefresh = false) => {
+    console.log(`=== GET CHILD NODES DEBUG ===`);
+    console.log(`Requesting children for folder ID: ${folderId}`);
+    console.log(`Force refresh: ${forceRefresh}`);
+    console.log(`Already cached: ${childNodesMapRef.current.has(folderId)}`);
+    console.log(`Pending operation: ${pendingOperationsRef.current.has(folderId)}`);
+
     if (!forceRefresh && childNodesMapRef.current.has(folderId)) {
-      return childNodesMapRef.current.get(folderId);
+      const cached = childNodesMapRef.current.get(folderId);
+      console.log(`Returning cached children (${cached.length} items):`, cached);
+      return cached;
     }
 
     if (pendingOperationsRef.current.has(folderId)) {
+      console.log(`Operation already pending for ${folderId}, returning empty array`);
       return [];
     }
 
     try {
       pendingOperationsRef.current.add(folderId);
+      console.log(`Fetching children from API for ${folderId}`);
       const children = await getChildNodes(folderId);
+      console.log(`Raw API response:`, children);
       const childrenData = children[0]?.children || [];
+      console.log(`Processed children data (${childrenData.length} items):`, childrenData);
 
       if (mountedRef.current) {
         childNodesMapRef.current.set(folderId, childrenData);
+        console.log(`Cached children for ${folderId}`);
       }
 
       return childrenData;
@@ -160,13 +178,26 @@ export default function FolderTree({
     }
   }, [getChildNodesWithCache, handleFolderClick]);
 
-  const getCachedChildren = useCallback((folderId) => {
+  const getCachedChildren = (folderId) => {
     return childNodesMapRef.current.get(folderId) || [];
-  }, []);
+  };
 
-  const renderFolderItem = useCallback((child) => {
+  const renderFolderItem = (child) => {
     const folderId = child.metadata.id;
     const isOpen = isExpanded.has(folderId);
+    const cachedChildren = getCachedChildren(folderId);
+
+    console.log(`=== FOLDER ITEM DEBUG ===`);
+    console.log(`Folder: ${child.metadata.name} (ID: ${folderId})`);
+    console.log(`Is Open: ${isOpen}`);
+    console.log(`Is Folder: ${child.metadata?.is_folder}`);
+    console.log(`Cached Children Count: ${cachedChildren.length}`);
+    console.log(`Cached Children:`, cachedChildren);
+    
+    if (cachedChildren.length > 0) {
+      console.log(`First cached child:`, cachedChildren[0]);
+      console.log(`First cached child is folder:`, cachedChildren[0].metadata?.is_folder);
+    }
 
     return (
       <React.Fragment key={`${folderId}-${cacheVersion}-${forceRender}`}>
@@ -183,7 +214,7 @@ export default function FolderTree({
         {isOpen && (
           <div className="sideFolderDropDown" style={{ display: "block" }}>
             <FolderTree
-              childrenOfRootNode={getCachedChildren(folderId)}
+              childrenOfRootNode={cachedChildren}
               showStateList={showStateList}
               setShowStateList={setShowStateList}
               getChildNodes={getChildNodes}
@@ -203,14 +234,14 @@ export default function FolderTree({
         )}
       </React.Fragment>
     );
-  }, [isExpanded, handleExpandFolder, getCachedChildren, showStateList, setShowStateList, getChildNodes, setCurrentNodeId, currentNodeId, setForwardHistory, backHistory, setBackHistory, handleFolderClick, displayNodeId, setPendingFileOperation, pendingFileOperation, reloadTrigger, cacheVersion, forceRender]);
+  };
 
-  const renderFileItem = useCallback((child) => (
+  const renderFileItem = (child) => (
     <div className="sideItem" key={`${child.metadata.id}-${cacheVersion}-${forceRender}`}>
       <img className="sideBarIcon" src={file} alt="fileIcon" />
       <h3 className="sideItemName">{child.metadata.name}</h3>
     </div>
-  ), [cacheVersion, forceRender]);
+  );
 
   if (!childrenOfRootNode || localPendingFileOperation || pendingFileOperation) {
     return <LoadingBars />;
@@ -218,8 +249,19 @@ export default function FolderTree({
 
   return (
     <div key={`root-${cacheVersion}-${forceRender}`}>
+      <div style={{ border: '1px solid red', padding: '5px', margin: '2px' }}>
+        <small>FolderTree Instance - Items: {childrenOfRootNode?.length || 0}</small>
+      </div>
       {childrenOfRootNode.map((child) => {
+        console.log(`=== MAIN RENDER DEBUG ===`);
+        console.log(`Processing child: ${child.metadata?.name} (ID: ${child.metadata?.id})`);
+        console.log(`Child data:`, child);
+        console.log(`Is folder check: ${child.metadata?.is_folder === true}`);
+        console.log(`Cache version: ${cacheVersion}`);
+        
         const isFolder = child.metadata?.is_folder === true;
+        console.log(`Rendering as: ${isFolder ? 'FOLDER' : 'FILE'}`);
+        
         return isFolder ? renderFolderItem(child) : renderFileItem(child);
       })}
     </div>

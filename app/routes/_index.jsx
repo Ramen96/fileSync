@@ -97,7 +97,6 @@ export default function Index() {
   const handleWebSocketMessage = useCallback((event) => {
     try {
       const msgObject = JSON.parse(event.data);
-      console.log('WebSocket message received:', event.data);
       if (msgObject?.message === 'reload') {
         setPendingFileOperation(true);
         setDisplayNodeId(msgObject.id);
@@ -116,7 +115,6 @@ export default function Index() {
   }, []);
 
   const handleWebSocketOpen = useCallback((event) => {
-    console.log('WebSocket connection established!');
     if (socket) {
       socket.send(JSON.stringify({ action: 'connection', message: 'Hello Server!' }));
     }

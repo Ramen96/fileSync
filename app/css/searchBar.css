@@ -63,6 +63,101 @@
     0 0 5px rgba(255, 0, 73, 0.5);
 }
 
+/* New styles for search dropdown */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);  /* Increased gap from input */
+  left: 0;
+  right: 0;
+  background: rgb(35, 38, 53);  /* Slightly lighter than input background */
+  border-radius: 1rem;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  max-height: 350px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 0.5rem 0;
+}
+
+.search-suggestion {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.search-suggestion:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.search-suggestion:active {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(0.995);
+}
+
+.suggestion-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 1rem;
+  opacity: 0.7;
+  filter: invert(1);
+  transition: opacity 0.2s ease;
+}
+
+.search-suggestion:hover .suggestion-icon {
+  opacity: 0.9;
+}
+
+.loading, .no-results {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: default;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Updated scrollbar styles */
+.search-dropdown::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.search-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 0.5rem;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Add a subtle animation for dropdown appearance */
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-dropdown {
+  animation: dropdownFadeIn 0.2s ease;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .search-bar-wrapper {

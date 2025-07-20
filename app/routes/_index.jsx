@@ -249,6 +249,12 @@ export default function Index() {
     }
   }, []);
 
+  const handleSearchNavigation = useCallback((parentId) => {
+    setDisplayNodeId(parentId);
+    setIsSearchMode(false); 
+    setSearchResults(null); 
+  }, []);
+
   const indexContextProps = {
     childrenOfRootNode: isSearchMode ? searchResults : childrenOfRootNode,
     setChildrenOfRootNode,
@@ -275,7 +281,11 @@ export default function Index() {
     <>
       <SideBar {...sidebarProps} />
       <div className="main">
-        <SearchBar onSearch={handleSearch} placeholder="Search drive" />
+        <SearchBar 
+          onSearch={handleSearch} 
+          placeholder="Search drive" 
+          onNavigate={handleSearchNavigation}
+        />
         <div className="mainWindow main-bg">
           <IndexContext.Provider value={indexContextProps}>
             <DisplayDirectory />

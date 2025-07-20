@@ -5,7 +5,7 @@ import { IndexContext, wsContext } from "../utils/context.js";
 import { prisma } from "../utils/prisma.server.js";
 import SideBar from "../components/SideBar/sidebar.jsx";
 import DisplayDirectory from "../components/DisplayDirectory/displayDirectory.jsx";
-const searchIcon = "../assets/search.svg";
+import SearchBar from "../components/SearchBar/searchBar.jsx";
 import "../css/index.css";
 
 export async function loader() {
@@ -36,6 +36,8 @@ export default function Index() {
   const [childrenOfRootNode, setChildrenOfRootNode] = useState(null);
   const [pendingFileOperation, setPendingFileOperation] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
+  const [searchResults, setSearchResults] = useState(null);
+  const [isSearchMode, setIsSearchMode] = useState(false);
 
   const db = useLoaderData();
   const childrenOfRoot = db.children;
@@ -210,8 +212,45 @@ export default function Index() {
       });
   }, []);
 
+  // New search functionality
+  const handleSearch = useCallback(async (searchQuery) => {
+    if (!searchQuery.trim()) {
+      setIsSearchMode(false);
+      setSearchResults(null);
+      return;
+    }
+
+    try {
+      setPendingFileOperation(true);
+      
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          searchQuery: searchQuery,
+          requestType: 'search_files'
+        })
+      };
+      
+      const response = await fetch('/databaseApi', options);
+      const searchData = await response.json();
+      
+      setSearchResults(searchData);
+      setIsSearchMode(true);
+      
+    } catch (error) {
+      console.error("Error searching files:", error);
+      setSearchResults([]);
+      setIsSearchMode(true);
+    } finally {
+      setPendingFileOperation(false);
+    }
+  }, []);
+
   const indexContextProps = {
-    childrenOfRootNode,
+    childrenOfRootNode: isSearchMode ? searchResults : childrenOfRootNode,
     setChildrenOfRootNode,
     fileUpload,
     displayNodeId,
@@ -220,7 +259,11 @@ export default function Index() {
     pendingFileOperation,
     setPendingFileOperation,
     reloadTrigger,
-    setReloadTrigger
+    setReloadTrigger,
+    isSearchMode,
+    setIsSearchMode,
+    searchResults,
+    setSearchResults
   };
 
   const sidebarProps = {
@@ -232,17 +275,7 @@ export default function Index() {
     <>
       <SideBar {...sidebarProps} />
       <div className="main">
-        <div className="searchBarWrapper flex-jc-ai main-bg">
-          <button className="submitButton">
-            <img className="searchIcon" src={searchIcon} alt="search icon" />
-          </button>
-          <input
-            className="searchBar"
-            id="searchbar"
-            type="text"
-            placeholder="Search drive"
-          />
-        </div>
+        <SearchBar onSearch={handleSearch} placeholder="Search drive" />
         <div className="mainWindow main-bg">
           <IndexContext.Provider value={indexContextProps}>
             <DisplayDirectory />

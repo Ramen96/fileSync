@@ -11,8 +11,6 @@ export default function DisplayDirectory() {
     rootNodeId,
     childrenOfRootNode,
     displayNodeId,
-    setDisplayNodeId,
-    pendingFileOperation,
     setPendingFileOperation,
     reloadTrigger,
     setReloadTrigger
@@ -232,20 +230,9 @@ useEffect(() => {
 }, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
 
   const folderTreeComponentProps = {
-    childrenOfRootNode: childrenOfRootNode,
-    showStateList: showStateList,
-    setShowStateList: setShowStateList,
-    getChildNodes: getChildNodes,
-    setDisplayNodeId: setDisplayNodeId,
-    displayNodeId: displayNodeId,
-    setForwardHistory: setForwardHistory,
-    forwardHistory: forwardHistory,
-    backHistory: backHistory,
-    setBackHistory: setBackHistory,
-    handleFolderClick: handleFolderClick,
-    pendingFileOperation: pendingFileOperation,
-    setPendingFileOperation: setPendingFileOperation,
-    reloadTrigger: reloadTrigger
+    childrenOfRootNode,
+    getChildNodes,
+    handleFolderClick
   };
 
   const displayDirectoryContextProps = {

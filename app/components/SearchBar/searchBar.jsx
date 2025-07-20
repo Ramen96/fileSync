@@ -87,10 +87,10 @@ export default function SearchBar({ onSearch, placeholder = "Search drive", onNa
     <div className="search-bar-wrapper">
       <form onSubmit={handleSubmit} className="search-form">
         <div className="search-input-wrapper">
-          <img 
-            className="search-icon" 
-            src={searchIcon} 
-            alt="search icon" 
+          <img
+            className="search-icon"
+            src={searchIcon}
+            alt="search icon"
           />
           <input
             ref={searchInputRef}
@@ -102,27 +102,28 @@ export default function SearchBar({ onSearch, placeholder = "Search drive", onNa
             aria-label="Search input"
           />
           {showDropdown && (
-            <div 
-              className="search-dropdown" 
+            <div
+              className="search-dropdown"
               ref={dropdownRef}
               aria-label="Search suggestions"
             >
-              {isLoading ? (
-                <div className="search-suggestion loading">Loading...</div>
-              ) : suggestions.length > 0 ? (
-                suggestions.map((suggestion, index) => (
-                  <div
-                    key={suggestion.id || index}
-                    className="search-suggestion"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    <img className="suggestion-icon" src={searchIcon} alt="" />
-                    <span>{suggestion.metadata.name}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="search-suggestion no-results">No results found</div>
-              )}
+              <div className="search-dropdown-content">
+                {isLoading ? (
+                  <div className="search-suggestion loading">Loading...</div>
+                ) : suggestions.length > 0 ? (
+                  suggestions.map((suggestion, index) => (
+                    <div
+                      key={suggestion.id || index}
+                      className="search-suggestion"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      <span>{suggestion.metadata.name}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="search-suggestion no-results">No results found</div>
+                )}
+              </div>
             </div>
           )}
         </div>

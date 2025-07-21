@@ -1,26 +1,62 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+/* Import matching fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&family=Exo+2:wght@300;600;800&display=swap');
 
-/* SearchBar Component Styles */
+/* SearchBar Component Styles - Cyberpunk Theme */
 .search-bar-wrapper {
   height: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(22, 20, 28);
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.9) 0%, 
+    rgba(32, 29, 39, 0.95) 50%,
+    rgba(22, 20, 28, 1) 100%);
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
   border-bottom: solid rgba(169, 169, 169, 0.5) 1px;
   border-right: solid rgba(169, 169, 169, 0.5) 1px;
   border-left: solid rgba(169, 169, 169, 0.5) 1px;
-  border-bottom-right-radius: 0.5rem;
-  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
   margin: 0 1rem;
   padding: 0 1rem;
+  position: relative;
+  overflow: visible;
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 0, 73, 0.15);
+}
+
+.search-bar-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(255, 0, 73, 0.15) 25%, 
+    rgba(47, 214, 181, 0.1) 50%, 
+    rgba(255, 0, 73, 0.15) 75%, 
+    transparent 100%);
+  border-radius: 0.75rem;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.search-bar-wrapper:hover::before {
+  opacity: 1;
 }
 
 .search-form {
   display: flex;
   width: 100%;
   max-width: 32rem;
+  position: relative;
+  z-index: 2;
 }
 
 .search-input-wrapper {
@@ -33,15 +69,40 @@
 .search-input {
   width: 100%;
   height: 2.5rem;
-  border-radius: 2rem;
-  background: rgb(30, 33, 48);
-  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.8) 0%, 
+    rgba(32, 29, 39, 0.9) 100%);
+  border: 1px solid rgba(169, 169, 169, 0.2);
   padding: 0.5rem 1.5rem 0.5rem 2.75rem;
-  color: white;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: all 0.3s ease;
+  font-family: 'Exo 2', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-input::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.6s ease-in-out;
+  pointer-events: none;
+}
+
+.search-input:hover::before {
+  left: 100%;
 }
 
 .search-icon {
@@ -49,43 +110,78 @@
   left: 1rem;
   width: 1.25rem;
   height: 1.25rem;
-  filter: invert(1);
+  filter: brightness(1.2) saturate(1.1) drop-shadow(0 0 8px rgba(255, 0, 73, 0.3));
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.8;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3;
+}
+
+.search-input:focus ~ .search-icon,
+.search-input:hover ~ .search-icon {
+  filter: brightness(1.4) saturate(1.3) drop-shadow(0 0 15px rgba(47, 214, 181, 0.5));
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.875rem;
 }
 
 .search-input:focus {
-  background: rgb(30, 33, 48);
-  border-color: #ff0049;
+  background: linear-gradient(135deg, 
+    rgba(47, 214, 181, 0.08) 0%, 
+    rgba(255, 0, 73, 0.05) 50%,
+    rgba(45, 41, 56, 0.9) 100%);
+  border-color: rgba(47, 214, 181, 0.4);
+  color: rgb(47, 214, 181);
+  text-shadow: 0 0 10px rgba(47, 214, 181, 0.3);
+  transform: translateY(-1px);
   box-shadow: 
     0 0 0 2px rgba(255, 0, 73, 0.2),
     0 0 25px rgba(255, 0, 73, 0.3),
-    0 0 5px rgba(255, 0, 73, 0.5);
+    0 0 15px rgba(47, 214, 181, 0.2),
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Enhanced dropdown styles */
+.search-input:hover {
+  border-color: rgba(47, 214, 181, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(47, 214, 181, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Enhanced dropdown styles with cyberpunk theme */
 .search-dropdown {
   position: absolute;
   top: calc(100% + 12px);
   left: 0;
   right: 0;
-  background: linear-gradient(145deg, rgba(40, 44, 60, 0.98), rgba(32, 36, 50, 0.98));
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.95) 0%, 
+    rgba(32, 29, 39, 0.98) 50%,
+    rgba(22, 20, 28, 0.99) 100%);
   backdrop-filter: blur(16px) saturate(180%);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  border: 1.5px solid rgba(47, 214, 181, 0.2);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.5),
     0 8px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 0 20px rgba(255, 0, 73, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 0, 73, 0.15);
   max-height: 380px;
   overflow: hidden;
-  z-index: 1000;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10000;
+  font-family: 'Exo 2', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  animation: dropdownFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-dropdown::before {
@@ -96,10 +192,29 @@
   transform: translateX(-50%);
   width: 16px;
   height: 8px;
-  background: linear-gradient(145deg, rgba(40, 44, 60, 0.98), rgba(32, 36, 50, 0.98));
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.95) 0%, 
+    rgba(32, 29, 39, 0.98) 100%);
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(47, 214, 181, 0.2);
+  border-right: 1px solid rgba(47, 214, 181, 0.2);
+}
+
+.search-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  animation: sweep 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes sweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 /* Scrollable content area */
@@ -113,17 +228,24 @@
   display: flex;
   align-items: center;
   padding: 14px 18px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+  transition: all 0.25s ease-out;
   margin: 2px 0;
-  border-radius: 10px;
+  border-radius: 0.5rem;
   font-size: 0.95rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.3px;
   position: relative;
   line-height: 1.4;
   border: 1px solid transparent;
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.3) 0%, 
+    rgba(32, 29, 39, 0.5) 100%);
+  overflow: hidden;
+  /* Add hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, background, color, box-shadow;
 }
 
 .search-suggestion::before {
@@ -132,66 +254,103 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 0, 73, 0.8), transparent);
-  border-radius: 0 0 10px 10px;
-  opacity: 0;
-  transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
-  box-shadow: 0 0 8px rgba(255, 0, 73, 0.3);
+  height: 0;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 0, 73, 0.8) 25%, 
+    rgba(47, 214, 181, 0.6) 75%, 
+    transparent);
+  border-radius: 0 0 0.5rem 0.5rem;
+  transition: height 0.25s ease-out;
+  box-shadow: 
+    0 0 8px rgba(255, 0, 73, 0.3),
+    0 0 12px rgba(47, 214, 181, 0.2);
+}
+
+.search-suggestion::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.4s ease-out;
+  pointer-events: none;
 }
 
 .search-suggestion:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
-  color: white;
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, 
+    rgba(47, 214, 181, 0.12) 0%, 
+    rgba(255, 0, 73, 0.08) 50%,
+    rgba(45, 41, 56, 0.6) 100%);
+  color: rgb(47, 214, 181);
+  text-shadow: 0 0 10px rgba(47, 214, 181, 0.3);
+  transform: translate3d(3px, -1px, 0);
+  border-color: rgba(47, 214, 181, 0.3);
   box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 15px rgba(47, 214, 181, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .search-suggestion:hover::before {
-  opacity: 1;
-  height: 3px;
+  height: 2px;
+  box-shadow: 
+    0 0 10px rgba(255, 0, 73, 0.4),
+    0 0 15px rgba(47, 214, 181, 0.25);
 }
 
-.search-suggestion:hover span {
-  padding-left: 0px;
+.search-suggestion:hover::after {
+  left: 100%;
 }
 
 .search-suggestion:active {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
-  transform: scale(0.98) translateX(4px);
+  background: linear-gradient(135deg, 
+    rgba(47, 214, 181, 0.2) 0%, 
+    rgba(255, 0, 73, 0.15) 100%);
+  transform: translate3d(3px, -1px, 0) scale(0.98);
+  transition: all 0.1s ease-out;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .search-suggestion span {
-  transition: padding-left 0.2s ease;
+  transition: all 0.25s ease-out;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  position: relative;
+  z-index: 1;
 }
 
-/* Special states */
+/* Special states with cyberpunk styling */
 .loading, .no-results {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.6);
   cursor: default;
   text-align: center;
   padding: 20px;
   font-size: 0.9rem;
   font-weight: 500;
-  letter-spacing: 0.01em;
-  font-style: italic;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: 'Orbitron', monospace;
+  transform: translate3d(0, 0, 0);
 }
 
 .loading {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 0%, 
-    rgba(255, 255, 255, 0.2) 50%, 
-    rgba(255, 255, 255, 0.1) 100%);
+  background: linear-gradient(135deg, 
+    rgba(255, 0, 73, 0.1) 0%, 
+    rgba(47, 214, 181, 0.1) 25%,
+    rgba(255, 0, 73, 0.1) 50%,
+    rgba(47, 214, 181, 0.1) 75%,
+    rgba(255, 0, 73, 0.1) 100%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 10px;
+  animation: shimmer 2s infinite, glow 3s infinite alternate;
+  border-radius: 0.5rem;
   margin: 2px;
+  border: 1px solid rgba(255, 0, 73, 0.2);
 }
 
 @keyframes shimmer {
@@ -199,26 +358,61 @@
   100% { background-position: 200% 0; }
 }
 
-/* Enhanced scrollbar styles */
+@keyframes glow {
+  0% { 
+    box-shadow: 0 0 5px rgba(255, 0, 73, 0.3), 0 0 10px rgba(255, 0, 73, 0.2);
+  }
+  100% { 
+    box-shadow: 0 0 20px rgba(255, 0, 73, 0.6), 0 0 30px rgba(47, 214, 181, 0.3);
+  }
+}
+
+.no-results {
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.4) 0%, 
+    rgba(32, 29, 39, 0.6) 100%);
+  border: 1px solid rgba(169, 169, 169, 0.2);
+  border-radius: 0.5rem;
+  margin: 2px;
+  color: rgba(255, 0, 73, 0.7);
+}
+
+/* Enhanced scrollbar with cyberpunk styling */
 .search-dropdown-content::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .search-dropdown-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, 
+    rgba(45, 41, 56, 0.5) 0%, 
+    rgba(32, 29, 39, 0.8) 100%);
   border-radius: 10px;
   margin: 8px 4px;
+  border: 1px solid rgba(169, 169, 169, 0.1);
 }
 
 .search-dropdown-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(255, 0, 73, 0.6), rgba(255, 0, 73, 0.3));
+  background: linear-gradient(180deg, 
+    rgba(255, 0, 73, 0.8) 0%,
+    rgba(47, 214, 181, 0.6) 50%, 
+    rgba(255, 0, 73, 0.4) 100%);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 2px 8px rgba(255, 0, 73, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
 }
 
 .search-dropdown-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(255, 0, 73, 0.8), rgba(255, 0, 73, 0.5));
-  box-shadow: 0 2px 8px rgba(255, 0, 73, 0.3);
+  background: linear-gradient(180deg, 
+    rgba(255, 0, 73, 1) 0%,
+    rgba(47, 214, 181, 0.8) 50%, 
+    rgba(255, 0, 73, 0.6) 100%);
+  box-shadow: 
+    0 4px 12px rgba(255, 0, 73, 0.5),
+    0 0 15px rgba(47, 214, 181, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 /* Refined entrance animation */
@@ -235,11 +429,12 @@
   }
 }
 
-/* Responsive design */
+/* Responsive design maintaining cyberpunk aesthetic */
 @media (max-width: 768px) {
   .search-bar-wrapper {
     margin: 0 0.5rem;
     padding: 0 0.5rem;
+    height: 4.5rem;
   }
   
   .search-form {
@@ -249,6 +444,7 @@
   .search-input {
     font-size: 0.9rem;
     padding: 0.4rem 1rem 0.4rem 2.5rem;
+    height: 2.25rem;
   }
   
   .search-icon {
@@ -257,7 +453,8 @@
   }
 
   .search-dropdown {
-    border-radius: 12px;
+    border-radius: 0.5rem;
+    max-height: 320px;
   }
 
   .search-suggestion {
@@ -272,17 +469,24 @@
   }
   
   .search-input {
-    height: 2.25rem;
+    height: 2rem;
     font-size: 0.85rem;
+    padding: 0.35rem 0.75rem 0.35rem 2.25rem;
   }
   
   .search-icon {
     width: 1rem;
     height: 1rem;
+    left: 0.75rem;
   }
 
   .search-dropdown {
-    max-height: 300px;
+    max-height: 280px;
     top: calc(100% + 8px);
+  }
+
+  .search-suggestion {
+    padding: 10px 14px;
+    font-size: 0.85rem;
   }
 }

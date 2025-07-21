@@ -87,11 +87,6 @@ export default function SearchBar({ onSearch, placeholder = "Search drive", onNa
     <div className="search-bar-wrapper">
       <form onSubmit={handleSubmit} className="search-form">
         <div className="search-input-wrapper">
-          <img
-            className="search-icon"
-            src={searchIcon}
-            alt="search icon"
-          />
           <input
             ref={searchInputRef}
             className="search-input"
@@ -100,6 +95,11 @@ export default function SearchBar({ onSearch, placeholder = "Search drive", onNa
             value={searchQuery}
             onChange={handleInputChange}
             aria-label="Search input"
+          />
+          <img
+            className="search-icon"
+            src={searchIcon}
+            alt="search icon"
           />
           {showDropdown && (
             <div

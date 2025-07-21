@@ -212,22 +212,22 @@ export default function DisplayDirectory() {
     }
   }, [deleteQueue, setPendingFileOperation, setReloadTrigger]);
 
-useEffect(() => {
-  const nodeIdToUpdate = displayNodeId || rootNodeId;
-  if (nodeIdToUpdate) {
-    updateDisplayNodes(nodeIdToUpdate);
-  }
-  
-  if (reloadTrigger > 0) {
-    const timer = setTimeout(() => {
+  useEffect(() => {
+    const nodeIdToUpdate = displayNodeId || rootNodeId;
+    if (nodeIdToUpdate) {
+      updateDisplayNodes(nodeIdToUpdate);
+    }
+
+    if (reloadTrigger > 0) {
+      const timer = setTimeout(() => {
+        setPendingFileOperation(false);
+      }, 200);
+
+      return () => clearTimeout(timer);
+    } else {
       setPendingFileOperation(false);
-    }, 200);
-    
-    return () => clearTimeout(timer);
-  } else {
-    setPendingFileOperation(false);
-  }
-}, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
+    }
+  }, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
 
   const folderTreeComponentProps = {
     childrenOfRootNode,
@@ -288,7 +288,7 @@ useEffect(() => {
       id: 'download',
       icon: Download,
       className: 'homeButton',
-      onClick: () => { } 
+      onClick: () => { }
     },
     {
       id: 'upload',
@@ -330,7 +330,9 @@ useEffect(() => {
       )}
 
       <div className="navWrapper prevent-select">
-        {leftNavButtons.map(renderButton)}
+        <div className="nav-buttons-left">
+          {leftNavButtons.map(renderButton)}
+        </div>
         <div className="nav-buttons-right">
           {rightNavButtons.map(renderButton)}
         </div>

@@ -10,7 +10,7 @@ export default function Folder({
   handleDeleteQueue,
 }) {
   const [checked, setChecked] = useState(false);
-
+  
   const handleChecked = () => {
     const metadataObject = {
       id: id,
@@ -29,17 +29,74 @@ export default function Folder({
   return isIcon ? (
     <div
       onClick={() => handleChecked()}
-      className="conA"
+      className="cyber-item-card cyber-folder-card"
       onDoubleClick={() => {
         handleFolderClick(id);
       }}
     >
-      <div className="conB justifyStart">
-        <label className="cb-con test" onClick={(e) => e.stopPropagation()}>
+      <div className="cyber-card-header">
+        <div className="cyber-checkbox-wrapper">
+          <label className="cyber-checkbox-container" onClick={(e) => e.stopPropagation()}>
+            <input
+              checked={checked}
+              onChange={(e) => console.log(e.target.value)}
+              className="cyber-checkbox-input"
+              type="checkbox"
+            />
+            <span
+              onClick={(e) => {
+                e.preventDefault();
+                handleChecked();
+              }}
+              className="cyber-checkmark"
+            >
+              <div className="cyber-check-icon"></div>
+            </span>
+          </label>
+        </div>
+        <div className="cyber-status-indicator cyber-folder-indicator"></div>
+      </div>
+      
+      <div className="cyber-icon-container">
+        <div className="cyber-icon-wrapper">
+          <img className="cyber-item-icon" src={folder} alt="folder" />
+          <div className="cyber-icon-glow"></div>
+        </div>
+      </div>
+      
+      <div className="cyber-item-info">
+        <h3 className="cyber-item-name">{name}</h3>
+        <span className="cyber-item-type">FOLDER</span>
+      </div>
+      
+      <div className="cyber-card-overlay"></div>
+    </div>
+  ) : (
+    <div
+      onClick={() => handleChecked()}
+      className="cyber-row-item cyber-folder-row"
+      onDoubleClick={() => {
+        handleFolderClick(id);
+      }}
+    >
+      <div className="cyber-row-content">
+        <div className="cyber-row-icon-wrapper">
+          <img className="cyber-row-icon" src={folder} alt="folder" />
+          <div className="cyber-row-icon-glow"></div>
+        </div>
+        
+        <div className="cyber-row-info">
+          <p className="cyber-row-name">{name}</p>
+          <span className="cyber-row-type">FOLDER</span>
+        </div>
+      </div>
+      
+      <div className="cyber-row-actions">
+        <label className="cyber-checkbox-container cyber-row-checkbox" onClick={(e) => e.stopPropagation()}>
           <input
             checked={checked}
             onChange={(e) => console.log(e.target.value)}
-            className="checkbox"
+            className="cyber-checkbox-input"
             type="checkbox"
           />
           <span
@@ -47,44 +104,14 @@ export default function Folder({
               e.preventDefault();
               handleChecked();
             }}
-            className="checkmark"
-          ></span>
+            className="cyber-checkmark"
+          >
+            <div className="cyber-check-icon"></div>
+          </span>
         </label>
       </div>
-      <div className="conB border-bottom">
-        <img className="folderImg margin1rem" src={folder} alt="folder" />
-      </div>
-      <div className="conB">
-        <h3 className="itemName">{name}</h3>
-      </div>
-    </div>
-  ) : (
-    <div
-      onClick={() => handleChecked()}
-      className="rowWrapper mainBorder vc"
-      onDoubleClick={() => {
-        handleFolderClick(id);
-      }}
-    >
-      <div className="centerAllFlex width100">
-        <img className="folderImgRow" src={folder} alt="folder" />
-        <p className="itemName marginNone textStart">{name}</p>
-      </div>
-      <label className="cb-con" onClick={(e) => e.stopPropagation()}>
-        <input
-          checked={checked}
-          onChange={(e) => console.log(e.target.value)}
-          className="checkbox"
-          type="checkbox"
-        />
-        <span
-          onClick={(e) => {
-            e.preventDefault();
-            handleChecked();
-          }}
-          className="checkmark"
-        ></span>
-      </label>
+      
+      <div className="cyber-row-overlay"></div>
     </div>
   );
 }

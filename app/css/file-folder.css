@@ -1,168 +1,626 @@
-.conA {
-  width: 10rem;
-  height: 10rem;
+/* Import matching fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&family=Exo+2:wght@300;600;800&display=swap');
+
+/* ================================== */
+/* ===== CYBERPUNK CARD STYLES ===== */
+/* ================================== */
+
+.cyber-item-card {
+  width: 11rem;
+  height: 11rem;
   border-radius: 1rem;
   display: flex;
-  align-items: center;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  flex-wrap: wrap;
-  text-align: center;
-  border: solid rgb(74, 68, 92) 1px;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Exo 2', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate3d(0, 0, 0);
+  will-change: transform, background, box-shadow;
+
+  background: linear-gradient(135deg,
+      rgba(45, 41, 56, 0.8) 0%,
+      rgba(32, 29, 39, 0.95) 50%,
+      rgba(22, 20, 28, 1) 100%);
+
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 0, 73, 0.1);
 }
 
-.conA:hover{
-  background: rgba(45, 41, 56);
+.cyber-item-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg,
+      transparent 0%,
+      rgba(255, 0, 73, 0.2) 25%,
+      rgba(47, 214, 181, 0.15) 50%,
+      rgba(255, 0, 73, 0.2) 75%,
+      transparent 100%);
+  border-radius: 1rem;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-.conB {
+.cyber-item-card:hover {
+  transform: translate3d(0, -6px, 0) scale(1.02);
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(47, 214, 181, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 0, 73, 0.2);
+}
+
+.cyber-item-card:hover::before {
+  opacity: 1;
+}
+
+.cyber-item-card:active {
+  transform: translate3d(0, -4px, 0) scale(0.98);
+  transition: all 0.15s ease;
+}
+
+/* Card Header */
+.cyber-card-header {
   width: 100%;
-  height: auto;
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem 0.75rem 0 0.75rem;
+  z-index: 2;
+}
+
+.cyber-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulse 2s infinite;
+}
+
+.cyber-file-indicator {
+  background: rgba(255, 0, 73, 0.8);
+  color: rgba(255, 0, 73, 0.8);
+}
+
+.cyber-folder-indicator {
+  background: rgba(47, 214, 181, 0.8);
+  color: rgba(47, 214, 181, 0.8);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Icon Container - Completely Redesigned */
+.cyber-icon-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  padding: 0.5rem 0;
 }
 
-.folderImg {
-  height: 3rem;
-  width: auto;
-  margin: 0px;
+.cyber-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  transition: all 0.4s ease;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
 }
 
-.folderImgRow {
-  height: 1.5rem;
-  width: auto;
-  margin: 0.5rem;
+.cyber-item-icon {
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: 
+    drop-shadow(0 0 4px rgba(47, 214, 181, 0.3))
+    brightness(1.1)
+    contrast(1.1);
 }
 
-.itemName {
+/* File Icon Styling */
+.cyber-file-card .cyber-item-icon {
+  filter: 
+    drop-shadow(0 0 4px rgba(255, 0, 73, 0.4))
+    drop-shadow(0 0 8px rgba(255, 0, 73, 0.2))
+    brightness(1.2)
+    contrast(1.1)
+    saturate(1.2);
+}
+
+/* Folder Icon Styling */
+.cyber-folder-card .cyber-item-icon {
+  filter: 
+    drop-shadow(0 0 4px rgba(47, 214, 181, 0.4))
+    drop-shadow(0 0 8px rgba(47, 214, 181, 0.2))
+    brightness(1.2)
+    contrast(1.1)
+    saturate(1.2);
+}
+
+/* Icon Glow Effect */
+.cyber-icon-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cyber-file-card .cyber-icon-glow {
+  background: 
+    radial-gradient(circle,
+      rgba(255, 0, 73, 0.15) 0%,
+      rgba(255, 0, 73, 0.08) 40%,
+      rgba(255, 0, 73, 0.02) 70%,
+      transparent 100%);
+  box-shadow: 
+    0 0 20px rgba(255, 0, 73, 0.2),
+    0 0 40px rgba(255, 0, 73, 0.1);
+}
+
+.cyber-folder-card .cyber-icon-glow {
+  background: 
+    radial-gradient(circle,
+      rgba(47, 214, 181, 0.15) 0%,
+      rgba(47, 214, 181, 0.08) 40%,
+      rgba(47, 214, 181, 0.02) 70%,
+      transparent 100%);
+  box-shadow: 
+    0 0 20px rgba(47, 214, 181, 0.2),
+    0 0 40px rgba(47, 214, 181, 0.1);
+}
+
+/* Hover Effects */
+.cyber-item-card:hover .cyber-icon-wrapper {
+  transform: scale(1.15) rotate(2deg);
+}
+
+.cyber-item-card:hover .cyber-icon-glow {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.cyber-file-card:hover .cyber-item-icon {
+  filter: 
+    drop-shadow(0 0 8px rgba(255, 0, 73, 0.6))
+    drop-shadow(0 0 16px rgba(255, 0, 73, 0.4))
+    drop-shadow(0 0 24px rgba(255, 0, 73, 0.2))
+    brightness(1.3)
+    contrast(1.2)
+    saturate(1.3);
+  transform: scale(1.05);
+}
+
+.cyber-folder-card:hover .cyber-item-icon {
+  filter: 
+    drop-shadow(0 0 8px rgba(47, 214, 181, 0.6))
+    drop-shadow(0 0 16px rgba(47, 214, 181, 0.4))
+    drop-shadow(0 0 24px rgba(47, 214, 181, 0.2))
+    brightness(1.3)
+    contrast(1.2)
+    saturate(1.3);
+  transform: scale(1.05);
+}
+
+/* Item Info */
+.cyber-item-info {
   width: 100%;
   text-align: center;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: white;
-  font-weight: 500;
-  margin: 0px;
-  margin-top: 0.5rem;
+  padding: 0 0.75rem 0.75rem 0.75rem;
+  z-index: 2;
 }
 
-/* *********************************** */
-/* ****** SECTION: check box  ******** */
-/* *********************************** */
+.cyber-item-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.3px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
 
-.cb-con{
+.cyber-item-type {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Orbitron', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.cyber-item-card:hover .cyber-item-name {
+  color: rgb(47, 214, 181);
+  text-shadow: 0 0 8px rgba(47, 214, 181, 0.3);
+}
+
+.cyber-file-card:hover .cyber-item-type {
+  color: rgba(255, 0, 73, 0.8);
+  opacity: 1;
+}
+
+.cyber-folder-card:hover .cyber-item-type {
+  color: rgba(47, 214, 181, 0.8);
+  opacity: 1;
+}
+
+/* Card Overlay */
+.cyber-card-overlay {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.6s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cyber-item-card:hover .cyber-card-overlay {
+  left: 100%;
+}
+
+/* ================================== */
+/* ====== CYBERPUNK ROW STYLES ====== */
+/* ================================== */
+
+.cyber-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  margin: 0.5rem 0;
+  border-radius: 0.75rem;
+  font-family: 'Exo 2', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate3d(0, 0, 0);
+  will-change: transform, background, box-shadow;
+
+  background: linear-gradient(135deg,
+      rgba(45, 41, 56, 0.6) 0%,
+      rgba(32, 29, 39, 0.8) 100%);
+
+  border: 1px solid rgba(169, 169, 169, 0.2);
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cyber-row-item:hover {
+  transform: translate3d(2px, -2px, 0);
+  background: linear-gradient(135deg,
+      rgba(47, 214, 181, 0.08) 0%,
+      rgba(255, 0, 73, 0.05) 50%,
+      rgba(45, 41, 56, 0.8) 100%);
+  border-color: rgba(47, 214, 181, 0.3);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(47, 214, 181, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cyber-row-item:active {
+  transform: translate3d(2px, -1px, 0) scale(0.98);
+  transition: all 0.15s ease;
+}
+
+.cyber-row-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  z-index: 2;
+}
+
+.cyber-row-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg,
+      rgba(45, 41, 56, 0.8) 0%,
+      rgba(32, 29, 39, 0.9) 100%);
+  border: 1px solid rgba(169, 169, 169, 0.15);
+  margin-right: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cyber-row-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.cyber-row-icon-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.cyber-file-row .cyber-row-icon-glow {
+  background: radial-gradient(circle,
+      rgba(255, 0, 73, 0.2) 0%,
+      rgba(255, 0, 73, 0.05) 70%,
+      transparent 100%);
+}
+
+.cyber-folder-row .cyber-row-icon-glow {
+  background: radial-gradient(circle,
+      rgba(47, 214, 181, 0.2) 0%,
+      rgba(47, 214, 181, 0.05) 70%,
+      transparent 100%);
+}
+
+.cyber-row-item:hover .cyber-row-icon-wrapper {
+  border-color: rgba(47, 214, 181, 0.3);
+  box-shadow: 0 0 10px rgba(47, 214, 181, 0.05);
+}
+
+.cyber-row-item:hover .cyber-row-icon-glow {
+  opacity: 1;
+}
+
+.cyber-row-item:hover .cyber-row-icon {
+  filter: drop-shadow(0 0 10px rgba(47, 214, 181, 0.4));
+}
+
+.cyber-row-info {
+  flex-grow: 1;
+}
+
+.cyber-row-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.3px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.cyber-row-type {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Orbitron', monospace;
+  font-weight: 400;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.cyber-row-item:hover .cyber-row-name {
+  color: rgb(47, 214, 181);
+  text-shadow: 0 0 6px rgba(47, 214, 181, 0.3);
+}
+
+.cyber-file-row:hover .cyber-row-type {
+  color: rgba(255, 0, 73, 0.8);
+  opacity: 1;
+}
+
+.cyber-folder-row:hover .cyber-row-type {
+  color: rgba(47, 214, 181, 0.8);
+  opacity: 1;
+}
+
+.cyber-row-actions {
+  z-index: 2;
+}
+
+.cyber-row-overlay {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  transition: left 0.5s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cyber-row-item:hover .cyber-row-overlay {
+  left: 100%;
+}
+
+/* ================================== */
+/* ===== CYBERPUNK CHECKBOX ======== */
+/* ================================== */
+
+.cyber-checkbox-wrapper {
+  z-index: 3;
+}
+
+.cyber-checkbox-container {
   display: block;
   position: relative;
-  margin: 1rem;
   cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  --icon-circle-border: 1px solid rgb(0, 210, 179);
-  --icon-circle-size: 35px;
+  padding: 0.25rem;
 }
 
-.cb-con input {
+.cyber-checkbox-input {
   position: absolute;
   opacity: 0;
+  cursor: pointer;
+  width: 0;
+  height: 0;
 }
 
-.checkmark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--main-button-color);
-  width: 1.25rem;
-  height: 1.25rem;
-  border: var(--main-button-border);
-  border-radius: 100%;
-}
-
-.cb-con:hover input ~ .checkmark {
-  background-color: rgb(89, 89, 89);
-}
-
-.cb-con input:checked ~ .checkmark {
-  background-color: rgb(0, 210, 179);
-  border-radius: 100%;
+.cyber-checkmark {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: 
-    circle 250ms forwards,
-    transparency 250ms ease-in;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.375rem;
+  border: 1.5px solid rgba(169, 169, 169, 0.4);
+  background: linear-gradient(135deg,
+      rgba(45, 41, 56, 0.8) 0%,
+      rgba(32, 29, 39, 0.9) 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.checkmark:after {
-  content: "";
+.cyber-checkmark::before {
+  content: '';
   position: absolute;
-  display: none;
-  top: 50%;
-  left: 50%;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg,
+      rgba(255, 0, 73, 0.3) 0%,
+      rgba(47, 214, 181, 0.3) 50%,
+      rgba(255, 0, 73, 0.3) 100%);
+  border-radius: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
 }
 
-.cb-con input:checked ~ .checkmark:after {
-  display: flex;
-  animation: transparency 250ms ease-in; 
+.cyber-checkmark:hover {
+  border-color: rgba(47, 214, 181, 0.6);
+  background: linear-gradient(135deg,
+      rgba(47, 214, 181, 0.08) 0%,
+      rgba(255, 0, 73, 0.05) 100%);
+  transform: scale(1.05);
+  box-shadow:
+    0 0 10px rgba(47, 214, 181, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.cb-con .checkmark:after {
-  width: 5px;
+.cyber-checkmark:hover::before {
+  opacity: 1;
+}
+
+.cyber-checkbox-input:checked+.cyber-checkmark {
+  background: linear-gradient(135deg,
+      rgba(47, 214, 181, 0.9) 0%,
+      rgba(255, 0, 73, 0.7) 100%);
+  border-color: rgba(47, 214, 181, 0.8);
+  box-shadow:
+    0 0 15px rgba(47, 214, 181, 0.4),
+    0 0 8px rgba(255, 0, 73, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: checkboxPulse 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cyber-check-icon {
+  width: 6px;
   height: 10px;
   border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: translate(-50%, -50%) rotate(45deg);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.2s ease-in 0.1s;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
 }
 
-@keyframes animate-check{
- 0% {
+.cyber-checkbox-input:checked+.cyber-checkmark .cyber-check-icon {
   opacity: 1;
-  transform: translate(-50%, -50%) rotate3d(-1, 1, 0, 0deg);
-  }
-  
-  50% {
-    opacity: 0.5;
-    transform: translate(-50%, -50%) rotate3d(-1, 1, 0, 180deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate3d(-1, 1, 0, 360deg);
-  }
+  animation: checkIconScale 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s;
 }
 
-@keyframes circle {
-  from {
-    width: 0;
-    height: 0;
-    opacity: 0;
-  }
-
-  90% {
-    width: var(--icon-circle-size);
-    height: var(--icon-circle-size);
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-  
-  100% {
-    opacity: 1;
-  }
+.cyber-row-checkbox .cyber-checkmark {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
-@keyframes transparency {
+.cyber-row-checkbox .cyber-check-icon {
+  width: 5px;
+  height: 8px;
+  border-width: 0 2px 2px 0;
+}
+
+@keyframes checkboxPulse {
   0% {
-    opacity: 0;
+    transform: scale(1);
   }
-
   50% {
-    opacity: 0.5;
+    transform: scale(1.1);
   }
-
   100% {
-    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes checkIconScale {
+  0% {
+    transform: rotate(45deg) scale(0);
+  }
+  50% {
+    transform: rotate(45deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(45deg) scale(1);
   }
 }

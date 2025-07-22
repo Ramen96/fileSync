@@ -8,9 +8,8 @@ export default function File({
   handleDeleteQueue,
   id
 }) {
-
   const [checked, setChecked] = useState(false);
-
+  
   const handleChecked = () => {
     const metadataObject = {
       id: id,
@@ -29,44 +28,86 @@ export default function File({
   return (
     isIcon  
       ?
-        <div className="conA" onClick={() => {
+        <div className="cyber-item-card cyber-file-card" onClick={() => {
           handleChecked();
         }}>
-          <div className="conB justifyStart">
-            <label className="cb-con test">
-              <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
+          <div className="cyber-card-header">
+            <div className="cyber-checkbox-wrapper">
+              <label className="cyber-checkbox-container">
+                <input 
+                  checked={checked} 
+                  onChange={e => console.log(e.target.value)} 
+                  className="cyber-checkbox-input" 
+                  type="checkbox" 
+                />
+                <span 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleChecked();
+                  }} 
+                  className="cyber-checkmark"
+                >
+                  <div className="cyber-check-icon"></div>
+                </span>
+              </label>
+            </div>
+            <div className="cyber-status-indicator cyber-file-indicator"></div>
+          </div>
+          
+          <div className="cyber-icon-container">
+            <div className="cyber-icon-wrapper">
+              <img className="cyber-item-icon" src={file} alt="file" />
+              <div className="cyber-icon-glow"></div>
+            </div>
+          </div>
+          
+          <div className="cyber-item-info">
+            <h3 className="cyber-item-name">{name}</h3>
+            <span className="cyber-item-type">FILE</span>
+          </div>
+          
+          <div className="cyber-card-overlay"></div>
+        </div>
+      :
+        <div 
+          onClick={() => {
+            handleChecked();
+          }}
+          className="cyber-row-item cyber-file-row"
+        >
+          <div className="cyber-row-content">
+            <div className="cyber-row-icon-wrapper">
+              <img className="cyber-row-icon" src={file} alt="file" />
+              <div className="cyber-row-icon-glow"></div>
+            </div>
+            
+            <div className="cyber-row-info">
+              <p className="cyber-row-name">{name}</p>
+              <span className="cyber-row-type">FILE</span>
+            </div>
+          </div>
+          
+          <div className="cyber-row-actions">
+            <label className="cyber-checkbox-container cyber-row-checkbox">
+              <input 
+                checked={checked} 
+                onChange={e => console.log(e.target.value)} 
+                className="cyber-checkbox-input" 
+                type="checkbox" 
+              />
               <span 
                 onClick={(e) => {
                   e.preventDefault();
                   handleChecked();
-                }} className="checkmark"></span>
+                }} 
+                className="cyber-checkmark"
+              >
+                <div className="cyber-check-icon"></div>
+              </span>
             </label>
           </div>
-          <div className="conB border-bottom">
-            <img className="folderImg margin1rem" src={file} alt="folder" />
-          </div>
-          <div className="conB">
-            <h3 className="itemName">{name}</h3>
-          </div>
+          
+          <div className="cyber-row-overlay"></div>
         </div>
-      :
-      <div 
-        onClick={() => {
-          handleChecked();
-        }}
-        className="rowWrapper mainBorder">
-        <div className="centerAllFlex width100">
-          <img className="folderImgRow" src={file} alt="folder" />
-          <p className="itemName marginNone textStart">{name}</p>
-        </div>
-        <label className="cb-con" >
-          <input checked={checked} onChange={e => console.log(e.target.value)} className="checkbox" type="checkbox" />
-          <span 
-            onClick={(e) => {
-            e.preventDefault();
-            handleChecked();
-          }} className="checkmark"></span>
-        </label>
-      </div>
   )
 }

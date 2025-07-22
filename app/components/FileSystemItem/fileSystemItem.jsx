@@ -1,10 +1,12 @@
 import { useState } from "react";
 import folder from "../../../assets/yellow-folder.svg";
-import "../../css/file-folder.css";
+import file from "../../../assets/file2.svg";
+import "../../css/fileSystemItem.css";
 
-export default function Folder({
+export default function FileSystemItem({
   name,
   id,
+  isFolder = false,
   handleFolderClick,
   isIcon,
   handleDeleteQueue,
@@ -15,7 +17,7 @@ export default function Folder({
     const metadataObject = {
       id: id,
       name: name,
-      type: "folder",
+      type: isFolder ? "folder" : "file",
     };
     if (checked === true) {
       setChecked(false);
@@ -26,13 +28,23 @@ export default function Folder({
     }
   };
 
+  const iconSrc = isFolder ? folder : file;
+  const itemType = isFolder ? "FOLDER" : "FILE";
+  const cardClass = isFolder ? "cyber-folder-card" : "cyber-file-card";
+  const rowClass = isFolder ? "cyber-folder-row" : "cyber-file-row";
+  const indicatorClass = isFolder ? "cyber-folder-indicator" : "cyber-file-indicator";
+
+  const handleDoubleClick = () => {
+    if (isFolder && handleFolderClick) {
+      handleFolderClick(id);
+    }
+  };
+
   return isIcon ? (
     <div
       onClick={() => handleChecked()}
-      className="cyber-item-card cyber-folder-card"
-      onDoubleClick={() => {
-        handleFolderClick(id);
-      }}
+      className={`cyber-item-card ${cardClass}`}
+      onDoubleClick={handleDoubleClick}
     >
       <div className="cyber-card-header">
         <div className="cyber-checkbox-wrapper">
@@ -54,19 +66,19 @@ export default function Folder({
             </span>
           </label>
         </div>
-        <div className="cyber-status-indicator cyber-folder-indicator"></div>
+        <div className={`cyber-status-indicator ${indicatorClass}`}></div>
       </div>
       
       <div className="cyber-icon-container">
         <div className="cyber-icon-wrapper">
-          <img className="cyber-item-icon" src={folder} alt="folder" />
+          <img className="cyber-item-icon" src={iconSrc} alt={itemType.toLowerCase()} />
           <div className="cyber-icon-glow"></div>
         </div>
       </div>
       
       <div className="cyber-item-info">
         <h3 className="cyber-item-name">{name}</h3>
-        <span className="cyber-item-type">FOLDER</span>
+        <span className="cyber-item-type">{itemType}</span>
       </div>
       
       <div className="cyber-card-overlay"></div>
@@ -74,20 +86,18 @@ export default function Folder({
   ) : (
     <div
       onClick={() => handleChecked()}
-      className="cyber-row-item cyber-folder-row"
-      onDoubleClick={() => {
-        handleFolderClick(id);
-      }}
+      className={`cyber-row-item ${rowClass}`}
+      onDoubleClick={handleDoubleClick}
     >
       <div className="cyber-row-content">
         <div className="cyber-row-icon-wrapper">
-          <img className="cyber-row-icon" src={folder} alt="folder" />
+          <img className="cyber-row-icon" src={iconSrc} alt={itemType.toLowerCase()} />
           <div className="cyber-row-icon-glow"></div>
         </div>
         
         <div className="cyber-row-info">
           <p className="cyber-row-name">{name}</p>
-          <span className="cyber-row-type">FOLDER</span>
+          <span className="cyber-row-type">{itemType}</span>
         </div>
       </div>
       

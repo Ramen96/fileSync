@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { DisplayDirectoryContext } from "../../utils/context";
 import "../../css/fileSystemItem.css";
 
@@ -13,6 +13,12 @@ export default function FileSystemItem({
 
   const { selectState } = useContext(DisplayDirectoryContext);
   const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (!selectState) {
+      setChecked(false); 
+    }
+  }, [selectState]);
   
   const handleChecked = () => {
     const metadataObject = {

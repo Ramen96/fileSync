@@ -246,6 +246,7 @@ export default function DisplayDirectory() {
     handleDeleteQueue,
     getChildNodes,
     handleUploadCardState,
+    selectState 
   };
 
   const leftNavButtons = [

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { DisplayDirectoryContext } from "../../utils/context";
 import "../../css/fileSystemItem.css";
 
 export default function FileSystemItem({
@@ -9,6 +10,8 @@ export default function FileSystemItem({
   isIcon,
   handleDeleteQueue,
 }) {
+
+  const { selectState } = useContext(DisplayDirectoryContext);
   const [checked, setChecked] = useState(false);
   
   const handleChecked = () => {
@@ -17,6 +20,8 @@ export default function FileSystemItem({
       name: name,
       type: isFolder ? "folder" : "file",
     };
+
+    if (!selectState) return;
     if (checked === true) {
       setChecked(false);
       handleDeleteQueue(checked, metadataObject);
@@ -30,9 +35,15 @@ export default function FileSystemItem({
   const cardClass = isFolder ? "cyber-folder-card" : "cyber-file-card";
   const rowClass = isFolder ? "cyber-folder-row" : "cyber-file-row";
 
-  const handleDoubleClick = () => {
-    if (isFolder && handleFolderClick) {
+  const handleClick = () => {
+    if (selectState) {
+      handleChecked();
+      return;
+    }
+
+    if (isFolder) {
       handleFolderClick(id);
+      return;
     }
   };
 
@@ -104,9 +115,8 @@ export default function FileSystemItem({
 
   return isIcon ? (
     <div
-      onClick={() => handleChecked()}
+      onClick={() => handleClick()}
       className={`cyber-item-card ${cardClass} ${checked ? 'selected' : ''}`}
-      onDoubleClick={handleDoubleClick}
     >
       <div className={`cyber-card-selection-overlay ${checked ? 'selected' : ''}`}>
         <div className="cyber-selection-pulse"></div>
@@ -120,9 +130,8 @@ export default function FileSystemItem({
     </div>
   ) : (
     <div
-      onClick={() => handleChecked()}
+      onClick={() => handleClick()}
       className={`cyber-row-item ${rowClass}`}
-      onDoubleClick={handleDoubleClick}
     >
       <div className="cyber-row-content">
         <div className="cyber-row-icon-wrapper">

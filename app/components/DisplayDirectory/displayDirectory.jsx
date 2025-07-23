@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload, RefreshCcwIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home, Sidebar, Grid, List, Trash, Download, Upload, MousePointerClick, RefreshCcwIcon } from 'lucide-react';
 import { DisplayDirectoryContext, IndexContext, displayIconContext } from '../../utils/context';
 import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
@@ -24,6 +24,8 @@ export default function DisplayDirectory() {
   const displayNodeIdRef = useRef(displayNodeId);
   const backHistoryRef = useRef(backHistory);
   const forwardHistoryRef = useRef(forwardHistory);
+
+  const [selectState, setSelectState] = useState(false);
 
   useEffect(() => {
     currentDisplayNodesRef.current = currentDisplayNodes;
@@ -278,6 +280,12 @@ export default function DisplayDirectory() {
   ];
 
   const rightNavButtons = [
+    {
+      id: 'select',
+      icon: MousePointerClick,
+      className: selectState ? 'homeButton homeButton-selected' : 'homeButton',
+      onClick: () => { setSelectState(!selectState) }
+    },
     {
       id: 'delete',
       icon: Trash,

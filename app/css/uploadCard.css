@@ -599,3 +599,38 @@
     font-size: 1.125rem;
   }
 }
+
+/* Drag and drop box */
+
+.upload-card-wrapper.drag-over {
+  border: 2px dashed #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.drag-n-drop.drag-active {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.drag-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 123, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #007bff;
+  border-radius: 8px;
+  backdrop-filter: blur(25px);
+  z-index: 9999;
+}
+
+.drag-overlay p {
+  color: rgba(255, 0, 73, 0.9);
+  text-shadow: 0 0 20px rgba(255, 0, 73, 0.9);
+  font-weight: bold;
+  font-size: 16px;
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif;
+}

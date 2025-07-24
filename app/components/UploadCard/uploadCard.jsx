@@ -187,6 +187,11 @@ export default function UploadCard() {
           <div className="cloud-wrapper">
             <UploadCloudIcon className="uploadCloudIcon" />
           </div>
+          {isDragOver && (
+            <div className="drag-overlay">
+              <p>Drop files here to upload</p>
+            </div>
+          )}
         </div>
         <button
           onClick={() => {

@@ -184,14 +184,14 @@ export default function UploadCard() {
         </div>
         <div className={`drag-n-drop ${isDragOver ? 'drag-active' : ''}`}>
           <UploadItem {...uploadItemProps} />
-          <div className="cloud-wrapper">
-            <UploadCloudIcon className="uploadCloudIcon" />
-          </div>
           {isDragOver && (
             <div className="drag-overlay">
               <p>Drop files here to upload</p>
             </div>
           )}
+        </div>
+        <div className="cloud-wrapper">
+          <UploadCloudIcon className="uploadCloudIcon" />
         </div>
         <button
           onClick={() => {

@@ -391,6 +391,8 @@
   box-shadow: 
     inset 0 2px 8px rgba(0, 0, 0, 0.2),
     0 4px 12px rgba(0, 0, 0, 0.1);
+  flex: 1; 
+  min-height: 0; 
 }
 
 .drag-n-drop::before {
@@ -408,6 +410,7 @@
   border-radius: 0.75rem;
   pointer-events: none;
   animation: dragAreaGlow 4s infinite ease-in-out;
+  z-index: 1;
 }
 
 @keyframes dragAreaGlow {
@@ -454,21 +457,22 @@
 }
 
 .cloud-wrapper {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  bottom: 0%;
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  pointer-events: none; 
+  z-index: 10; 
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .uploadCloudIcon {
   color: rgba(47, 214, 181, 0.4);
   height: 6.5em;
   width: auto;
-  margin: 5rem;
   filter: drop-shadow(0 0 20px rgba(47, 214, 181, 0.2));
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   animation: cloudFloat 3s infinite ease-in-out;
@@ -553,7 +557,7 @@
   display: flex;
   justify-content: center;
   position: relative;
-  z-index: 2;
+  z-index: 5; 
 }
 
 /* Responsive design */
@@ -580,7 +584,6 @@
   
   .uploadCloudIcon {
     height: 4em;
-    margin: 3rem;
   }
 }
 

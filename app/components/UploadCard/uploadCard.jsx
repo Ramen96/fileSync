@@ -1,9 +1,8 @@
 import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon, FolderMinus } from "lucide-react";
-import { useRef, useContext } from "react";
+import { useRef, useContext, useState } from "react";
 import { DisplayDirectoryContext, IndexContext, wsContext } from "../../utils/context";
 import UploadItem from "../uploadItem/uploadItem";
 import "../../css/uploadCard.css";
-import { useState } from "react";
 
 export default function UploadCard() {
   const {
@@ -32,6 +31,7 @@ export default function UploadCard() {
 
   const [multiUpload, setMultiUpload] = useState(false);
   const [fileArr, setFileArr] = useState([]);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleMultiUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
@@ -49,6 +49,38 @@ export default function UploadCard() {
     }
   };
 
+  // Drag and drop handlers
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only set drag over to false if we're leaving the drop zone entirely
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setIsDragOver(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      setFileArr([...fileArr, ...droppedFiles]);
+    }
+  };
+
   const uploadItemProps = {
     fileArr: fileArr,
     setFileArr: setFileArr,
@@ -56,7 +88,13 @@ export default function UploadCard() {
 
   return (
     <div className="blur-background">
-      <div className="upload-card-wrapper">
+      <div 
+        className={`upload-card-wrapper ${isDragOver ? 'drag-over' : ''}`}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
         <div className="title-wrapper">
           <div className="h1-wrapper">
             <h1 className="h1">New Upload</h1>
@@ -144,7 +182,7 @@ export default function UploadCard() {
             ></span>
           </label>
         </div>
-        <div className="drag-n-drop">
+        <div className={`drag-n-drop ${isDragOver ? 'drag-active' : ''}`}>
           <UploadItem {...uploadItemProps} />
           <div className="cloud-wrapper">
             <UploadCloudIcon className="uploadCloudIcon" />

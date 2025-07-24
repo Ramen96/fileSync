@@ -1,11 +1,15 @@
+/* Import matching fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&family=Exo+2:wght@300;600;800&display=swap');
+
 .blur-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  backdrop-filter: blur(10px);
-  z-index: 1;
+  backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(22, 20, 28, 0.3);
+  z-index: 1000;
 }
 
 .upload-card-wrapper {
@@ -15,113 +19,85 @@
   transform: translate(-50%, -50%);
   width: 40rem;
   height: 40rem;
-  background: rgb(22, 20, 28);
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.95) 0%, 
+    rgba(32, 29, 39, 0.98) 50%,
+    rgba(22, 20, 28, 0.99) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
   border-radius: 1rem;
-  border: solid #ff0048bb 1px;
-  box-shadow: 0px 0px 40px 3px #ff0048c7;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.6),
+    0 12px 24px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 0, 73, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 0, 73, 0.15);
+  animation: cardFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-wrapper {
+.upload-card-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(0, 200, 255, 0.3) 25%, 
+    rgba(0, 200, 255, 0.2) 50%, 
+    rgba(0, 200, 255, 0.3) 75%, 
+    transparent 100%);
+  border-radius: 1rem;
+  z-index: -1;
+  animation: borderGlow 3s infinite alternate;
+}
+
+.upload-card-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
   width: 100%;
-  height: 3rem;
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 1rem;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  animation: sweep 4s infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.btn {
-  display: flex;
-  margin: 1rem;
-  width: inherit;
-  height: inherit;
-  justify-content: center;
-  border-radius: 1rem;
-  align-items: center;
-  background: rgb(24, 22, 30);
-  border: solid rgb(74, 68, 92) 1px;
-}
-
-.btn-label {
-  display: flex;
-  width: inherit;
-  height: inherit;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  border-radius: 1rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-weight: 600;
-}
-
-.btn-label:hover{
-  cursor: pointer;
-  color:  rgb(23, 191, 99);
-  background: radial-gradient(rgba(23, 191, 99, 0.1) 0, rgba(23, 191, 99, 0) 85%);
-}
-
-.drag-n-drop {
-  margin: 1rem;
-  width: auto;
-  height: inherit;
-  border: solid rgb(74, 68, 92) 1px;
-  border-radius: 9px;
-  background: rgb(24, 22, 30);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
-}
-
-.drag-n-drop {
-  --sb-track-color: #383838;
-  --sb-thumb-color: #b1b1b1;
-  --sb-size: 10px;
-}
-
-.drag-n-drop::-webkit-scrollbar {
-  width: var(--sb-size)
-}
-
-.drag-n-drop::-webkit-scrollbar-track {
-  background: var(--sb-track-color);
-  border-radius: 5px;
-}
-
-.drag-n-drop::-webkit-scrollbar-thumb {
-  background: var(--sb-thumb-color);
-  border-radius: 5px;
-  
-}
-
-@supports not selector(::-webkit-scrollbar) {
-  .drag-n-drop {
-    scrollbar-color: var(--sb-thumb-color)
-                     var(--sb-track-color);
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
   }
 }
 
-.h1 {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  text-align: center;
-  font-size: x-large;
+@keyframes borderGlow {
+  0% { 
+    opacity: 0.6;
+    filter: blur(2px);
+  }
+  100% { 
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
-.x-circle {
-  position: absolute;
-  top: -1%;
-  right: -1%;
-  margin: 1rem;
-  color: rgb(113, 118, 123);
-  border-radius: 100%;
-  padding: 3px;
-}
-
-.x-circle:hover {
-  cursor: pointer;
-  color: rgba(255, 0, 72, 1);
-  background-color: rgba(255, 0, 72, 0.05);
+@keyframes sweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .title-wrapper {
@@ -130,77 +106,445 @@
   align-items: end;
   justify-content: flex-end;
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
 .h1-wrapper {
-  background: rgb(24, 22, 30);
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.8) 0%, 
+    rgba(32, 29, 39, 0.9) 100%);
   text-align: center;
   width: inherit;
   display: block;
-  border-bottom: solid rgb(74, 68, 92) 1px;
+  border-bottom: 1px solid rgba(0, 200, 255, 0.2);
   border-top-right-radius: 1rem;
   border-top-left-radius: 1rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.upload-btn {
+.h1-wrapper::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(0, 200, 255, 0.6) 25%, 
+    rgba(0, 200, 255, 0.4) 75%, 
+    transparent);
+  animation: titleGlow 2s infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.h1 {
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 15px rgba(0, 200, 255, 0.3);
+  letter-spacing: 1px;
+  margin: 1rem 0;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 2;
+}
+
+.x-circle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  padding: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  z-index: 3;
+  background: rgba(45, 41, 56, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.x-circle:hover {
+  color: rgb(255, 0, 73);
+  background: rgba(255, 0, 73, 0.1);
+  border-color: rgba(255, 0, 73, 0.3);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 20px rgba(255, 0, 73, 0.4);
+}
+
+.btn-wrapper {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: space-around;
   margin-bottom: 1rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
-  height: 4rem;
-  background: linear-gradient(to right, #1245C6, #9909B7);
-  border: none;
-  border-radius: 0.5rem;
-  color: #eee;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-size: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.btn {
+  display: flex;
+  margin: 1rem;
+  width: inherit;
+  height: inherit;
+  justify-content: center;
+  border-radius: 0.75rem;
+  align-items: center;
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.8) 0%, 
+    rgba(32, 29, 39, 0.9) 100%);
+  border: 1px solid rgba(47, 214, 181, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  border-color: rgba(47, 214, 181, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(47, 214, 181, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn-label {
+  display: flex;
+  width: inherit;
+  height: inherit;
+  justify-content: center;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 0.75rem;
+  font-family: 'Exo 2', system-ui, sans-serif;
   font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+}
+
+.btn-label:hover {
+  color: rgb(47, 214, 181);
+  text-shadow: 0 0 12px rgba(47, 214, 181, 0.4);
 }
 
 .margin-r-1 {
   margin-right: 0.5rem;
+  filter: drop-shadow(0 0 6px rgba(47, 214, 181, 0.3));
 }
 
 .upload-multiple {
-  color: #eee;
+  color: rgba(255, 255, 255, 0.9);
   width: auto;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Exo 2', system-ui, sans-serif;
   font-weight: 600;
   text-align: center;
-  font-size: 18px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
-  background: rgb(24, 22, 30);
-  border-radius: 1rem;
-  padding: 0.5rem;
-  border: solid rgb(74, 68, 92) 1px;
+  margin: 1rem;
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.8) 0%, 
+    rgba(32, 29, 39, 0.9) 100%);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(47, 214, 181, 0.2);
+  cursor: default;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.upload-multiple {
-  cursor: default;
+.upload-multiple::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(47, 214, 181, 0.4), 
+    transparent);
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Custom Checkbox Styling */
+.cb-con {
+  display: block;
+  position: relative;
+  margin-left: 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cb-con input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.9) 0%, 
+    rgba(32, 29, 39, 1) 100%);
+  border: 2px solid rgba(47, 214, 181, 0.3);
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: inline-block;
+}
+
+.checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid rgb(47, 214, 181);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  filter: drop-shadow(0 0 6px rgba(47, 214, 181, 0.6));
+}
+
+.cb-con input:checked ~ .checkmark {
+  background: linear-gradient(135deg, 
+    rgba(47, 214, 181, 0.2) 0%, 
+    rgba(255, 0, 73, 0.1) 100%);
+  border-color: rgb(47, 214, 181);
+  box-shadow: 0 0 15px rgba(47, 214, 181, 0.3);
+}
+
+.cb-con input:checked ~ .checkmark::after {
+  display: block;
+}
+
+.checkmark:hover {
+  border-color: rgba(47, 214, 181, 0.5);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(47, 214, 181, 0.2);
+}
+
+.drag-n-drop {
+  margin: 1rem;
+  width: auto;
+  height: inherit;
+  border: 1px solid rgba(47, 214, 181, 0.2);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, 
+    rgba(45, 41, 56, 0.6) 0%, 
+    rgba(32, 29, 39, 0.8) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.drag-n-drop::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(47, 214, 181, 0.03) 25%, 
+    rgba(255, 0, 73, 0.02) 75%, 
+    transparent 100%);
+  border-radius: 0.75rem;
+  pointer-events: none;
+  animation: dragAreaGlow 4s infinite ease-in-out;
+}
+
+@keyframes dragAreaGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Enhanced scrollbar with cyberpunk styling */
+.drag-n-drop::-webkit-scrollbar {
+  width: 8px;
+}
+
+.drag-n-drop::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, 
+    rgba(45, 41, 56, 0.5) 0%, 
+    rgba(32, 29, 39, 0.8) 100%);
+  border-radius: 10px;
+  margin: 8px 4px;
+  border: 1px solid rgba(169, 169, 169, 0.1);
+}
+
+.drag-n-drop::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, 
+    rgba(255, 0, 73, 0.8) 0%,
+    rgba(47, 214, 181, 0.6) 50%, 
+    rgba(255, 0, 73, 0.4) 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 2px 8px rgba(255, 0, 73, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.drag-n-drop::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, 
+    rgba(255, 0, 73, 1) 0%,
+    rgba(47, 214, 181, 0.8) 50%, 
+    rgba(255, 0, 73, 0.6) 100%);
+  box-shadow: 
+    0 4px 12px rgba(255, 0, 73, 0.5),
+    0 0 15px rgba(47, 214, 181, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .cloud-wrapper {
   height: 100%;
   width: 100%;
-  /* background-color: #1245C6; */
   position: relative;
-  /* bottom: -100%; */
   bottom: 0%;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 2;
 }
 
 .uploadCloudIcon {
-  color: #898989;
+  color: rgba(47, 214, 181, 0.4);
   height: 6.5em;
   width: auto;
   margin: 5rem;
+  filter: drop-shadow(0 0 20px rgba(47, 214, 181, 0.2));
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: cloudFloat 3s infinite ease-in-out;
+}
+
+@keyframes cloudFloat {
+  0%, 100% { 
+    transform: translateY(0px);
+    filter: drop-shadow(0 0 20px rgba(47, 214, 181, 0.2));
+  }
+  50% { 
+    transform: translateY(-10px);
+    filter: drop-shadow(0 0 30px rgba(47, 214, 181, 0.4));
+  }
+}
+
+.upload-btn {
+  margin: 1rem;
+  height: 4rem;
+  background: rgba(255, 0, 73, 0.9);
+  border: 2px solid rgba(255, 0, 73, 0.6);
+  border-radius: 0.75rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 8px 20px rgba(255, 0, 73, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 0 25px rgba(255, 0, 73, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.upload-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.upload-btn:hover::before {
+  left: 100%;
+}
+
+.upload-btn:hover {
+  background: rgb(255, 0, 73);
+  border-color: rgba(255, 0, 73, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 30px rgba(255, 0, 73, 0.6),
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    0 0 35px rgba(255, 0, 73, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+.upload-btn:active {
+  transform: translateY(-1px) scale(0.98);
+  background: rgba(220, 0, 60, 1);
+  box-shadow: 
+    0 6px 15px rgba(255, 0, 73, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .metadata-item-container {
@@ -208,4 +552,50 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .upload-card-wrapper {
+    width: 90vw;
+    height: auto;
+    max-height: 90vh;
+  }
+  
+  .btn-wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .btn {
+    margin: 0.5rem 1rem;
+    height: 3rem;
+  }
+  
+  .h1 {
+    font-size: 1.25rem;
+  }
+  
+  .uploadCloudIcon {
+    height: 4em;
+    margin: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-card-wrapper {
+    width: 95vw;
+    margin: 1rem;
+  }
+  
+  .upload-btn {
+    font-size: 1rem;
+    height: 3.5rem;
+  }
+  
+  .h1 {
+    font-size: 1.125rem;
+  }
 }

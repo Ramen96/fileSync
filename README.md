@@ -1,6 +1,6 @@
 # AI File Syncing Website
 
-This project is a self-hosted, privacy-respecting file syncing and organization tool. It features intelligent search, file tagging, and local-only redundancy detection using a Raspberry Pi or home server. Built using ReactRouter, Express, and React.
+This project is a self-hosted, privacy-respecting file syncing and organization tool. It features intelligent search, file tagging, and local-only redundancy detection using a Raspberry Pi or home server.
 
 ---
 

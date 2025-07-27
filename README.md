@@ -1,6 +1,6 @@
 # AI File Syncing Website
 
-This project is a self-hosted, privacy-respecting file syncing and organization tool. It features intelligent search, file tagging, and local-only redundancy detection using a Raspberry Pi or home server.
+This project is a self-hosted, privacy-respecting file syncing and organization tool designed to run alongside Raspberry Pi-based network privacy tools like Pi-hole and PiVPN. It provides file management with intelligent search, file tagging, and local-only redundancy detection. 
 
 ---
 
@@ -9,10 +9,8 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 - View, upload, and organize files in a hierarchical structure
 - Search files with AI-assisted suggestions (WIP)
 - Detect and manage redundant files (WIP)
-- Lightweight and designed for local hosting
+- Lightweight and designed for local hosting alongside Pi-hole and PiVPN
 - Minimal external dependencies
-
----
 
 ## To-Do
 

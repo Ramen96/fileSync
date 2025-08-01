@@ -2,149 +2,182 @@ import { prisma } from "../utils/prisma.server"
 import { wss } from "../../webSocketServer";
 import WebSocket from "ws";
 import * as fs from "node:fs/promises";
+import * as path from "node:path";
 
 export const action = async ({ request }) => {
   try {
-    const initRoot = await prisma.hierarchy.findFirst({
-      where: {
-        parent_id: null,
-      }
-    });
-
-    const rootId = initRoot.id;
     const body = await request.json();
     const deleteQueue = body?.deleteQueue;
     const displayNodeId = body?.displayNodeId;
 
-    const getParentId = async (objectId) => {
+    if (!deleteQueue || !Array.isArray(deleteQueue)) {
+      return new Response(JSON.stringify({
+        error: "Invalid deleteQueue provided"
+      }), { status: 400 });
+    }
+
+    // Helper function to check if file exists
+    const checkIfFileExists = async (filePath) => {
       try {
-        const elementMetadata = await prisma.metadata.findUnique({
+        await fs.access(filePath);
+        return true;
+      } catch (err) {
+        if (err.code === "ENOENT") return false;
+        throw err;
+      }
+    };
+
+    // Helper function to delete file from filesystem
+    const deleteFile = async (filePath) => {
+      try {
+        await fs.rm(filePath, { recursive: false });
+        console.log(`File deleted successfully: ${filePath}`);
+        return true;
+      } catch (err) {
+        console.error(`Error deleting file ${filePath}:`, err.message);
+        return false;
+      }
+    };
+
+    // Helper function to recursively get all children of a folder
+    const getAllChildren = async (parentId) => {
+      const children = await prisma.hierarchy.findMany({
+        where: {
+          parent_id: parentId
+        },
+        include: {
+          metadata: true
+        }
+      });
+
+      let allDescendants = [...children];
+
+      // Recursively get children of each child
+      for (const child of children) {
+        const grandChildren = await getAllChildren(child.id);
+        allDescendants = [...allDescendants, ...grandChildren];
+      }
+
+      return allDescendants;
+    };
+
+    // Helper function to delete folder and all its contents
+    const deleteFolder = async (folderId) => {
+      try {
+        // Get all children recursively
+        const allChildren = await getAllChildren(folderId);
+        
+        // Delete all child files from filesystem first
+        for (const child of allChildren) {
+          if (!child.metadata.is_folder) {
+            const filePath = path.join('./cloud/', child.metadata.name);
+            const fileExists = await checkIfFileExists(filePath);
+            
+            if (fileExists) {
+              await deleteFile(filePath);
+            }
+          }
+        }
+
+        // Delete all children from database (metadata entries)
+        const childMetadataIds = allChildren.map(child => child.metadata.id);
+        if (childMetadataIds.length > 0) {
+          await prisma.metadata.deleteMany({
+            where: {
+              id: {
+                in: childMetadataIds
+              }
+            }
+          });
+        }
+
+        // Finally delete the folder itself from database
+        await prisma.metadata.delete({
           where: {
-            id: objectId
-          },
-          include: {
-            hierarchy: true
+            id: folderId
           }
         });
 
-        const metadata = {
-          parent_id: elementMetadata.hierarchy.parent_id,
-          name: elementMetadata.name
-        }
-
-        return metadata;
+        console.log(`Folder and all contents deleted successfully`);
+        return true;
       } catch (error) {
-        console.error(`Error getting parentId: ${error}`);
+        console.error(`Error deleting folder:`, error);
+        return false;
       }
-    }
+    };
 
-    // returns metadata for the parent folder
-    const getMetaData = async (id) => {
+    // Process each item in deleteQueue
+    const results = [];
+    
+    for (const element of deleteQueue) {
       try {
-        const metadata = await prisma.hierarchy.findUnique({
+        const elementId = element.id;
+        
+        // Get the metadata for this element
+        const elementMetadata = await prisma.metadata.findUnique({
           where: {
-            id: id
-          },
-          include: {
-            metadata: true
+            id: elementId
           }
-        })
+        });
 
-        return metadata.metadata;
-      } catch (error) {
-        console.error(`Error getting metadata: ${error}`);
-      }
-    }
-
-    let pathChunks = [];
-    let filePath;
-    const getFilePath = async (metadata) => {
-      // Use recursion to get path to root and reconstruct the path
-      try {
-        const objectId = metadata.id;
-        const fileMetadata = await getParentId(objectId);
-
-        pathChunks.push(fileMetadata.name);
-
-        if (fileMetadata.parent_id !== rootId) {
-          await getFilePath(await getMetaData(fileMetadata.parent_id));
-        } else {
-          filePath = 'cloud/' + pathChunks.reverse().join("/");
-          pathChunks = [];
+        if (!elementMetadata) {
+          console.log(`Element with id ${elementId} not found in database`);
+          results.push({ id: elementId, success: false, reason: 'Not found' });
+          continue;
         }
-        return filePath;
 
-      } catch (error) {
-        console.error(`Error constructing file path ${error}`);
-        throw new Error(error);
-      }
-    }
+        // Check if it's a file or folder
+        if (!elementMetadata.is_folder) {
+          // Handle file deletion
+          const filePath = path.join('./cloud/', elementMetadata.name);
+          const fileExists = await checkIfFileExists(filePath);
 
-    deleteQueue.forEach(async (element) => {
-      const elementID = element.id;
-      try {
-        // bug note:  when selecting multiple files to delete the path printed is not the full path
-        // it is the path to the parent folder of both items
-        const filePath = await getFilePath(element);
-
-        const checkIfPathExists = async (activePath) => {
-          try {
-            await fs.access(activePath);
-            return true;
-          } catch (err) {
-            if (err.code === "ENOENT") return false;
-            throw err;
-          }
-        };
-
-        const file = await checkIfPathExists(filePath); // returns boolean letting you know if file exists
-
-        const deleteFile = (filePath) => {
-          fs.rm(filePath, { recursive: false }, (err) => {
-            if (err) {
-              console.error(err.message); 
-              return;
+          if (fileExists) {
+            const fileDeleted = await deleteFile(filePath);
+            
+            if (fileDeleted) {
+              // Delete from database
+              await prisma.metadata.delete({
+                where: {
+                  id: elementId
+                }
+              });
+              console.log(`File deleted from database: ${elementId}`);
+              results.push({ id: elementId, success: true, type: 'file' });
+            } else {
+              results.push({ id: elementId, success: false, reason: 'Failed to delete file' });
             }
-            console.log(`File deleted successfully: ${filePath}`)
-          })
-        }
-
-        // ToDo: determine if the object is for a file or folder 
-        if (file) { // delete file...
-          console.log('Deleting file from system...');
-          deleteFile(filePath);
-
-          try {
+          } else {
+            // File doesn't exist on filesystem, just remove from database
             await prisma.metadata.delete({
-              where : {
-                id: elementID
+              where: {
+                id: elementId
               }
             });
-            console.log('file deleted from database');
-          } catch (err) {
-            console.error(`Error deleting file: ${filePath} from database ${err}`);
+            console.log(`File not found on filesystem, removed from database: ${elementId}`);
+            results.push({ id: elementId, success: true, type: 'file', note: 'File not found on filesystem' });
           }
-
+        } else if (elementMetadata.is_folder) {
+          // Handle folder deletion
+          const folderDeleted = await deleteFolder(elementId);
+          results.push({ 
+            id: elementId, 
+            success: folderDeleted, 
+            type: 'folder',
+            reason: folderDeleted ? null : 'Failed to delete folder'
+          });
         } else {
-          console.log('file dose not exist');
-        }
-
-        // delete folder
-        //    1. check metadata object to see if it is a folder
-        //    2. if it is a folder check for children recursively
-        //    3. delete folder and its children recursively
-
-        for (let i in element) { // 
-          console.log(`elements: ${element[i]}`);
-          console.log(i);
-          console.log(`body: ${body[0]}`);
+          console.log(`Unknown element type for: ${elementMetadata.name}`);
+          results.push({ id: elementId, success: false, reason: 'Unknown type' });
         }
 
       } catch (err) {
-        console.log(`Something went wrong in body.foreach, Error: ${err}`);
+        console.error(`Error processing element ${element.id}:`, err);
+        results.push({ id: element.id, success: false, reason: err.message });
       }
-    });
+    }
 
+    // Send WebSocket notification
     try {
       const socket = wss;
       socket.clients.forEach((client) => {
@@ -152,19 +185,29 @@ export const action = async ({ request }) => {
           client.send(
             JSON.stringify({
               message: "reload",
-              id: body?.displayNodeId
+              id: displayNodeId,
+              deletedItems: results.filter(r => r.success).map(r => r.id)
             })
           );
         }
       });
     } catch (wsError) {
-      console.error('WebSocket error: ', wsError);
+      console.error('WebSocket error:', wsError);
     }
 
     return new Response(JSON.stringify({
-      message: "200"
-    }, {status: 200}));
+      message: "Delete operation completed",
+      results: results,
+      totalProcessed: results.length,
+      successful: results.filter(r => r.success).length,
+      failed: results.filter(r => !r.success).length
+    }), { status: 200 });
+
   } catch (error) {
-    console.error(`Error processing request ${error}`);
+    console.error(`Error processing delete request:`, error);
+    return new Response(JSON.stringify({
+      error: "Internal server error",
+      message: error.message
+    }), { status: 500 });
   }
 }

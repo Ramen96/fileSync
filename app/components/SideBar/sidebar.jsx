@@ -6,15 +6,12 @@ import {
   FolderUpIcon,
 } from "lucide-react";
 import { IndexContext } from "../../utils/context";
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 
 const folderIcon = "../assets/folder.svg";
 
 export default function SideBar() {
-  const { fileUpload, displayNodeId } = useContext(IndexContext);
-  useEffect(() => {
-    console.log(`SideBar component mounted with displayNodeId: ${displayNodeId}`);
-  }, [displayNodeId]);
+  const { fileUpload } = useContext(IndexContext);
 
   const fileActions = [
     {
@@ -48,10 +45,6 @@ export default function SideBar() {
   ];
 
   const handleFileUpload = (event) => {
-    // if (!displayNodeId) {
-    //   console.error('No display node ID available');
-    //   return;
-    // }
     fileUpload(event);
   };
 

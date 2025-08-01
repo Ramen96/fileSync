@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import LoadingBars from "../Loading/loading";
+import { IndexContext } from "../../utils/context";
 import "../../css/folderTree.css";
 
 export default function FolderTree({
@@ -7,6 +8,7 @@ export default function FolderTree({
   getChildNodes,
   handleFolderClick,
 }) {
+  const { setDisplayNodeId } = useContext(IndexContext);
   const [expandedFolders, setExpandedFolders] = useState({});
   const [loadingFolders, setLoadingFolders] = useState({});
 
@@ -24,6 +26,7 @@ export default function FolderTree({
           ...prev,
           [folderId]: children[0]?.children || []
         }));
+        setDisplayNodeId(folderId);
       } finally {
         setLoadingFolders(prev => ({ ...prev, [folderId]: false }));
       }

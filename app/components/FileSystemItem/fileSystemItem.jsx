@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { DisplayDirectoryContext } from "../../utils/context";
+import { DisplayDirectoryContext, IndexContext } from "../../utils/context";
 import "../../css/fileSystemItem.css";
 
 export default function FileSystemItem({
@@ -11,6 +11,7 @@ export default function FileSystemItem({
   handleDeleteQueue,
 }) {
 
+  const { setDisplayNodeId } = useContext(IndexContext);
   const { selectState } = useContext(DisplayDirectoryContext);
   const [checked, setChecked] = useState(false);
 
@@ -49,6 +50,7 @@ export default function FileSystemItem({
 
     if (isFolder) {
       handleFolderClick(id);
+      setDisplayNodeId(id);
       return;
     }
   };

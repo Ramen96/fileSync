@@ -277,9 +277,15 @@ export default function Index() {
     displayNodeId: displayNodeId
   };
 
+  useEffect(() => {
+    console.log(`Index component mounted with displayNodeId: ${displayNodeId}`);
+  }, [displayNodeId]);
+
   return (
     <>
-      <SideBar {...sidebarProps} />
+    <IndexContext.Provider value={indexContextProps}>
+      <SideBar />
+    </IndexContext.Provider>
       <div className="main">
         <SearchBar 
           onSearch={handleSearch} 

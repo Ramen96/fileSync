@@ -15,7 +15,7 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 ## To-Do
 
 ### Backend
-- [ ] Fix bug where uploaded files are placed in the root directory regardless of the current view
+- [x] Fix bug where uploaded files are placed in the root directory regardless of the current view
 - [ ] Implement intelligent file search using embeddings or fuzzy matching
 - [ ] Create REST endpoints for tag creation and management
 - [ ] Enable recursive deletion of folders and their contents

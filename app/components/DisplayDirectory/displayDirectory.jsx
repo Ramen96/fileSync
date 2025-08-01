@@ -187,6 +187,7 @@ export default function DisplayDirectory() {
   }, []);
 
   const handleDeleteButton = useCallback(async () => {
+    setSelectState(false);
     const currentDisplayNodeId = displayNodeIdRef.current;
     const options = {
       method: "POST",

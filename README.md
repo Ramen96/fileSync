@@ -16,15 +16,15 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 
 ### Backend
 - [x] Fix bug where uploaded files are placed in the root directory regardless of the current view
-- [ ] Fix bug where files that are not in root are not deleted
+- [x] Fix bug where files that are not in root are not deleted
 - [ ] Implement intelligent file search using embeddings or fuzzy matching
 - [ ] Create REST endpoints for tag creation and management
-- [ ] Enable recursive deletion of folders and their contents
+- [x] Enable recursive deletion of folders and their contents
 - [ ] Set up cron job for scanning and flagging exact duplicate files
 
 ### Frontend
 - [ ] **Upload**
-  - [ ] Fix bug so uploaded files go to the currently viewed directory
+  - [x] Fix bug so uploaded files go to the currently viewed directory
   - [ ] Add full functionality to `UploadCard` component
 
 - [ ] **Search**
@@ -33,7 +33,6 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 - [ ] **DisplayDirectory Component**
   - [ ] Clicking the home button should always display the root node
   - [ ] Implement download button functionality
-  - [ ] Fix delete bug — currently only deletes children of the root node
   - [ ] After deleting a file, reset `selector` state to `false`
 
 - [ ] **Sidebar Component**

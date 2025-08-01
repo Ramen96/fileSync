@@ -33,7 +33,7 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 - [ ] **DisplayDirectory Component**
   - [ ] Clicking the home button should always display the root node
   - [ ] Implement download button functionality
-  - [ ] After deleting a file, reset `selector` state to `false`
+  - [x] After deleting a file, reset `selector` state to `false`
 
 - [ ] **Sidebar Component**
   - [ ] Add functionality for "New Folder"

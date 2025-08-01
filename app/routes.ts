@@ -4,5 +4,5 @@ export default [
   index("./routes/_index.jsx"),
   route("databaseAPI", "./routes/databaseAPI.jsx"),
   route("fileDelete", "./routes/fileDelete.jsx"),
-  route("fileStorage", "./routes/fileStorage.jsx")
+  route("uploadAPI", "./routes/uploadAPI.jsx")
 ]

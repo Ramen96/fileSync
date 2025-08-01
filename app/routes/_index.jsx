@@ -193,7 +193,7 @@ export default function Index() {
 
     fileList.append('metadata', JSON.stringify(metadata()));
 
-    fetch("fileStorage", {
+    fetch("uploadAPI", {
       method: "POST",
       body: fileList
     })

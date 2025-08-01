@@ -272,15 +272,6 @@ export default function Index() {
     setSearchResults
   };
 
-  const sidebarProps = {
-    fileUpload: fileUpload,
-    displayNodeId: displayNodeId
-  };
-
-  useEffect(() => {
-    console.log(`Index component mounted with displayNodeId: ${displayNodeId}`);
-  }, [displayNodeId]);
-
   return (
     <>
     <IndexContext.Provider value={indexContextProps}>

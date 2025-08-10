@@ -1,4 +1,4 @@
-import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon, FolderMinus } from "lucide-react";
+import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon } from "lucide-react";
 import { useRef, useContext, useState } from "react";
 import { DisplayDirectoryContext, IndexContext, wsContext } from "../../utils/context";
 import UploadItem from "../uploadItem/uploadItem";

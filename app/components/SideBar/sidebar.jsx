@@ -46,6 +46,7 @@ export default function SideBar() {
 
   const handleFileUpload = (event) => {
     fileUpload(event);
+    event.target.value = "";
   };
 
   return (

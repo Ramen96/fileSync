@@ -28,6 +28,8 @@ export default function UploadCard() {
   }
 
   const inputRef = useRef(null);
+  const folderInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [multiUpload, setMultiUpload] = useState(false);
   const [fileArr, setFileArr] = useState([]);
@@ -44,8 +46,11 @@ export default function UploadCard() {
       fileDataArr.push(file[i]);
     }
     setFileArr([...fileArr, ...fileDataArr]);
-    if (inputRef.current.value !== "") {
-      inputRef.current.value = "";
+    if (folderInputRef.current.value !== "") {
+      folderInputRef.current.value = "";
+    }
+    if (fileInputRef.current.value !== "") {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -195,8 +200,15 @@ export default function UploadCard() {
         </div>
         <button
           onClick={() => {
-            // setPendingFileOperation(true);
-            fileUpload(fileArr);
+            if (fileArr.length === 0) return;
+
+            const event = {
+              target: {
+                files: fileArr
+              }
+            }
+
+            fileUpload(event);
             setFileArr([]);
             handleUploadCardState();
             wsTriggerReload(displayNodeId);

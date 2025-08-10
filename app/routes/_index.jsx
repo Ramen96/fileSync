@@ -38,6 +38,57 @@ export default function Index() {
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const [searchResults, setSearchResults] = useState(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
+  const [backHistory, setBackHistory] = useState([]);
+  const [forwardHistory, setForwardHistory] = useState([]);
+  const [currentDisplayNodes, setCurrentDisplayNodes] = useState(null);
+
+  const getChildNodes = useCallback(async (id) => {
+  try {
+    const res = await fetch('/databaseApi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ displayNodeId: id, requestType: 'get_child_nodes' })
+    });
+    const body = await res.json();
+    return body;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}, []);
+
+const updateDisplayNodes = useCallback(async (id) => {
+  const body = await getChildNodes(id);
+  setCurrentDisplayNodes(body[0]?.children || []);
+  setDisplayNodeId(id);
+}, [getChildNodes]);
+
+const handleNavClick = useCallback((direction) => {
+  const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
+  const prevNodeId = backHistory[backHistory.length - 1];
+  const nextNodeId = forwardHistory[0];
+
+  if (direction === 'backward' && prevNodeId) {
+    updateDisplayNodes(prevNodeId);
+    setBackHistory(b => b.slice(0, -1));
+    setForwardHistory(f => [currentNodeId, ...f]);
+  }
+
+  if (direction === 'forward' && nextNodeId) {
+    updateDisplayNodes(nextNodeId);
+    setForwardHistory(f => f.slice(1));
+    setBackHistory(b => [...b, currentNodeId]);
+  }
+}, [backHistory, forwardHistory, currentDisplayNodes, updateDisplayNodes]);
+
+const handleFolderClick = useCallback((folderId) => {
+  const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
+  setForwardHistory([]);
+  updateDisplayNodes(folderId);
+  setBackHistory(b => [...b, currentNodeId]);
+}, [currentDisplayNodes, updateDisplayNodes]);
+
+
 
   const db = useLoaderData();
   const childrenOfRoot = db.children;
@@ -257,6 +308,16 @@ export default function Index() {
 
   const indexContextProps = {
     childrenOfRootNode: isSearchMode ? searchResults : childrenOfRootNode,
+    currentDisplayNodes,
+    setCurrentDisplayNodes,
+    updateDisplayNodes,
+    getChildNodes,
+    handleFolderClick,
+    handleNavClick,
+    backHistory,
+    forwardHistory,
+    setBackHistory,
+    setForwardHistory,
     setChildrenOfRootNode,
     fileUpload,
     displayNodeId,

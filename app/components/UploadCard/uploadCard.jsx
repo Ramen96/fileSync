@@ -12,9 +12,6 @@ export default function UploadCard() {
   const {
     fileUpload,
     displayNodeId,
-    pendingFileOperation,
-    setPendingFileOperation,
-    // wsTriggerReload
   } =  useContext(IndexContext)
 
   const socket = useContext(wsContext);

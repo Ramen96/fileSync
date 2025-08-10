@@ -23,9 +23,9 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 - [ ] Set up cron job for scanning and flagging exact duplicate files
 
 ### Frontend
-- [ ] **Upload**
+- [x] **Upload**
   - [x] Fix bug so uploaded files go to the currently viewed directory
-  - [ ] Add full functionality to `UploadCard` component
+  - [x] Add full functionality to `UploadCard` component
 
 - [ ] **Search**
   - [ ] Fix issue where clicking on a folder/file result sets display to the clicked node instead of its parent

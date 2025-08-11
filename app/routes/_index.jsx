@@ -197,6 +197,12 @@ const handleFolderClick = useCallback((folderId) => {
     };
   }, [socket, handleWebSocketOpen, handleWebSocketMessage, handleWebSocketClose, handleWebSocketError]);
 
+  const resetToRoot = useCallback(() => {
+    setDisplayNodeId(rootNodeId);
+    setIsSearchMode(false);
+    setSearchResults(null);
+  }, [rootNodeId]);
+
   const fileUpload = useCallback((event) => {
     const currentDisplayNodeId = displayNodeIdRef.current;
     if (!currentDisplayNodeId) {
@@ -330,7 +336,8 @@ const handleFolderClick = useCallback((folderId) => {
     isSearchMode,
     setIsSearchMode,
     searchResults,
-    setSearchResults
+    setSearchResults,
+    resetToRoot
   };
 
   return (

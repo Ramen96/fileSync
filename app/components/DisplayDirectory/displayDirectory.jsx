@@ -33,7 +33,8 @@ export default function DisplayDirectory() {
     displayNodeId,
     setPendingFileOperation,
     reloadTrigger,
-    setReloadTrigger
+    setReloadTrigger,
+    resetToRoot
   } = useContext(IndexContext);
 
   // Navigation state
@@ -234,7 +235,7 @@ export default function DisplayDirectory() {
   const leftNavButtons = [
     {
       id: 'home', icon: Home, className: 'homeButton pointer', onClick: () => {
-        setCurrentDisplayNodes(childrenOfRootNode);
+        resetToRoot();
         setForwardHistory([]);
         setBackHistory([]);
       }
@@ -300,4 +301,3 @@ export default function DisplayDirectory() {
     </>
   );
 }
-

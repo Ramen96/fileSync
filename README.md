@@ -31,7 +31,7 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
   - [ ] Fix issue where clicking on a folder/file result sets display to the clicked node instead of its parent
 
 - [ ] **DisplayDirectory Component**
-  - [ ] Clicking the home button should always display the root node
+  - [x] Clicking the home button should always display the root node
   - [ ] Implement download button functionality
   - [x] After deleting a file, reset `selector` state to `false`
 

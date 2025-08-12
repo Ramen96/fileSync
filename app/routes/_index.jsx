@@ -153,8 +153,6 @@ const handleFolderClick = useCallback((folderId) => {
       const msgObject = JSON.parse(event.data);
       if (msgObject?.message === 'reload') {
         setPendingFileOperation(true);
-        // setDisplayNodeId(msgObject.id);
-        // setReloadTrigger(prev => prev + 1);
         setUpdatedFolderId(msgObject.id);
         setTimeout(() => {
           setPendingFileOperation(false);
@@ -263,7 +261,6 @@ const handleFolderClick = useCallback((folderId) => {
           console.log(`Upload failed with status: ${res.status}`);
         }
         setPendingFileOperation(false);
-        // setReloadTrigger(prev => prev + 1);
         setUpdatedFolderId(currentDisplayNodeId);
       })
       .catch((err) => {

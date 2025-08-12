@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import LoadingBars from "../Loading/loading";
 import { IndexContext } from "../../utils/context";
 import "../../css/folderTree.css";
@@ -8,9 +8,28 @@ export default function FolderTree({
   getChildNodes,
   handleFolderClick,
 }) {
-  const { setDisplayNodeId } = useContext(IndexContext);
+  const { setDisplayNodeId, updatedFolderId } = useContext(IndexContext);
   const [expandedFolders, setExpandedFolders] = useState({});
   const [loadingFolders, setLoadingFolders] = useState({});
+
+  useEffect(() => {
+    if (updatedFolderId && expandedFolders[updatedFolderId]) {
+      // Force reload the folder by clearing it and then refetching
+      const reloadFolder = async () => {
+        setLoadingFolders(prev => ({ ...prev, [updatedFolderId]: true }));
+        try {
+          const children = await getChildNodes(updatedFolderId);
+          setExpandedFolders(prev => ({
+            ...prev,
+            [updatedFolderId]: children[0]?.children || []
+          }));
+        } finally {
+          setLoadingFolders(prev => ({ ...prev, [updatedFolderId]: false }));
+        }
+      };
+      reloadFolder();
+    }
+  }, [updatedFolderId, getChildNodes]);
 
   const handleExpand = async (folderId) => {
     setExpandedFolders(prev => ({

@@ -32,9 +32,10 @@ export default function DisplayDirectory() {
     childrenOfRootNode,
     displayNodeId,
     setPendingFileOperation,
-    reloadTrigger,
     setReloadTrigger,
-    resetToRoot
+    resetToRoot,
+    updatedFolderId,
+    setUpdatedFolderId
   } = useContext(IndexContext);
 
   // Navigation state
@@ -193,7 +194,8 @@ export default function DisplayDirectory() {
         console.warn(`Failed to delete file with status: ${response.status}`);
       }
       setPendingFileOperation(true);
-      setReloadTrigger(prev => prev + 1);
+      updateDisplayNodes(currentDisplayNodeId);
+      // setReloadTrigger(prev => prev + 1);
     } catch (error) {
       console.error(`Error deleting files: ${error}`);
     }
@@ -205,13 +207,17 @@ export default function DisplayDirectory() {
     if (nodeIdToUpdate) {
       updateDisplayNodes(nodeIdToUpdate);
     }
-    if (reloadTrigger > 0) {
-      const timer = setTimeout(() => setPendingFileOperation(false), 200);
-      return () => clearTimeout(timer);
-    } else {
-      setPendingFileOperation(false);
+    setPendingFileOperation(false);
+  }, [displayNodeId, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
+
+  // Add a separate useEffect to handle folder updates
+  useEffect(() => {
+    if (updatedFolderId && displayNodeId === updatedFolderId) {
+      updateDisplayNodes(updatedFolderId);
+      // Reset after handling
+      setTimeout(() => setUpdatedFolderId(null), 50);
     }
-  }, [displayNodeId, reloadTrigger, rootNodeId, updateDisplayNodes, setPendingFileOperation]);
+  }, [updatedFolderId, displayNodeId, updateDisplayNodes, setUpdatedFolderId]);
 
   // Context props
   const folderTreeComponentProps = {

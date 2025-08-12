@@ -41,6 +41,7 @@ export default function Index() {
   const [backHistory, setBackHistory] = useState([]);
   const [forwardHistory, setForwardHistory] = useState([]);
   const [currentDisplayNodes, setCurrentDisplayNodes] = useState(null);
+  const [updatedFolderId, setUpdatedFolderId] = useState(null);
 
   const getChildNodes = useCallback(async (id) => {
   try {
@@ -152,8 +153,9 @@ const handleFolderClick = useCallback((folderId) => {
       const msgObject = JSON.parse(event.data);
       if (msgObject?.message === 'reload') {
         setPendingFileOperation(true);
-        setDisplayNodeId(msgObject.id);
-        setReloadTrigger(prev => prev + 1);
+        // setDisplayNodeId(msgObject.id);
+        // setReloadTrigger(prev => prev + 1);
+        setUpdatedFolderId(msgObject.id);
         setTimeout(() => {
           setPendingFileOperation(false);
         }, 500);
@@ -261,7 +263,8 @@ const handleFolderClick = useCallback((folderId) => {
           console.log(`Upload failed with status: ${res.status}`);
         }
         setPendingFileOperation(false);
-        setReloadTrigger(prev => prev + 1);
+        // setReloadTrigger(prev => prev + 1);
+        setUpdatedFolderId(currentDisplayNodeId);
       })
       .catch((err) => {
         console.error(err);
@@ -337,7 +340,9 @@ const handleFolderClick = useCallback((folderId) => {
     setIsSearchMode,
     searchResults,
     setSearchResults,
-    resetToRoot
+    resetToRoot,
+    updatedFolderId,
+    setUpdatedFolderId
   };
 
   return (

@@ -39,8 +39,8 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
   - [ ] Add functionality for "New Folder"
   - [ ] Add functionality for "New File"
 
-- [ ] **FolderTree Component**
-  - [ ] Fix bug when uploading a new file so only the parent node of the uploaded file is re-rendered instead of the whole recursion tree
+- [x] **FolderTree Component**
+  - [x] Fix bug when uploading a new file so only the parent node of the uploaded file is re-rendered instead of the whole recursion tree
 
 ---
 

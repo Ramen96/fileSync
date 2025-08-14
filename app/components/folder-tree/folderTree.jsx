@@ -31,13 +31,50 @@ export default function FolderTree({
     }
   }, [updatedFolderId, getChildNodes]);
 
-  const handleExpand = async (folderId) => {
-    setExpandedFolders(prev => ({
-      ...prev,
-      [folderId]: prev[folderId] ? null : prev[folderId]
-    }));
+  const getParentNode = async (nodeId) => {
+    const response = await fetch('/databaseAPI', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        requestType: 'get_parent_node',
+        nodeId: nodeId
+      })
+    });
+    const data = await response.json();
+    return data.parentNode;
+  };
 
-    if (!expandedFolders[folderId]) {
+  const handleExpand = async (folderId) => {
+    const isCurrentlyExpanded = !!expandedFolders[folderId];
+    const isCurrentFolder = displayNodeId === folderId;
+
+    if (isCurrentlyExpanded && !isCurrentFolder) {
+      setDisplayNodeId(folderId);
+      return;
+    }
+
+    if (isCurrentFolder && isCurrentlyExpanded) {
+      setExpandedFolders(prev => ({
+        ...prev,
+        [folderId]: null
+      }));
+
+      try {
+        const parentNode = await getParentNode(folderId);
+        if (parentNode) {
+          setDisplayNodeId(parentNode.id);
+        }
+      } catch (error) {
+        console.error('Error getting parent node:', error);
+      }
+      return;
+    }
+
+    setDisplayNodeId(folderId);
+
+    if (!isCurrentlyExpanded) {
       setLoadingFolders(prev => ({ ...prev, [folderId]: true }));
       try {
         const children = await getChildNodes(folderId);
@@ -45,7 +82,6 @@ export default function FolderTree({
           ...prev,
           [folderId]: children[0]?.children || []
         }));
-        setDisplayNodeId(folderId);
       } finally {
         setLoadingFolders(prev => ({ ...prev, [folderId]: false }));
       }

@@ -103,7 +103,7 @@ export default function FolderTree({
               handleFolderClick(folderId);
             }
           }}
-          className={`cyber-tree-item cyber-tree-folder ${displayNodeId === folderId ? 'current-folder' : ''}`}
+          className={`cyber-tree-item cyber-tree-folder ${isOpen ? 'expanded' : ''} ${displayNodeId === folderId ? 'current-folder' : ''}`}
         >
           <div className="cyber-tree-icon-wrapper">
             <svg className="cyber-tree-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

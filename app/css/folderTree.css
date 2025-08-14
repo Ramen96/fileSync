@@ -3,19 +3,23 @@
   height: auto;
   display: flex;
   flex-direction: row;
+  background: linear-gradient(135deg, rgba(20, 18, 28, 0.95) 0%, rgba(30, 25, 40, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(47, 214, 181, 0.2);
 }
 
 .handle {
   width: 10px;
-  border-right: solid rgb(74, 68, 92) 1px;
-  box-shadow: 6px 0px 6px rgba(54, 48, 72, 0.5);
+  border-right: solid rgba(47, 214, 181, 0.3) 1px;
+  box-shadow: 6px 0px 10px rgba(47, 214, 181, 0.1);
+  background: linear-gradient(90deg, transparent 0%, rgba(47, 214, 181, 0.1) 100%);
 }
 
 .handle-gui {
   position: relative;
   top: 50%;
   left: -50%;
-  transform: translate(-50% -50%);
+  transform: translate(-50%, -50%);
   width: 1rem;
   height: 2rem;
   border-radius: 0.25rem;
@@ -24,43 +28,84 @@
 .dot {
   width: 0.375rem;
   height: 0.375rem;
-  background-color: #acacac;
+  background: linear-gradient(45deg, #2fd6b5, #47ecc7);
   border-radius: 100%;
   margin: 0.25rem;
+  box-shadow: 0 0 4px rgba(47, 214, 181, 0.5);
+  animation: glow-pulse 2s infinite alternate;
+}
+
+@keyframes glow-pulse {
+  0% { box-shadow: 0 0 4px rgba(47, 214, 181, 0.3); }
+  100% { box-shadow: 0 0 8px rgba(47, 214, 181, 0.8); }
 }
 
 .handle:hover {
   cursor: ew-resize;
+  border-right-color: rgba(47, 214, 181, 0.6);
 }
 
 .sideItemWrapper {
   display: block;
   width: 100%;
   margin-left: 5px;
+  position: relative;
+}
+
+.sideItemWrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(47, 214, 181, 0.2) 50%, transparent 100%);
 }
 
 .sideItem {
   height: 2rem;
   display: flex;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 8px;
   margin: 0.25rem;
   padding: 5px 0 5px 0;
-  border: solid rgba(74, 68, 92, 0) 1px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: white;
+  border: solid rgba(47, 214, 181, 0) 1px;
+  font-family: 'Exo 2', 'Orbitron', monospace, system-ui;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(30, 25, 40, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sideItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(47, 214, 181, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.sideItem:hover::before {
+  left: 100%;
 }
 
 .sideItem:hover {
-  background: rgba(45, 41, 56);
+  background: rgba(47, 214, 181, 0.1);
   cursor: pointer;
-  border: solid rgb(74, 68, 92) 1px;
-  text-decoration: underline;
+  border: solid rgba(47, 214, 181, 0.5) 1px;
+  box-shadow: 0 0 10px rgba(47, 214, 181, 0.2);
+  transform: translateX(3px);
 }
 
 .sideItemName {
   margin-left: 0.5rem;
   font-weight: 500;
+  text-shadow: 0 0 5px rgba(47, 214, 181, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .sideFolderWrapper {
@@ -71,73 +116,272 @@
 .sideFolderDropDown {
   width: auto;
   height: auto;
-  margin-left: 1rem;
-  border-left: solid rgb(74, 68, 92) 1px;
+  margin-left: 1.2rem;
+  border-left: solid rgba(47, 214, 181, 0.4) 2px;
+  position: relative;
+  padding-left: 0.6rem;
+  background: linear-gradient(90deg, rgba(47, 214, 181, 0.02) 0%, transparent 20%);
+}
+
+.sideFolderDropDown::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(47, 214, 181, 0.9), rgba(47, 214, 181, 0.3), rgba(47, 214, 181, 0.9));
+  animation: line-scan 3s linear infinite;
+  box-shadow: 0 0 8px rgba(47, 214, 181, 0.4);
+}
+
+@keyframes line-scan {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 .sideBarIcon {
   height: 1.5rem;
   width: auto;
   margin-left: 0.5rem;
+  filter: drop-shadow(0 0 3px rgba(47, 214, 181, 0.4));
 }
 
-
-
 .cyber-tree-item {
-  height: 2rem;
+  height: 2.2rem;
   display: flex;
   align-items: center;
-  border-radius: 10px;
-  margin: 0.25rem;
-  padding: 5px;
-  border: solid rgba(74, 68, 92, 0) 1px;
-  font-family: 'Exo 2', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  color: rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  margin: 0.2rem;
+  padding: 6px 8px;
+  border: solid rgba(47, 214, 181, 0) 1px;
+  font-family: 'Exo 2', 'Orbitron', monospace, system-ui;
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  background: rgba(30, 25, 40, 0.2);
+}
+
+.cyber-tree-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(47, 214, 181, 0.15), transparent);
+  transition: left 0.4s ease;
+}
+
+.cyber-tree-item:hover::before {
+  left: 100%;
 }
 
 .cyber-tree-item:hover {
-  background: rgba(45, 41, 56, 0.8);
-  border: solid rgb(74, 68, 92) 1px;
+  background: rgba(47, 214, 181, 0.12);
+  border: solid rgba(47, 214, 181, 0.5) 1px;
+  box-shadow: 
+    0 0 20px rgba(47, 214, 181, 0.15),
+    inset 0 0 15px rgba(47, 214, 181, 0.08),
+    0 2px 8px rgba(47, 214, 181, 0.1);
+  transform: translateX(3px) translateY(-1px);
 }
 
 .cyber-tree-icon-wrapper {
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 0.5rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-right: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .cyber-tree-icon {
   width: 100%;
   height: 100%;
   transition: all 0.3s ease;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+}
+
+.cyber-tree-folder:hover .cyber-tree-icon {
+  filter: drop-shadow(0 0 4px rgba(47, 214, 181, 0.6));
+  transform: scale(1.05);
+}
+
+.cyber-tree-file:hover .cyber-tree-icon {
+  filter: drop-shadow(0 0 4px rgba(255, 0, 73, 0.6));
+  transform: scale(1.05);
 }
 
 .cyber-tree-name {
   font-weight: 500;
-  font-size: 0.9rem;
-  letter-spacing: 0.3px;
+  font-size: 0.85rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .cyber-tree-folder:hover .cyber-tree-name {
-  color: rgba(47, 214, 181, 0.9);
+  color: rgba(47, 214, 181, 0.95);
+  text-shadow: 0 0 8px rgba(47, 214, 181, 0.4);
 }
 
 .cyber-tree-file:hover .cyber-tree-name {
-  color: rgba(255, 0, 73, 0.9);
+  color: rgba(255, 0, 73, 0.95);
+  text-shadow: 0 0 8px rgba(255, 0, 73, 0.4);
 }
 
-
 .cyber-tree-item.current-folder {
-  background-color: rgba(47, 214, 181, 0.2);
+  background: linear-gradient(90deg, rgba(47, 214, 181, 0.15) 0%, rgba(47, 214, 181, 0.08) 50%, rgba(30, 25, 40, 0.4) 100%);
   border-left: 3px solid #2fd6b5;
+  border-right: 1px solid rgba(47, 214, 181, 0.3);
+  border-top: 1px solid rgba(47, 214, 181, 0.2);
+  border-bottom: 1px solid rgba(47, 214, 181, 0.2);
+  box-shadow: 
+    0 0 15px rgba(47, 214, 181, 0.1),
+    inset 0 0 20px rgba(47, 214, 181, 0.08),
+    0 2px 8px rgba(47, 214, 181, 0.05);
+  position: relative;
+}
+
+.cyber-tree-item.current-folder::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, rgba(47, 214, 181, 0.8), transparent);
+  animation: current-scan-subtle 2s ease-in-out infinite alternate;
+  border-radius: 2px;
+}
+
+@keyframes current-scan-subtle {
+  0% { 
+    opacity: 0.4;
+    box-shadow: 0 0 4px rgba(47, 214, 181, 0.2);
+  }
+  100% { 
+    opacity: 0.8;
+    box-shadow: 0 0 8px rgba(47, 214, 181, 0.4);
+  }
+}
+
+.cyber-tree-item.current-folder .cyber-tree-name {
+  color: rgba(47, 214, 181, 0.9);
+  text-shadow: 0 0 6px rgba(47, 214, 181, 0.3);
+  font-weight: 600;
+}
+
+/* Optional: Add a subtle pulse effect to the folder icon when current */
+.cyber-tree-item.current-folder .cyber-tree-icon {
+  filter: drop-shadow(0 0 3px rgba(47, 214, 181, 0.4));
+  animation: icon-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes icon-glow {
+  0% { filter: drop-shadow(0 0 2px rgba(47, 214, 181, 0.3)); }
+  100% { filter: drop-shadow(0 0 4px rgba(47, 214, 181, 0.5)); }
 }
 
 .cyber-tree-item.current-file {
-  background-color: rgba(255, 0, 73, 0.2);
+  background: linear-gradient(90deg, rgba(255, 0, 73, 0.25) 0%, rgba(255, 0, 73, 0.1) 100%);
   border-left: 3px solid #ff0049;
+  border-right: 1px solid rgba(255, 0, 73, 0.3);
+  box-shadow: 
+    0 0 20px rgba(255, 0, 73, 0.15),
+    inset 0 0 20px rgba(255, 0, 73, 0.1);
+  position: relative;
+}
+
+.cyber-tree-item.current-file::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, #ff0049, transparent);
+  animation: current-scan 2s ease-in-out infinite alternate;
+}
+
+.cyber-tree-item.current-file .cyber-tree-name {
+  color: rgba(255, 0, 73, 1);
+  text-shadow: 0 0 10px rgba(255, 0, 73, 0.6);
+  font-weight: 600;
+}
+
+/* Add expand/collapse indicator */
+.cyber-tree-folder {
+  position: relative;
+  padding-right: 3rem;
+}
+
+.cyber-tree-folder::after {
+  content: '▶';
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  color: rgba(47, 214, 181, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 0 6px rgba(47, 214, 181, 0.4);
+  font-weight: bold;
+  filter: drop-shadow(0 0 3px rgba(47, 214, 181, 0.6));
+}
+
+.cyber-tree-folder.expanded::after {
+  transform: translateY(-50%) rotate(90deg);
+  color: rgba(47, 214, 181, 1);
+  text-shadow: 0 0 10px rgba(47, 214, 181, 0.8);
+  filter: drop-shadow(0 0 6px rgba(47, 214, 181, 0.9));
+}
+
+.cyber-tree-folder:hover::after {
+  color: rgba(47, 214, 181, 1);
+  text-shadow: 0 0 12px rgba(47, 214, 181, 0.9);
+  transform: translateY(-50%) scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(47, 214, 181, 1));
+}
+
+.cyber-tree-folder.expanded:hover::after {
+  transform: translateY(-50%) rotate(90deg) scale(1.2);
+}
+
+/* Loading animation enhancement */
+.sideFolderDropDown .loading-container {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Scrollbar styling for cyberpunk theme */
+.sideItemWrapper::-webkit-scrollbar,
+.sideFolderDropDown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sideItemWrapper::-webkit-scrollbar-track,
+.sideFolderDropDown::-webkit-scrollbar-track {
+  background: rgba(30, 25, 40, 0.3);
+  border-radius: 3px;
+}
+
+.sideItemWrapper::-webkit-scrollbar-thumb,
+.sideFolderDropDown::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #2fd6b5, #47ecc7);
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(47, 214, 181, 0.3);
+}
+
+.sideItemWrapper::-webkit-scrollbar-thumb:hover,
+.sideFolderDropDown::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #47ecc7, #2fd6b5);
+  box-shadow: 0 0 10px rgba(47, 214, 181, 0.6);
 }

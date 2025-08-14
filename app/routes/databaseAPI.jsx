@@ -15,7 +15,7 @@ export const action = async ({ request }) => {
       const childNodes = await prisma.hierarchy.findMany({
         where: {
           id: displayNodeId
-        }, 
+        },
         include: {
           children: {
             include: {
@@ -25,10 +25,10 @@ export const action = async ({ request }) => {
         }
       });
       return Response.json(childNodes, { status: 200 });
-    } 
+    }
     else if (requestType === 'search_files') {
       const searchQuery = body.searchQuery;
-      
+
       if (!searchQuery || typeof searchQuery !== 'string') {
         return Response.json([], { status: 200 });
       }
@@ -38,7 +38,7 @@ export const action = async ({ request }) => {
           metadata: {
             name: {
               contains: searchQuery,
-              mode: 'insensitive' 
+              mode: 'insensitive'
             }
           }
         },
@@ -50,11 +50,34 @@ export const action = async ({ request }) => {
             }
           }
         },
-        take: 10 
+        take: 10
+      });
+      return Response.json(searchResults, { status: 200 });
+
+    } else if (requestType === 'get_parent_node') {
+      const nodeId = body.nodeId;
+      if (!nodeId) {
+        return Response.json({ error: 'nodeId is required' }, { status: 400 });
+      }
+
+      const node = await prisma.hierarchy.findUnique({
+        where: {
+          id: nodeId
+        },
+        include: {
+          parent: {
+            include: {
+              metadata: true
+            }
+          }
+        }
       });
 
-      return Response.json(searchResults, { status: 200 });
-    } 
+      if (!node || !node.parent) {
+        return Response.json({ parentNode: null }, { status: 200 });
+      }
+      return Response.json({ parentNode: node.parent }, { status: 200 });
+    }
     else {
       return Response.json({ status: 400 });
     }

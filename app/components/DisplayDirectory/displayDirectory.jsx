@@ -212,12 +212,12 @@ export default function DisplayDirectory() {
 
   // Add a separate useEffect to handle folder updates
   useEffect(() => {
-    if (updatedFolderId && displayNodeId === updatedFolderId) {
+    if (updatedFolderId && (displayNodeId === updatedFolderId || (updatedFolderId === rootNodeId && displayNodeId === rootNodeId))) {
       updateDisplayNodes(updatedFolderId);
       // Reset after handling
       setTimeout(() => setUpdatedFolderId(null), 50);
     }
-  }, [updatedFolderId, displayNodeId, updateDisplayNodes, setUpdatedFolderId]);
+  }, [updatedFolderId, displayNodeId, rootNodeId, updateDisplayNodes, setUpdatedFolderId]);
 
   // Context props
   const folderTreeComponentProps = {

@@ -135,9 +135,12 @@ const handleFolderClick = useCallback((folderId) => {
           
           const response = await fetch('/databaseApi', options);
           const body = await response.json();
-          
+
           if (body[0]?.children) {
-            setChildrenOfRootNode(body[0].children);
+            setChildrenOfRootNode([...body[0].children]); 
+            if (displayNodeIdRef.current === rootNodeId) {
+              setCurrentDisplayNodes([...body[0].children]);
+            }
           }
         } catch (error) {
           console.error("Error refreshing root children:", error);
@@ -149,23 +152,28 @@ const handleFolderClick = useCallback((folderId) => {
   }, [reloadTrigger, rootNodeId]);
 
   const handleWebSocketMessage = useCallback((event) => {
-    try {
-      const msgObject = JSON.parse(event.data);
-      if (msgObject?.message === 'reload') {
-        setPendingFileOperation(true);
-        setUpdatedFolderId(msgObject.id);
-        setTimeout(() => {
-          setPendingFileOperation(false);
-        }, 500);
-      } else if (msgObject.message === false) {
-        console.log('message: ', msgObject.message);
-        setPendingFileOperation(false);
+  try {
+    const msgObject = JSON.parse(event.data);
+    if (msgObject?.message === 'reload') {
+      setPendingFileOperation(true);
+      setUpdatedFolderId(msgObject.id);
+      
+      if (msgObject.id === rootNodeId) {
+        setReloadTrigger(prev => prev + 1);
       }
-    } catch (error) {
-      console.error('Error parsing WebSocket message:', error);
+      
+      setTimeout(() => {
+        setPendingFileOperation(false);
+      }, 500);
+    } else if (msgObject.message === false) {
+      console.log('message: ', msgObject.message);
       setPendingFileOperation(false);
     }
-  }, []);
+  } catch (error) {
+    console.error('Error parsing WebSocket message:', error);
+    setPendingFileOperation(false);
+  }
+}, [rootNodeId]); 
 
   const handleWebSocketOpen = useCallback((event) => {
     if (socket) {

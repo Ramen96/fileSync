@@ -13,8 +13,9 @@ export default function FolderTree({
   const [loadingFolders, setLoadingFolders] = useState({});
 
   useEffect(() => {
-    if (updatedFolderId && expandedFolders[updatedFolderId]) {
-      // Force reload the folder by clearing it and then refetching
+    if (!updatedFolderId) return;
+
+    if (expandedFolders[updatedFolderId]) {
       const reloadFolder = async () => {
         setLoadingFolders(prev => ({ ...prev, [updatedFolderId]: true }));
         try {
@@ -29,7 +30,7 @@ export default function FolderTree({
       };
       reloadFolder();
     }
-  }, [updatedFolderId, getChildNodes]);
+  }, [updatedFolderId, getChildNodes, expandedFolders, childrenOfRootNode]);
 
   const getParentNode = async (nodeId) => {
     const response = await fetch('/databaseAPI', {

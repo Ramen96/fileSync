@@ -1,46 +1,112 @@
-.spinner-square {
-    display: flex;
-    flex-direction: row;
-    width: 90px;
-    height: 120px;
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;600;800&display=swap');
+
+.loading-text {
+  font-family: 'Orbitron', 'Exo 2', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: rgba(47, 214, 181, 0.8);
+  text-shadow: 0 0 10px rgba(47, 214, 181, 0.4);
+  margin-top: 20px;
+  margin-left: 15px;
 }
 
-.spinner-square > .square {
-    width: 17px;
-    height: 80px;
-    margin: auto auto;
-    border-radius: 4px;
+.loading-letter {
+  display: inline-block;
+  animation: cyberPulse 3.5s infinite ease-in-out;
+  will-change: transform, color, text-shadow, filter;
 }
 
-.square-1 {
-    animation: square-anim 1200ms cubic-bezier(0.445, 0.05, 0.55, 0.95) 0s infinite;
-}
+.loading-letter:nth-child(1) { animation-delay: 0ms; }
+.loading-letter:nth-child(2) { animation-delay: 100ms; }
+.loading-letter:nth-child(3) { animation-delay: 200ms; }
+.loading-letter:nth-child(4) { animation-delay: 300ms; }
+.loading-letter:nth-child(5) { animation-delay: 400ms; }
+.loading-letter:nth-child(6) { animation-delay: 500ms; }
+.loading-letter:nth-child(7) { animation-delay: 600ms; }
 
-.square-2 {
-    animation: square-anim 1200ms cubic-bezier(0.445, 0.05, 0.55, 0.95) 200ms infinite;
-}
-
-.square-3 {
-    animation: square-anim 1200ms cubic-bezier(0.445, 0.05, 0.55, 0.95) 400ms infinite;
-}
-
-@keyframes square-anim {
-    0% {
-        height: 80px;
-        background-color: rgb(140, 120, 180);
-    }
-    20% {
-        height: 80px;
-    }
-    40% {
-        height: 120px;
-        background-color: rgb(170, 150, 220);
-    }
-    80% {
-        height: 80px;
-    }
-    100% {
-        height: 80px;
-        background-color: rgb(140, 120, 180);
-    }
+@keyframes cyberPulse {
+  0% { 
+    color: rgba(47, 214, 181, 0.4);
+    text-shadow: 0 0 5px rgba(47, 214, 181, 0.2);
+    transform: rotateY(0deg) skewX(0deg);
+    filter: blur(0px);
+  }
+  10% {
+    color: rgba(47, 214, 181, 0.5);
+    text-shadow: 0 0 7px rgba(47, 214, 181, 0.25);
+    transform: rotateY(5deg) skewX(2deg);
+    filter: blur(0px);
+  }
+  20% {
+    color: rgba(255, 0, 73, 0.6);
+    text-shadow: 
+      0 0 10px rgba(255, 0, 73, 0.3),
+      0 0 15px rgba(255, 0, 73, 0.15);
+    transform: rotateY(10deg) skewX(-3deg);
+    filter: blur(0.2px);
+  }
+  30% {
+    color: rgba(255, 0, 73, 0.75);
+    text-shadow: 
+      0 0 12px rgba(255, 0, 73, 0.4),
+      0 0 20px rgba(255, 0, 73, 0.2);
+    transform: rotateY(15deg) skewX(5deg);
+    filter: blur(0.3px);
+  }
+  40% {
+    color: rgba(0, 200, 255, 0.85);
+    text-shadow: 
+      0 0 15px rgba(0, 200, 255, 0.45),
+      0 0 25px rgba(0, 200, 255, 0.25),
+      0 0 30px rgba(47, 214, 181, 0.15);
+    transform: rotateY(20deg) skewX(-6deg);
+    filter: blur(0.4px);
+  }
+  50% {
+    color: rgba(0, 200, 255, 0.9);
+    text-shadow: 
+      0 0 18px rgba(0, 200, 255, 0.5),
+      0 0 28px rgba(0, 200, 255, 0.3),
+      0 0 35px rgba(47, 214, 181, 0.2);
+    transform: rotateY(25deg) skewX(8deg);
+    filter: blur(0.5px);
+  }
+  60% {
+    color: rgba(47, 214, 181, 1);
+    text-shadow: 
+      0 0 20px rgba(47, 214, 181, 0.6),
+      0 0 30px rgba(0, 200, 255, 0.3),
+      0 0 40px rgba(255, 0, 73, 0.15);
+    transform: rotateY(20deg) skewX(-5deg);
+    filter: blur(0.4px);
+  }
+  70% {
+    color: rgba(47, 214, 181, 0.85);
+    text-shadow: 
+      0 0 15px rgba(47, 214, 181, 0.5),
+      0 0 25px rgba(0, 200, 255, 0.25);
+    transform: rotateY(15deg) skewX(4deg);
+    filter: blur(0.3px);
+  }
+  80% {
+    color: rgba(255, 0, 73, 0.7);
+    text-shadow: 
+      0 0 12px rgba(255, 0, 73, 0.4),
+      0 0 18px rgba(47, 214, 181, 0.2);
+    transform: rotateY(10deg) skewX(-2deg);
+    filter: blur(0.2px);
+  }
+  90% {
+    color: rgba(47, 214, 181, 0.5);
+    text-shadow: 0 0 8px rgba(47, 214, 181, 0.3);
+    transform: rotateY(5deg) skewX(1deg);
+    filter: blur(0px);
+  }
+  100% { 
+    color: rgba(47, 214, 181, 0.4);
+    text-shadow: 0 0 5px rgba(47, 214, 181, 0.2);
+    transform: rotateY(0deg) skewX(0deg);
+    filter: blur(0px);
+  }
 }

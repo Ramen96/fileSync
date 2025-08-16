@@ -2,10 +2,17 @@ import "../../css/loading.css";
 
 export default function LoadingBars() {
   return(
-    <div className="spinner-square">
-      <div className="square-1 square"></div>
-      <div className="square-2 square"></div>
-      <div className="square-3 square"></div>
+    <div className="loading-text">
+      <span className="loading-letter">L</span>
+      <span className="loading-letter">O</span>
+      <span className="loading-letter">A</span>
+      <span className="loading-letter">D</span>
+      <span className="loading-letter">I</span>
+      <span className="loading-letter">N</span>
+      <span className="loading-letter">G</span>
+      <span className="loading-letter">.</span>
+      <span className="loading-letter">.</span>
+      <span className="loading-letter">.</span>
     </div>
   )
 }

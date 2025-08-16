@@ -32,9 +32,9 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
   - [ ] Implement download button functionality
   - [x] After deleting a file, reset `selector` state to `false`
 
-- [ ] **Sidebar Component**
-  - [ ] Add functionality for "New Folder"
-  - [ ] Add functionality for "New File"
+- [x] **Sidebar Component**
+  - [x] Add functionality for "New Folder"
+  - [x] Add functionality for "New File"
 
 - [x] **FolderTree Component**
   - [x] Fix bug when uploading a new file so only the parent node of the uploaded file is re-rendered instead of the whole recursion tree

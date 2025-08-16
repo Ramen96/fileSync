@@ -295,3 +295,5 @@ export const createAction = async ({ request }) => {
     });
   }
 };
+
+export const action = createAction;

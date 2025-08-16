@@ -12,7 +12,7 @@ import CreateCard from "../CreateCard/createCard";
 const folderIcon = "../assets/folder.svg";
 
 export default function SideBar() {
-  const { fileUpload } = useContext(IndexContext);
+  const { fileUpload, displayNodeId, setPendingFileOperation, setUpdatedFolderId } = useContext(IndexContext);
   
   const [showCreateCard, setShowCreateCard] = useState(false);
   const [createMode, setCreateMode] = useState(null);
@@ -73,6 +73,12 @@ export default function SideBar() {
     setCreateMode(null);
   };
 
+  const handleCreateSuccess = (createdItem) => {
+    console.log('Item created:', createdItem);
+    setPendingFileOperation(true);
+    setUpdatedFolderId(displayNodeId);
+  };
+
   return (
     <div className="sidebar">
       <button className="logo">
@@ -106,9 +112,11 @@ export default function SideBar() {
       </section>
 
       {showCreateCard && (
-        <CreateCard 
+        <CreateCard
           mode={createMode}
+          parentId={displayNodeId}
           onClose={handleCloseCreateCard}
+          onSuccess={handleCreateSuccess}
         />
       )}
     </div>

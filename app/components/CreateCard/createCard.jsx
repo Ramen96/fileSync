@@ -2,7 +2,7 @@ import { FolderPlus, FilePlus, XCircle, Save } from "lucide-react";
 import React, { useState } from "react";
 import "../../css/createCard.css";
 
-export default function CreateCard({ mode, onClose }) {
+export default function CreateCard({  mode, parentId, onClose, onSuccess }) {
 
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
@@ -15,19 +15,43 @@ export default function CreateCard({ mode, onClose }) {
 
   const handleCreate = async () => {
     if (!name.trim()) return;
-    
+
     setIsCreating(true);
-    
-    // Simulate API call for visual feedback
-    setTimeout(() => {
-      console.log(`Would create ${mode}:`, name);
-      if (content && isFileMode) {
-        console.log('With content:', content);
+
+    try {
+      const response = await fetch('/createNew', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: mode,
+          name: name.trim(),
+          content: isFileMode ? content : undefined,
+          parentId: parentId || null
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Failed to create ${mode}`);
       }
-      
+
+      console.log(`${mode} created successfully:`, data);
+
+      if (onSuccess) {
+        onSuccess(data);
+      }
+
       setIsCreating(false);
       handleClose();
-    }, 1000);
+
+    } catch (error) {
+      console.error(`Create ${mode} error:`, error);
+      setIsCreating(false);
+      alert(error.message);
+    }
   };
 
   const handleClose = () => {

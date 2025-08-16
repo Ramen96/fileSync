@@ -46,13 +46,49 @@ const sendWebSocketNotification = (parentId) => {
   }
 };
 
+// Helper function to get MIME type from file extension
+const getMimeType = (extension) => {
+  const mimeTypes = {
+    '.txt': 'text/plain',
+    '.md': 'text/markdown',
+    '.js': 'text/javascript',
+    '.json': 'application/json',
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.py': 'text/x-python',
+    '.xml': 'application/xml',
+    '.csv': 'text/csv'
+  };
+  return mimeTypes[extension.toLowerCase()] || 'text/plain';
+};
+
+// Helper function to ensure proper file extension
+const ensureFileExtension = (fileName, fileType) => {
+  const currentExtension = path.extname(fileName).toLowerCase();
+  const expectedExtension = `.${fileType}`;
+  
+  // If the file already has the correct extension, return as is
+  if (currentExtension === expectedExtension) {
+    return fileName;
+  }
+  
+  // If the file has a different extension, replace it
+  if (currentExtension) {
+    const nameWithoutExt = path.basename(fileName, currentExtension);
+    return `${nameWithoutExt}${expectedExtension}`;
+  }
+  
+  // If no extension, add the correct one
+  return `${fileName}${expectedExtension}`;
+};
+
 // CREATE FILE ENDPOINT
 export const createFileAction = async ({ request }) => {
   try {
     console.log("Starting file creation process...");
 
     const body = await request.json();
-    const { name, content = '', parentId } = body;
+    const { name, content = '', fileType = 'txt', parentId } = body;
 
     // Validation
     if (!name || name.trim().length === 0) {
@@ -64,9 +100,18 @@ export const createFileAction = async ({ request }) => {
       });
     }
 
+    if (!fileType || fileType.trim().length === 0) {
+      return new Response(JSON.stringify({ 
+        error: 'File type is required' 
+      }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
     // Sanitize filename (remove path traversal attempts and invalid characters)
-    const sanitizedName = name.trim().replace(/[<>:"/\\|?*\x00-\x1F]/g, '');
-    if (sanitizedName.length === 0) {
+    const sanitizedBaseName = name.trim().replace(/[<>:"/\\|?*\x00-\x1F]/g, '');
+    if (sanitizedBaseName.length === 0) {
       return new Response(JSON.stringify({ 
         error: 'Invalid file name' 
       }), {
@@ -74,6 +119,15 @@ export const createFileAction = async ({ request }) => {
         headers: { "Content-Type": "application/json" }
       });
     }
+
+    // Ensure the filename has the correct extension based on selected file type
+    const finalFileName = ensureFileExtension(sanitizedBaseName, fileType.trim());
+    
+    // Get the MIME type based on the file extension
+    const fileExtension = `.${fileType.trim()}`;
+    const mimeType = getMimeType(fileExtension);
+
+    console.log(`Creating file: ${finalFileName} with type: ${fileType} (${mimeType})`);
 
     // Get root node for fallback
     const rootNode = await getRootNode();
@@ -83,8 +137,8 @@ export const createFileAction = async ({ request }) => {
 
     const targetParentId = parentId || rootNode.id;
 
-    // Check if file already exists
-    const nameExists = await checkNameExists(sanitizedName, targetParentId);
+    // Check if file already exists (using the final filename with extension)
+    const nameExists = await checkNameExists(finalFileName, targetParentId);
     if (nameExists) {
       return new Response(JSON.stringify({ 
         error: 'A file or folder with this name already exists' 
@@ -94,17 +148,13 @@ export const createFileAction = async ({ request }) => {
       });
     }
 
-    // Determine file type from extension
-    const fileExtension = path.extname(sanitizedName).toLowerCase();
-    const fileType = fileExtension || 'text/plain';
-
     // Create metadata entry
     const fileMetadata = await prisma.metadata.create({
       data: {
-        name: sanitizedName,
+        name: finalFileName,
         is_folder: false,
         created_at: new Date(),
-        file_type: fileType,
+        file_type: mimeType,
         hierarchy: {
           create: {
             parent_id: targetParentId
@@ -120,13 +170,13 @@ export const createFileAction = async ({ request }) => {
     await fs.mkdir('cloud', { recursive: true });
 
     // Generate unique filename to avoid conflicts on filesystem
-    const uniqueFileName = `${fileMetadata.id}_${sanitizedName}`;
+    const uniqueFileName = `${fileMetadata.id}_${finalFileName}`;
     const filePath = path.join('cloud', uniqueFileName);
 
-    // Save file to filesystem
-    await fs.writeFile(filePath, content, 'utf8');
+    // Save file to filesystem with the content
+    await fs.writeFile(filePath, content || '', 'utf8');
 
-    console.log(`File created successfully: ${sanitizedName}`);
+    console.log(`File created successfully: ${finalFileName} at ${filePath}`);
 
     // Send WebSocket notification
     sendWebSocketNotification(targetParentId);
@@ -136,9 +186,11 @@ export const createFileAction = async ({ request }) => {
       message: "File created successfully",
       file: {
         id: fileMetadata.id,
-        name: sanitizedName,
-        type: fileType,
-        hierarchyId: fileMetadata.hierarchy.id
+        name: finalFileName,
+        type: mimeType,
+        fileType: fileType,
+        hierarchyId: fileMetadata.hierarchy.id,
+        path: filePath
       }
     }), {
       status: 201,
@@ -257,14 +309,14 @@ export const createFolderAction = async ({ request }) => {
 export const createAction = async ({ request }) => {
   try {
     const body = await request.json();
-    const { type, name, content, parentId } = body;
+    const { type, name, content, fileType, parentId } = body;
 
     if (type === 'file') {
       // Create a new request object for the file creation
       const fileRequest = new Request(request.url, {
         method: 'POST',
         headers: request.headers,
-        body: JSON.stringify({ name, content, parentId })
+        body: JSON.stringify({ name, content, fileType, parentId })
       });
       return await createFileAction({ request: fileRequest });
     } else if (type === 'folder') {

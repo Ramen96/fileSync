@@ -70,7 +70,8 @@ export const action = async ({ request }) => {
         // Delete all child files from filesystem first
         for (const child of allChildren) {
           if (!child.metadata.is_folder) {
-            const filePath = path.join('./cloud/', child.metadata.name);
+            const uniqueFileName = `${child.metadata.id}_${child.metadata.name}`;
+            const filePath = path.join('./cloud/', uniqueFileName);
             const fileExists = await checkIfFileExists(filePath);
             
             if (fileExists) {
@@ -128,8 +129,9 @@ export const action = async ({ request }) => {
 
         // Check if it's a file or folder
         if (!elementMetadata.is_folder) {
-          // Handle file deletion
-          const filePath = path.join('./cloud/', elementMetadata.name);
+          // Handle file deletion - use the UUID_filename pattern
+          const uniqueFileName = `${elementId}_${elementMetadata.name}`;
+          const filePath = path.join('./cloud/', uniqueFileName);
           const fileExists = await checkIfFileExists(filePath);
 
           if (fileExists) {

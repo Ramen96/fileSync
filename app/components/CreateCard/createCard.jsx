@@ -1,4 +1,4 @@
-import { FolderPlus, FilePlus, XCircle, Save } from "lucide-react";
+import { FolderPlus, FilePlus, XCircle, Save, ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 import "../../css/createCard.css";
 
@@ -6,12 +6,26 @@ export default function CreateCard({  mode, parentId, onClose, onSuccess }) {
 
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
+  const [fileType, setFileType] = useState("txt");
   const [isCreating, setIsCreating] = useState(false);
 
   const isFileMode = mode === "file";
   const title = isFileMode ? "Create New Document" : "Create New Folder";
   const icon = isFileMode ? FilePlus : FolderPlus;
   const placeholder = isFileMode ? "Enter document name..." : "Enter folder name...";
+
+  // Available file types
+  const fileTypes = [
+    { value: "txt", label: "Text File (.txt)" },
+    { value: "md", label: "Markdown (.md)" },
+    { value: "js", label: "JavaScript (.js)" },
+    { value: "json", label: "JSON (.json)" },
+    { value: "html", label: "HTML (.html)" },
+    { value: "css", label: "CSS (.css)" },
+    { value: "py", label: "Python (.py)" },
+    { value: "xml", label: "XML (.xml)" },
+    { value: "csv", label: "CSV (.csv)" },
+  ];
 
   const handleCreate = async () => {
     if (!name.trim()) return;
@@ -28,6 +42,7 @@ export default function CreateCard({  mode, parentId, onClose, onSuccess }) {
           type: mode,
           name: name.trim(),
           content: isFileMode ? content : undefined,
+          fileType: isFileMode ? fileType : undefined,
           parentId: parentId || null
         })
       });
@@ -57,6 +72,7 @@ export default function CreateCard({  mode, parentId, onClose, onSuccess }) {
   const handleClose = () => {
     setName("");
     setContent("");
+    setFileType("txt");
     if (onClose) {
       onClose();
     }
@@ -102,6 +118,28 @@ export default function CreateCard({  mode, parentId, onClose, onSuccess }) {
               />
             </div>
           </div>
+
+          {isFileMode && (
+            <div className="input-group">
+              <label className="input-label">
+                File Type
+              </label>
+              <div className="select-wrapper">
+                <select
+                  value={fileType}
+                  onChange={(e) => setFileType(e.target.value)}
+                  className="file-type-select"
+                >
+                  {fileTypes.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="select-icon" />
+              </div>
+            </div>
+          )}
 
           {isFileMode && (
             <div className="input-group">

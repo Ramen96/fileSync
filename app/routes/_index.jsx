@@ -44,50 +44,50 @@ export default function Index() {
   const [updatedFolderId, setUpdatedFolderId] = useState(null);
 
   const getChildNodes = useCallback(async (id) => {
-  try {
-    const res = await fetch('/databaseApi', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ displayNodeId: id, requestType: 'get_child_nodes' })
-    });
-    const body = await res.json();
-    return body;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-}, []);
+    try {
+      const res = await fetch('/databaseApi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayNodeId: id, requestType: 'get_child_nodes' })
+      });
+      const body = await res.json();
+      return body;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  }, []);
 
-const updateDisplayNodes = useCallback(async (id) => {
-  const body = await getChildNodes(id);
-  setCurrentDisplayNodes(body[0]?.children || []);
-  setDisplayNodeId(id);
-}, [getChildNodes]);
+  const updateDisplayNodes = useCallback(async (id) => {
+    const body = await getChildNodes(id);
+    setCurrentDisplayNodes(body[0]?.children || []);
+    setDisplayNodeId(id);
+  }, [getChildNodes]);
 
-const handleNavClick = useCallback((direction) => {
-  const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
-  const prevNodeId = backHistory[backHistory.length - 1];
-  const nextNodeId = forwardHistory[0];
+  const handleNavClick = useCallback((direction) => {
+    const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
+    const prevNodeId = backHistory[backHistory.length - 1];
+    const nextNodeId = forwardHistory[0];
 
-  if (direction === 'backward' && prevNodeId) {
-    updateDisplayNodes(prevNodeId);
-    setBackHistory(b => b.slice(0, -1));
-    setForwardHistory(f => [currentNodeId, ...f]);
-  }
+    if (direction === 'backward' && prevNodeId) {
+      updateDisplayNodes(prevNodeId);
+      setBackHistory(b => b.slice(0, -1));
+      setForwardHistory(f => [currentNodeId, ...f]);
+    }
 
-  if (direction === 'forward' && nextNodeId) {
-    updateDisplayNodes(nextNodeId);
-    setForwardHistory(f => f.slice(1));
+    if (direction === 'forward' && nextNodeId) {
+      updateDisplayNodes(nextNodeId);
+      setForwardHistory(f => f.slice(1));
+      setBackHistory(b => [...b, currentNodeId]);
+    }
+  }, [backHistory, forwardHistory, currentDisplayNodes, updateDisplayNodes]);
+
+  const handleFolderClick = useCallback((folderId) => {
+    const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
+    setForwardHistory([]);
+    updateDisplayNodes(folderId);
     setBackHistory(b => [...b, currentNodeId]);
-  }
-}, [backHistory, forwardHistory, currentDisplayNodes, updateDisplayNodes]);
-
-const handleFolderClick = useCallback((folderId) => {
-  const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
-  setForwardHistory([]);
-  updateDisplayNodes(folderId);
-  setBackHistory(b => [...b, currentNodeId]);
-}, [currentDisplayNodes, updateDisplayNodes]);
+  }, [currentDisplayNodes, updateDisplayNodes]);
 
 
 
@@ -132,12 +132,12 @@ const handleFolderClick = useCallback((folderId) => {
               requestType: 'get_child_nodes'
             })
           };
-          
+
           const response = await fetch('/databaseApi', options);
           const body = await response.json();
 
           if (body[0]?.children) {
-            setChildrenOfRootNode([...body[0].children]); 
+            setChildrenOfRootNode([...body[0].children]);
             if (displayNodeIdRef.current === rootNodeId) {
               setCurrentDisplayNodes([...body[0].children]);
             }
@@ -152,28 +152,28 @@ const handleFolderClick = useCallback((folderId) => {
   }, [reloadTrigger, rootNodeId]);
 
   const handleWebSocketMessage = useCallback((event) => {
-  try {
-    const msgObject = JSON.parse(event.data);
-    if (msgObject?.message === 'reload') {
-      setPendingFileOperation(true);
-      setUpdatedFolderId(msgObject.id);
-      
-      if (msgObject.id === rootNodeId) {
-        setReloadTrigger(prev => prev + 1);
-      }
-      
-      setTimeout(() => {
+    try {
+      const msgObject = JSON.parse(event.data);
+      if (msgObject?.message === 'reload') {
+        setPendingFileOperation(true);
+        setUpdatedFolderId(msgObject.id);
+
+        if (msgObject.id === rootNodeId) {
+          setReloadTrigger(prev => prev + 1);
+        }
+
+        setTimeout(() => {
+          setPendingFileOperation(false);
+        }, 500);
+      } else if (msgObject.message === false) {
+        console.log('message: ', msgObject.message);
         setPendingFileOperation(false);
-      }, 500);
-    } else if (msgObject.message === false) {
-      console.log('message: ', msgObject.message);
+      }
+    } catch (error) {
+      console.error('Error parsing WebSocket message:', error);
       setPendingFileOperation(false);
     }
-  } catch (error) {
-    console.error('Error parsing WebSocket message:', error);
-    setPendingFileOperation(false);
-  }
-}, [rootNodeId]); 
+  }, [rootNodeId]);
 
   const handleWebSocketOpen = useCallback((event) => {
     if (socket) {
@@ -262,17 +262,26 @@ const handleFolderClick = useCallback((folderId) => {
       method: "POST",
       body: fileList
     })
-      .then((res) => {
+      .then(async (res) => {
+        const data = await res.json();
+
         if (res.ok) {
           console.log("Upload successful");
+          setPendingFileOperation(false);
+          setUpdatedFolderId(currentDisplayNodeId);
+        } else if (res.status === 409 && data.status === 'duplicate_names') {
+          // Handle duplicate names
+          alert(data.error);
+          setPendingFileOperation(false);
         } else {
           console.log(`Upload failed with status: ${res.status}`);
+          alert(data.error || 'Upload failed');
+          setPendingFileOperation(false);
         }
-        setPendingFileOperation(false);
-        setUpdatedFolderId(currentDisplayNodeId);
       })
       .catch((err) => {
         console.error(err);
+        alert('Upload failed: Network error');
         setPendingFileOperation(false);
       });
   }, []);
@@ -287,7 +296,7 @@ const handleFolderClick = useCallback((folderId) => {
 
     try {
       setPendingFileOperation(true);
-      
+
       const options = {
         method: "POST",
         headers: {
@@ -298,13 +307,13 @@ const handleFolderClick = useCallback((folderId) => {
           requestType: 'search_files'
         })
       };
-      
+
       const response = await fetch('/databaseApi', options);
       const searchData = await response.json();
-      
+
       setSearchResults(searchData);
       setIsSearchMode(true);
-      
+
     } catch (error) {
       console.error("Error searching files:", error);
       setSearchResults([]);
@@ -316,8 +325,8 @@ const handleFolderClick = useCallback((folderId) => {
 
   const handleSearchNavigation = useCallback((parentId) => {
     setDisplayNodeId(parentId);
-    setIsSearchMode(false); 
-    setSearchResults(null); 
+    setIsSearchMode(false);
+    setSearchResults(null);
   }, []);
 
   const indexContextProps = {
@@ -352,13 +361,13 @@ const handleFolderClick = useCallback((folderId) => {
 
   return (
     <>
-    <IndexContext.Provider value={indexContextProps}>
-      <SideBar />
-    </IndexContext.Provider>
+      <IndexContext.Provider value={indexContextProps}>
+        <SideBar />
+      </IndexContext.Provider>
       <div className="main">
-        <SearchBar 
-          onSearch={handleSearch} 
-          placeholder="Search drive" 
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="Search drive"
           onNavigate={handleSearchNavigation}
         />
         <div className="mainWindow main-bg">

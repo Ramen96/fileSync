@@ -70,3 +70,6 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 - WebSockets (real-time updates)
 - Lucide (icons)
 - Planned: AI/ML Integration (lightweight NLP models for search and redundancy)
+
+--- 
+## Backup before css over hual

@@ -5,5 +5,6 @@ export default [
   route("databaseAPI", "./routes/databaseAPI.jsx"),
   route("fileDelete", "./routes/fileDelete.jsx"),
   route("uploadAPI", "./routes/uploadAPI.jsx"),
-  route("createNew", "./routes/createNew.jsx")
+  route("createNew", "./routes/createNew.jsx"),
+  route("download", "./routes/download.jsx")
 ]

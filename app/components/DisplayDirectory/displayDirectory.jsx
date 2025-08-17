@@ -166,40 +166,231 @@ export default function DisplayDirectory() {
     setDisplayUploadCard(prev => !prev);
   }, []);
 
-  // Delete queue
+  // Selection queue (shared for both delete and download)
+  const [selectionQueue, setSelectionQueue] = useState([]);
+  const handleSelectionQueue = useCallback((checkState, metadataObject) => {
+    if (!checkState) {
+      setSelectionQueue(prev => [...prev, metadataObject]);
+    } else {
+      setSelectionQueue(prev => prev.filter(el => el.id !== metadataObject.id));
+    }
+  }, []);
+
+  // Legacy delete queue support (for backward compatibility)
   const [deleteQueue, setDeleteQueue] = useState([]);
   const handleDeleteQueue = useCallback((checkState, metadataObject) => {
+    // Use the shared selection queue for consistency
+    handleSelectionQueue(checkState, metadataObject);
+    // Keep legacy deleteQueue in sync
     if (!checkState) {
       setDeleteQueue(prev => [...prev, metadataObject]);
     } else {
       setDeleteQueue(prev => prev.filter(el => el.id !== metadataObject.id));
     }
+  }, [handleSelectionQueue]);
+
+  // Single file download
+  const downloadSingleFile = useCallback(async (fileId, fileName) => {
+    try {
+      console.log(`Starting download for file: ${fileName}`);
+      const response = await fetch(`/download?type=single&id=${fileId}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Download failed:', errorData.error);
+        alert(`Download failed: ${errorData.error}`);
+        return;
+      }
+
+      // Create blob from response
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create temporary download link
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log(`File downloaded successfully: ${fileName}`);
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Download failed. Please try again.');
+    }
   }, []);
 
-  const handleDeleteButton = useCallback(async () => {
-    setSelectState(false);
-    const currentDisplayNodeId = displayNodeIdRef.current;
+  // Bulk download (multiple files/folders)
+  const downloadBulkFiles = useCallback(async (items) => {
     try {
-      const response = await fetch('fileDelete', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          deleteQueue,
-          displayNodeId: currentDisplayNodeId
-        })
+      console.log(`Starting bulk download for ${items.length} items`);
+      const response = await fetch('/download?type=bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items })
       });
-      if (response.ok) {
-        console.log("File successfully deleted");
-      } else {
-        console.warn(`Failed to delete file with status: ${response.status}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Bulk download failed:', errorData.error);
+        alert(`Download failed: ${errorData.error}`);
+        return;
       }
-      setPendingFileOperation(true);
-      updateDisplayNodes(currentDisplayNodeId);
-      // setReloadTrigger(prev => prev + 1);
+
+      // Create blob from response
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `download-${timestamp}.zip`;
+
+      // Create temporary download link
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log(`Bulk download completed: ${filename}`);
     } catch (error) {
-      console.error(`Error deleting files: ${error}`);
+      console.error('Bulk download error:', error);
+      alert('Download failed. Please try again.');
     }
-  }, [deleteQueue, setPendingFileOperation, setReloadTrigger]);
+  }, []);
+
+  const handleDownloadButton = useCallback(async () => {
+    if (selectState && selectionQueue.length > 0) {
+      try {
+        console.log(`Starting download for ${selectionQueue.length} items`);
+
+        if (selectionQueue.length === 1) {
+          const item = selectionQueue[0];
+          console.log('Downloading single file:', item.id, item.name);
+
+          const response = await fetch(`/download?type=single&id=${item.id}`);
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Download failed:', response.status, errorText);
+            alert(`Download failed: ${errorText}`);
+            return;
+          }
+
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = item.name || `file-${item.id}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+
+          console.log(`Successfully downloaded: ${item.name}`);
+
+        } else {
+          // Multiple files - bulk download
+          const items = selectionQueue.map(item => ({ id: item.id }));
+          console.log('Downloading multiple files:', items);
+
+          const response = await fetch('/download?type=bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items })
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Bulk download failed:', response.status, errorText);
+            alert(`Download failed: ${errorText}`);
+            return;
+          }
+
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `download-${Date.now()}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+
+          console.log(`Successfully downloaded ${items.length} items as zip`);
+        }
+
+        // Clear selection after successful download
+        setSelectionQueue([]);
+        setDeleteQueue([]);
+        setSelectState(false);
+
+      } catch (error) {
+        console.error('Download failed with error:', error);
+        alert(`Download failed: ${error.message}`);
+      }
+    } else if (selectState && selectionQueue.length === 0) {
+      alert('Please select files to download');
+    } else {
+      // Auto-enable select mode if not already active
+      setSelectState(true);
+      alert('Select mode enabled. Please choose files to download.');
+    }
+  }, [selectState, selectionQueue, setSelectionQueue, setDeleteQueue, setSelectState]);
+
+  const handleDeleteButton = useCallback(async () => {
+    if (selectState && selectionQueue.length > 0) {
+      const currentDisplayNodeId = displayNodeIdRef.current;
+      try {
+        const response = await fetch('fileDelete', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            deleteQueue: selectionQueue,
+            displayNodeId: currentDisplayNodeId
+          })
+        });
+        if (response.ok) {
+          console.log("Files successfully deleted");
+        } else {
+          console.warn(`Failed to delete files with status: ${response.status}`);
+        }
+
+        // Clear selection after delete
+        setSelectionQueue([]);
+        setDeleteQueue([]);
+        setSelectState(false);
+        setPendingFileOperation(true);
+        updateDisplayNodes(currentDisplayNodeId);
+      } catch (error) {
+        console.error(`Error deleting files: ${error}`);
+      }
+    } else if (selectState && selectionQueue.length === 0) {
+      alert('Please select files or folders to delete.');
+    } else {
+      // Auto-enable select mode if not already active
+      setSelectState(true);
+      alert('Select mode enabled. Please choose files or folders to delete.');
+    }
+  }, [selectState, selectionQueue, setPendingFileOperation, updateDisplayNodes]);
+
+  // Clear selections when select mode is disabled
+  useEffect(() => {
+    if (!selectState) {
+      setSelectionQueue([]);
+      setDeleteQueue([]);
+    }
+  }, [selectState]);
 
   // Initial & reload effect
   useEffect(() => {
@@ -225,6 +416,7 @@ export default function DisplayDirectory() {
     getChildNodes,
     handleFolderClick
   };
+
   const displayDirectoryContextProps = {
     updateDisplayNodes,
     currentDisplayNodes,
@@ -232,6 +424,10 @@ export default function DisplayDirectory() {
     isIcon,
     handleFolderClick,
     handleDeleteQueue,
+    handleSelectionQueue, // Add shared selection handler
+    selectionQueue, // Add shared selection queue
+    downloadSingleFile, // Add individual download function
+    downloadBulkFiles, // Add bulk download function
     getChildNodes,
     handleUploadCardState,
     selectState
@@ -240,22 +436,69 @@ export default function DisplayDirectory() {
   // Nav button configs
   const leftNavButtons = [
     {
-      id: 'home', icon: Home, className: 'homeButton pointer', onClick: () => {
+      id: 'home',
+      icon: Home,
+      className: 'homeButton pointer',
+      onClick: () => {
         resetToRoot();
         setForwardHistory([]);
         setBackHistory([]);
+        setSelectionQueue([]);
+        setDeleteQueue([]);
+        setSelectState(false);
       }
     },
-    { id: 'sidebar', icon: Sidebar, className: 'homeButton', onClick: () => setShowSideBar(prev => !prev) },
-    { id: 'backward', icon: ChevronLeft, className: 'homeButton circle', onClick: () => handleNavClick("backward") },
-    { id: 'forward', icon: ChevronRight, className: 'homeButton circle', onClick: () => handleNavClick("forward") }
+    {
+      id: 'sidebar',
+      icon: Sidebar,
+      className: 'homeButton',
+      onClick: () => setShowSideBar(prev => !prev)
+    },
+    {
+      id: 'backward',
+      icon: ChevronLeft,
+      className: 'homeButton circle',
+      onClick: () => handleNavClick("backward")
+    },
+    {
+      id: 'forward',
+      icon: ChevronRight,
+      className: 'homeButton circle',
+      onClick: () => handleNavClick("forward")
+    }
   ];
+
   const rightNavButtons = [
-    { id: 'select', icon: MousePointerClick, className: selectState ? 'homeButton homeButton-selected' : 'homeButton', onClick: () => setSelectState(!selectState) },
-    { id: 'delete', icon: Trash, className: 'homeButton', onClick: handleDeleteButton },
-    { id: 'download', icon: Download, className: 'homeButton', onClick: () => { } },
-    { id: 'upload', icon: Upload, className: 'homeButton', onClick: handleUploadCardState },
-    { id: 'view-toggle', icon: isIcon ? Grid : List, className: 'homeButton', onClick: () => setIsIcon(prev => !prev) }
+    {
+      id: 'select',
+      icon: MousePointerClick,
+      className: selectState ? 'homeButton homeButton-selected' : 'homeButton',
+      onClick: () => setSelectState(!selectState)
+    },
+    {
+      id: 'delete',
+      icon: Trash,
+      className: `homeButton${selectState && selectionQueue.length > 0 ? ' homeButton-active' : ''}`,
+      onClick: handleDeleteButton
+    },
+    {
+      id: 'download',
+      icon: Download,
+      className: `homeButton${selectState && selectionQueue.length > 0 ? ' homeButton-active' : ''}`,
+      onClick: handleDownloadButton
+    },
+    {
+      id: 'upload',
+      icon: Upload,
+      className: 'homeButton',
+      onClick: handleUploadCardState
+    },
+    {
+      id: 'view-toggle',
+      icon: isIcon ? Grid : List,
+      className: 'homeButton',
+      onClick: () => setIsIcon(prev => !prev)
+    }
   ];
 
   const handleDots = Array.from({ length: 3 }, (_, i) => ({ id: `dot-${i}` }));

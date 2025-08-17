@@ -27,9 +27,9 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
   - [x] Fix bug so uploaded files go to the currently viewed directory
   - [x] Add full functionality to `UploadCard` component
 
-- [ ] **DisplayDirectory Component**
+- [x] **DisplayDirectory Component**
   - [x] Clicking the home button should always display the root node
-  - [ ] Implement download button functionality
+  - [x] Implement download button functionality
   - [x] After deleting a file, reset `selector` state to `false`
 
 - [x] **Sidebar Component**

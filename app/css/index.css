@@ -23,31 +23,31 @@
   flex-direction: column;
 }
 
-/* ******************************************** */
-/* ************* Section Nav (Removed old search bar styles) ****************** */
-/* ******************************************** */
-
-/* Removed:
-.navWrapper { ... }
-.nav { ... }
-.searchBar { ... }
-.searchbarWrapper { ... }
-.searchIcon { ... }
-.searchIcon:hover { ... }
-.searchIcon:active { ... }
-.submitButton { ... }
-*/
-
-/* ******************************** */
-/* ************ main ************* */
-/* ****************************** */
-
 .mainWindow {
   height: 100%;
   border: solid rgba(169, 169, 169, 0.5) 1px;
   border-radius: 0.5rem;
-  margin: 1rem;
+  margin: 1rem 1rem 0 1rem; /* Added top margin for spacing from search bar */
   display: flex;
   flex-direction: column;
   align-items: stretch; /* This is key for the navWrapper to take full width */
+}
+
+/* Responsive margins to match search bar behavior */
+@media (max-width: 1024px) {
+  .mainWindow {
+    margin: 1rem 0.5rem 0 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainWindow {
+    margin: 1rem 0.5rem 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainWindow {
+    margin: 1rem 0.25rem 0 0.25rem;
+  }
 }

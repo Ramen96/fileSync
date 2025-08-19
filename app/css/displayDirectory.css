@@ -469,7 +469,7 @@
 @media (max-width: 768px) {
   .navWrapper {
     height: 3rem;
-    padding: 0 0.5rem; /* Adjusted padding */
+    padding: 0 0.75rem;
   }
 
   .homeButton {
@@ -483,7 +483,7 @@
   }
 
   .dirTreeSideBar {
-    min-width: 250px;
+    min-width: 260px;
   }
 
   .gridIconDisplayWrapper {
@@ -495,29 +495,56 @@
     height: 2.75rem;
     font-size: 0.9rem;
   }
+
+  .handle {
+    width: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .navWrapper {
+    padding: 0.5rem 0.75rem;
+    height: 3rem;
+  }
+  
+  .dirTreeSideBar {
+    min-width: 250px;
+  }
+  
+  .rowWrapper {
+    height: 2.6rem;
+    font-size: 0.9rem;
+  }
+
+  .gridIconDisplayWrapper {
+    padding: 0.6rem;
+    gap: 0.6rem;
+  }
 }
 
 @media (max-width: 480px) {
   .navWrapper {
-    height: auto; /* Allow height to adjust for wrapping */
-    padding: 0.5rem 0.25rem; /* Adjusted padding for very small screens */
+    height: 3rem;
+    padding: 0.5rem;
+    flex-wrap: nowrap;
+    min-width: 0;
     border-bottom-right-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
-    flex-wrap: wrap; /* Allow items to wrap to the next line */
   }
 
   .nav-buttons-left,
   .nav-buttons-right {
-    flex-grow: 1; /* Allow them to grow and take available space */
-    flex-basis: auto; /* Reverted to auto, let flex-grow distribute */
+    flex-grow: 0;
+    flex-shrink: 1;
+    gap: 0.25rem;
   }
 
   .nav-buttons-left {
-    justify-content: flex-start; /* Explicitly align left buttons to start */
+    justify-content: flex-start;
   }
 
   .nav-buttons-right {
-    justify-content: flex-end; /* Explicitly align right buttons to end */
+    justify-content: flex-end;
   }
 
   .homeButton {
@@ -532,7 +559,7 @@
   }
 
   .dirTreeSideBar {
-    min-width: 200px;
+    min-width: 240px;
   }
 
   .gridIconDisplayWrapper {
@@ -544,5 +571,9 @@
     height: 2.5rem;
     font-size: 0.85rem;
     border-radius: 0.4rem;
+  }
+
+  .handle {
+    width: 18px;
   }
 }

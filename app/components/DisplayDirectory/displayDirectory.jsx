@@ -121,12 +121,27 @@ export default function DisplayDirectory() {
     setBackHistory(prev => [...prev, currentNodeId]);
   }, [updateDisplayNodes]);
 
-  // Sidebar state
+  // Sidebar state with responsive behavior
   const [showSideBar, setShowSideBar] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 300 });
   const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
   const lastX = useRef(0);
+
+  // Responsive sidebar effect
+  useEffect(() => {
+    const handleResize = () => {
+      const isSmallScreen = window.innerWidth < 1024;
+      if (isSmallScreen) {
+        setShowSideBar(false);
+      } else {
+        setShowSideBar(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => { isDraggingRef.current = isDragging; }, [isDragging]);
 

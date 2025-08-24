@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {  FolderPlus, FilePlus, XCircle, UploadCloudIcon } from "lucide-react";
 import { useRef, useContext, useState } from "react";
 import { DisplayDirectoryContext, IndexContext, wsContext } from "../../utils/context";
@@ -31,6 +32,8 @@ export default function UploadCard() {
   const [multiUpload, setMultiUpload] = useState(false);
   const [fileArr, setFileArr] = useState([]);
   const [isDragOver, setIsDragOver] = useState(false);
+
+   const [isMobile, setIsMobile] = useState(false);
 
   const handleMultiUploadState = () => {
     multiUpload ? setMultiUpload(false) : setMultiUpload(true);
@@ -88,133 +91,237 @@ export default function UploadCard() {
     setFileArr: setFileArr,
   };
 
-  return (
+
+    useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+
+    return (
     <div className="blur-background">
       <div 
-        className={`upload-card-wrapper ${isDragOver ? 'drag-over' : ''}`}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
+        className={`upload-card-wrapper ${isDragOver ? 'drag-over' : ''} ${isMobile ? 'mobile' : ''}`}
+        onDragEnter={!isMobile ? handleDragEnter : undefined}
+        onDragLeave={!isMobile ? handleDragLeave : undefined}
+        onDragOver={!isMobile ? handleDragOver : undefined}
+        onDrop={!isMobile ? handleDrop : undefined}
       >
         <div className="title-wrapper">
           <div className="h1-wrapper">
-            <h1 className="h1">New Upload</h1>
+            <h1 className="h1">Upload Files</h1>
             <XCircle
-              onClick={() => {
-                handleUploadCardState();
-              }}
+              onClick={handleUploadCardState}
               className="x-circle"
             />
           </div>
         </div>
+
         <div className="btn-wrapper">
           <div className="btn" role="button">
             <label className="btn-label" htmlFor="new-folder">
-              <FolderPlus className="margin-r-1" /> New Folder
+              <FolderPlus className="margin-r-1" />
+              <span>Folder Upload</span>
             </label>
-            {multiUpload ? (
-              <input
-                ref={inputRef}
-                style={{ display: "none" }}
-                id="new-folder"
-                type="file"
-                webkitdirectory=""
-                multiple
-                onChange={(e) => {
-                  createFileDataObject(e);
-                }}
-              />
-            ) : (
-              <input
-                ref={inputRef}
-                style={{ display: "none" }}
-                id="new-folder"
-                type="file"
-                webkitdirectory=""
-                onChange={(e) => {
-                  createFileDataObject(e);
-                }}
-              />
-            )}
+            <input
+              ref={folderInputRef}
+              style={{ display: "none" }}
+              id="new-folder"
+              type="file"
+              webkitdirectory=""
+              multiple={multiUpload}
+              onChange={createFileDataObject}
+            />
           </div>
           <div className="btn" role="button">
             <label className="btn-label" htmlFor="new-file">
-              <FilePlus className="margin-r-1" /> New File
+              <FilePlus className="margin-r-1" />
+              <span>File Upload</span>
             </label>
-            {multiUpload ? (
-              <input
-                ref={inputRef}
-                id="new-file"
-                style={{ display: "none" }}
-                type="file"
-                multiple
-                onChange={(e) => {
-                  createFileDataObject(e);
-                }}
-              />
-            ) : (
-              <input
-                ref={inputRef}
-                id="new-file"
-                style={{ display: "none" }}
-                type="file"
-                onChange={(e) => {
-                  createFileDataObject(e);
-                }}
-              />
-            )}
+            <input
+              ref={fileInputRef}
+              id="new-file"
+              style={{ display: "none" }}
+              type="file"
+              multiple={multiUpload}
+              onChange={createFileDataObject}
+            />
           </div>
         </div>
-        <div className="upload-multiple">
-          Upload Multiple?
-          <label className="cb-con test">
-            <input
-              checked={multiUpload}
-              onChange={(e) => console.log(e.target.value)}
-              className="checkbox"
-              type="checkbox"
-            />
-            <span
-              className="checkmark"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMultiUploadState();
-              }}
-            ></span>
-          </label>
-        </div>
+
+        {!isMobile && (
+          <div className="upload-multiple">
+            <span>Upload Multiple</span>
+            <label className="cb-con">
+              <input
+                checked={multiUpload}
+                onChange={() => handleMultiUploadState()}
+                className="checkbox"
+                type="checkbox"
+              />
+              <span className="checkmark"></span>
+            </label>
+          </div>
+        )}
+
         <div className={`drag-n-drop ${isDragOver ? 'drag-active' : ''}`}>
           <UploadItem {...uploadItemProps} />
-          {isDragOver && (
+          {isDragOver && !isMobile && (
             <div className="drag-overlay">
               <p>Drop files here to upload</p>
             </div>
           )}
         </div>
-        <div className="cloud-wrapper">
-          <UploadCloudIcon className="uploadCloudIcon" />
-        </div>
+
         <button
           onClick={() => {
             if (fileArr.length === 0) return;
-
-            const event = {
-              target: {
-                files: fileArr
-              }
-            }
-
+            const event = { target: { files: fileArr } };
             fileUpload(event);
             setFileArr([]);
             handleUploadCardState();
             wsTriggerReload(displayNodeId);
           }}
           className="upload-btn"
+          disabled={fileArr.length === 0}
         >
-          Upload
+          {fileArr.length > 0 ? 'Upload Files' : 'Select Files to Upload'}
         </button>
       </div>
     </div>
   );
+
+  // return (
+  //   <div className="blur-background">
+  //     <div 
+  //       className={`upload-card-wrapper ${isDragOver ? 'drag-over' : ''}`}
+  //       onDragEnter={handleDragEnter}
+  //       onDragLeave={handleDragLeave}
+  //       onDragOver={handleDragOver}
+  //       onDrop={handleDrop}
+  //     >
+  //       <div className="title-wrapper">
+  //         <div className="h1-wrapper">
+  //           <h1 className="h1">New Upload</h1>
+  //           <XCircle
+  //             onClick={() => {
+  //               handleUploadCardState();
+  //             }}
+  //             className="x-circle"
+  //           />
+  //         </div>
+  //       </div>
+  //       <div className="btn-wrapper">
+  //         <div className="btn" role="button">
+  //           <label className="btn-label" htmlFor="new-folder">
+  //             <FolderPlus className="margin-r-1" /> New Folder
+  //           </label>
+  //           {multiUpload ? (
+  //             <input
+  //               ref={inputRef}
+  //               style={{ display: "none" }}
+  //               id="new-folder"
+  //               type="file"
+  //               webkitdirectory=""
+  //               multiple
+  //               onChange={(e) => {
+  //                 createFileDataObject(e);
+  //               }}
+  //             />
+  //           ) : (
+  //             <input
+  //               ref={inputRef}
+  //               style={{ display: "none" }}
+  //               id="new-folder"
+  //               type="file"
+  //               webkitdirectory=""
+  //               onChange={(e) => {
+  //                 createFileDataObject(e);
+  //               }}
+  //             />
+  //           )}
+  //         </div>
+  //         <div className="btn" role="button">
+  //           <label className="btn-label" htmlFor="new-file">
+  //             <FilePlus className="margin-r-1" /> New File
+  //           </label>
+  //           {multiUpload ? (
+  //             <input
+  //               ref={inputRef}
+  //               id="new-file"
+  //               style={{ display: "none" }}
+  //               type="file"
+  //               multiple
+  //               onChange={(e) => {
+  //                 createFileDataObject(e);
+  //               }}
+  //             />
+  //           ) : (
+  //             <input
+  //               ref={inputRef}
+  //               id="new-file"
+  //               style={{ display: "none" }}
+  //               type="file"
+  //               onChange={(e) => {
+  //                 createFileDataObject(e);
+  //               }}
+  //             />
+  //           )}
+  //         </div>
+  //       </div>
+  //       <div className="upload-multiple">
+  //         Upload Multiple?
+  //         <label className="cb-con test">
+  //           <input
+  //             checked={multiUpload}
+  //             onChange={(e) => console.log(e.target.value)}
+  //             className="checkbox"
+  //             type="checkbox"
+  //           />
+  //           <span
+  //             className="checkmark"
+  //             onClick={(e) => {
+  //               e.stopPropagation();
+  //               handleMultiUploadState();
+  //             }}
+  //           ></span>
+  //         </label>
+  //       </div>
+  //       <div className={`drag-n-drop ${isDragOver ? 'drag-active' : ''}`}>
+  //         <UploadItem {...uploadItemProps} />
+  //         {isDragOver && (
+  //           <div className="drag-overlay">
+  //             <p>Drop files here to upload</p>
+  //           </div>
+  //         )}
+  //       </div>
+  //       <div className="cloud-wrapper">
+  //         <UploadCloudIcon className="uploadCloudIcon" />
+  //       </div>
+  //       <button
+  //         onClick={() => {
+  //           if (fileArr.length === 0) return;
+
+  //           const event = {
+  //             target: {
+  //               files: fileArr
+  //             }
+  //           }
+
+  //           fileUpload(event);
+  //           setFileArr([]);
+  //           handleUploadCardState();
+  //           wsTriggerReload(displayNodeId);
+  //         }}
+  //         className="upload-btn"
+  //       >
+  //         Upload
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
 }

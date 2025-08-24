@@ -14,7 +14,7 @@
 
 .mainWindowWrapper {
   width: 100%;
-  height: inherit;
+  flex: 1;
   margin: 0px;
   display: flex;
   background: linear-gradient(160deg,
@@ -23,6 +23,7 @@
     var(--cyber-dark-bg) 100%);
   border-top: 1px solid var(--cyber-border-color);
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .mainWindow .navWrapper {
@@ -31,6 +32,7 @@
 
 .navWrapper {
   height: 3.5rem;
+  min-height: 3.5rem; /* Ensure nav doesn't shrink */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,6 +56,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(255, 0, 73, 0.15);
   z-index: 1;
+  flex-shrink: 0; /* Prevent nav from shrinking */
 }
 
 .navWrapper::before {
@@ -177,10 +180,12 @@
   transform: scale(1.1);
 }
 
-/* Sidebar styling */
+/* Sidebar styling with proper height constraints */
 .dirTreeSideBar {
   min-width: 300px;
-  max-width: 1600px; /* Consider adding a max-width on larger screens */
+  max-width: 1600px;
+  height: 100%; /* Take full height of parent */
+  max-height: 100%; /* Never exceed parent height */
   background: linear-gradient(90deg,
     rgba(22, 20, 28, 0.98) 0%,
     rgba(32, 29, 39, 0.95) 50%,
@@ -195,11 +200,14 @@
   flex-direction: column;
   overflow: hidden;
   z-index: 5;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
 }
 
 .sideItemWrapper {
-  flex-grow: 1;
+  flex: 1; /* Take remaining space */
+  height: 0; /* Allow flex to control height */
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem 0;
   /* Custom Scrollbar for sidebar */
   scrollbar-width: thin;
@@ -282,8 +290,9 @@
 /* *********************************** */
 
 .gridIconDisplayWrapper {
-  width: 100%;
-  height: auto;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
@@ -298,7 +307,10 @@
 }
 
 .listIconDisplayWrapper {
-  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem;
   background: radial-gradient(circle at top left,
     rgba(47, 214, 181, 0.05) 0%,
     transparent 30%),
@@ -327,6 +339,7 @@
     rgba(45, 41, 56, 0.3) 0%,
     rgba(32, 29, 39, 0.5) 100%);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0; /* Prevent rows from shrinking */
 }
 
 .rowWrapper::before {
@@ -481,6 +494,7 @@
 
   .navWrapper {
     height: 3rem;
+    min-height: 3rem;
     padding: 0 0.75rem;
     margin: 0 0.5rem;
   }
@@ -522,6 +536,7 @@
   .navWrapper {
     padding: 0.5rem 0.75rem;
     height: 3rem;
+    min-height: 3rem;
     margin: 0 0.5rem;
   }
   
@@ -547,6 +562,7 @@
 
   .navWrapper {
     height: 3rem;
+    min-height: 3rem;
     padding: 0.5rem;
     flex-wrap: nowrap;
     min-width: 0;

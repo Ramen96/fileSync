@@ -1,53 +1,246 @@
-.main-bg {
-  background: rgb(22, 20, 28);
-}
-
-.flex-jc-ai {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.w100 {
-  width: 100%;
-}
-
-/* ******************************************** */
-/* ************* Section Main ***************** */
-/* ******************************************** */
-
-.main {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
+/* Main Window */
 .mainWindow {
-  height: 100%;
+  margin: 1rem 1rem 1rem 1rem;
+  flex-grow: 1;
+  height: calc(100vh - 120px);
+  max-width: 100%;
   border: solid rgba(169, 169, 169, 0.5) 1px;
   border-radius: 0.5rem;
-  margin: 1rem 1rem 0 1rem; /* Added top margin for spacing from search bar */
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* This is key for the navWrapper to take full width */
+  align-items: stretch;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-/* Responsive margins to match search bar behavior */
+/* Main Container */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-right: 0;
+}
+
+/* Root Container */
+.app-container {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Main Window Wrapper */
+.mainWindowWrapper {
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  background: linear-gradient(160deg,
+      var(--cyber-dark-bg) 0%,
+      var(--cyber-medium-bg) 50%,
+      var(--cyber-dark-bg) 100%);
+  border-top: 1px solid var(--cyber-border-color);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  min-height: 0;
+  max-width: 100%;
+}
+
+/* Directory Tree Sidebar */
+.dirTreeSideBar {
+  width: 300px;
+  max-width: 300px;
+  height: 100%;
+  background: linear-gradient(90deg,
+      rgba(22, 20, 28, 0.98) 0%,
+      rgba(32, 29, 39, 0.95) 50%,
+      rgba(45, 41, 56, 0.9) 100%);
+  border-right: 1.5px solid rgba(47, 214, 181, 0.2);
+  box-shadow:
+    10px 0 30px rgba(0, 0, 0, 0.4),
+    5px 0 15px rgba(255, 0, 73, 0.1),
+    inset -1px 0 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+/* External Sidebar */
+.sidebar {
+  width: 18rem;
+  flex-shrink: 0;
+  background: rgb(22, 20, 28);
+  border-right: solid rgba(169, 169, 169, 0.5) 1px;
+  border-bottom: solid rgba(169, 169, 169, 0.5) 1px;
+  border-bottom-right-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Grid Icon Display */
+.gridIconDisplayWrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 0.75rem;
+  gap: 0.75rem;
+  background: radial-gradient(circle at top left,
+      rgba(47, 214, 181, 0.05) 0%,
+      transparent 30%),
+    radial-gradient(circle at bottom right,
+      rgba(255, 0, 73, 0.05) 0%,
+      transparent 30%);
+  min-width: 0;
+}
+
+/* List Icon Display */
+.listIconDisplayWrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem;
+  background: radial-gradient(circle at top left,
+      rgba(47, 214, 181, 0.05) 0%,
+      transparent 30%),
+    radial-gradient(circle at bottom right,
+      rgba(255, 0, 73, 0.05) 0%,
+      transparent 30%);
+  min-width: 0;
+}
+
+/* Responsive - Tablet */
 @media (max-width: 1024px) {
+  .main {
+    padding: 1rem 0.5rem 0 0.5rem;
+  }
+
   .mainWindow {
-    margin: 1rem 0.5rem 0 0.5rem;
+    height: calc(100vh - 110px);
+  }
+
+  .dirTreeSideBar {
+    width: 280px;
+    max-width: 280px;
   }
 }
 
+/* Responsive - Mobile */
 @media (max-width: 768px) {
+  .dirTreeSideBar {
+    display: none;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    flex: 1;
+    min-width: 100%;
+    margin-right: 0;
+    padding: 0;
+    gap: 0;
+  }
+
   .mainWindow {
-    margin: 1rem 0.5rem 0 0.5rem;
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+    height: calc(100vh - 120px);
+    border-radius: 0.5rem;
+  }
+
+  .search-bar-wrapper {
+    margin: 0 !important;
+    padding: 0.5rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .search-form {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .main>*:first-child {
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .gridIconDisplayWrapper {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .listIconDisplayWrapper {
+    padding: 0.25rem;
   }
 }
 
-@media (max-width: 480px) {
-  .mainWindow {
-    margin: 1rem 0.25rem 0 0.25rem;
+/* Responsive - Small Mobile */
+@media (max-width: 600px) {
+  .main {
+    padding: 0;
   }
+
+  .mainWindow {
+    margin: 0.5rem 0.25rem 0.25rem 0.25rem;
+    height: calc(100vh - 60px);
+    border-radius: 0.5rem;
+  }
+
+  .dirTreeSideBar {
+    width: 240px;
+    max-width: 240px;
+  }
+}
+
+/* Responsive - Extra Small Mobile */
+@media (max-width: 480px) {
+  .main {
+    padding: 0;
+  }
+
+  .mainWindow {
+    margin: 0.5rem 0.125rem 0.125rem 0.125rem;
+    height: calc(100vh - 50px);
+    border-radius: 0.5rem;
+  }
+
+  .dirTreeSideBar {
+    width: 220px;
+    max-width: 220px;
+  }
+
+  .gridIconDisplayWrapper {
+    padding: 0.25rem;
+    gap: 0.25rem;
+  }
+
+  .listIconDisplayWrapper {
+    padding: 0.125rem;
+  }
+}
+
+/* Global Box Sizing */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
 }

@@ -42,6 +42,8 @@ export default function Index() {
   const [forwardHistory, setForwardHistory] = useState([]);
   const [currentDisplayNodes, setCurrentDisplayNodes] = useState(null);
   const [updatedFolderId, setUpdatedFolderId] = useState(null);
+  // State to track if the screen is mobile based on width
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
 
   const getChildNodes = useCallback(async (id) => {
     try {
@@ -71,14 +73,14 @@ export default function Index() {
 
     if (direction === 'backward' && prevNodeId) {
       updateDisplayNodes(prevNodeId);
-      setBackHistory(b => b.slice(0, -1));
-      setForwardHistory(f => [currentNodeId, ...f]);
+      setBackHistory(prev => prev.slice(0, -1));
+      setForwardHistory(prev => [currentNodeId, ...prev]);
     }
 
     if (direction === 'forward' && nextNodeId) {
       updateDisplayNodes(nextNodeId);
-      setForwardHistory(f => f.slice(1));
-      setBackHistory(b => [...b, currentNodeId]);
+      setForwardHistory(prev => prev.slice(1));
+      setBackHistory(prev => [...prev, currentNodeId]);
     }
   }, [backHistory, forwardHistory, currentDisplayNodes, updateDisplayNodes]);
 
@@ -86,14 +88,12 @@ export default function Index() {
     const currentNodeId = currentDisplayNodes?.[0]?.parent_id;
     setForwardHistory([]);
     updateDisplayNodes(folderId);
-    setBackHistory(b => [...b, currentNodeId]);
+    setBackHistory(prev => [...prev, currentNodeId]);
   }, [currentDisplayNodes, updateDisplayNodes]);
 
-
-
   const db = useLoaderData();
-  const childrenOfRoot = db.children;
-  const rootNodeId = db.id;
+  const childrenOfRoot = db?.children;
+  const rootNodeId = db?.id;
 
   const socket = useContext(wsContext);
 
@@ -118,9 +118,23 @@ export default function Index() {
     setDisplayNodeId(rootNodeId);
   }, [childrenOfRoot, rootNodeId]);
 
+  // New useEffect to handle window resizing
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Empty dependency array ensures this runs once on mount
+
   useEffect(() => {
     const refreshRootChildren = async () => {
-      if (reloadTrigger > 0) {
+      if (reloadTrigger > 0 && rootNodeId) {
         try {
           const options = {
             method: "POST",
@@ -242,14 +256,16 @@ export default function Index() {
           parent_id: currentDisplayNodeId,
         };
 
-        if (fileObject.webkitRelativePath.length === 0) {
+        if (fileObject.webkitRelativePath?.length === 0) {
           fileInfo.is_folder = false;
-        } else if (fileObject.webkitRelativePath.length > 0) {
+        } else if (fileObject.webkitRelativePath?.length > 0) {
           fileInfo.is_folder = true;
+        } else {
+          fileInfo.is_folder = false;
         }
 
         fileInfo.name = fileObject.name;
-        fileInfo.webkitRelativePath = fileObject.webkitRelativePath;
+        fileInfo.webkitRelativePath = fileObject.webkitRelativePath || '';
         fileInfo.type = fileObject.type;
         dataArr.push(fileInfo);
       }
@@ -360,10 +376,12 @@ export default function Index() {
   };
 
   return (
-    <>
-      <IndexContext.Provider value={indexContextProps}>
-        <SideBar />
-      </IndexContext.Provider>
+    <div className="app-container">
+      {!isMobile && (
+        <IndexContext.Provider value={indexContextProps}>
+          <SideBar />
+        </IndexContext.Provider>
+      )}
       <div className="main">
         <SearchBar
           onSearch={handleSearch}
@@ -376,6 +394,6 @@ export default function Index() {
           </IndexContext.Provider>
         </div>
       </div>
-    </>
+    </div>
   );
 }

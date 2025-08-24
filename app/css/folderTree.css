@@ -1,18 +1,23 @@
+/* Directory Tree Sidebar */
 .dirTreeSideBar {
   width: 15rem;
-  height: auto;
+  height: 100%;
+  max-height: 100vh;
   display: flex;
   flex-direction: row;
   background: linear-gradient(135deg, rgba(20, 18, 28, 0.95) 0%, rgba(30, 25, 40, 0.95) 100%);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(47, 214, 181, 0.2);
+  overflow: hidden;
 }
 
+/* Resize Handle */
 .handle {
   width: 10px;
   border-right: solid rgba(47, 214, 181, 0.3) 1px;
   box-shadow: 6px 0px 10px rgba(47, 214, 181, 0.1);
   background: linear-gradient(90deg, transparent 0%, rgba(47, 214, 181, 0.1) 100%);
+  flex-shrink: 0;
 }
 
 .handle-gui {
@@ -45,11 +50,20 @@
   border-right-color: rgba(47, 214, 181, 0.6);
 }
 
+/* Sidebar Items Wrapper */
 .sideItemWrapper {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100%;
   margin-left: 5px;
   position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47, 214, 181, 0.6) rgba(30, 25, 40, 0.3);
 }
 
 .sideItemWrapper::before {
@@ -60,8 +74,10 @@
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(47, 214, 181, 0.2) 50%, transparent 100%);
+  z-index: 1;
 }
 
+/* Sidebar Items */
 .sideItem {
   height: 2rem;
   display: flex;
@@ -76,6 +92,7 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .sideItem::before {
@@ -108,11 +125,14 @@
   letter-spacing: 0.5px;
 }
 
+/* Folder Wrapper */
 .sideFolderWrapper {
   width: auto;
   height: auto;
+  flex-shrink: 0;
 }
 
+/* Folder Dropdown */
 .sideFolderDropDown {
   width: auto;
   height: auto;
@@ -121,6 +141,7 @@
   position: relative;
   padding-left: 0.6rem;
   background: linear-gradient(90deg, rgba(47, 214, 181, 0.02) 0%, transparent 20%);
+  flex-shrink: 0;
 }
 
 .sideFolderDropDown::before {
@@ -145,8 +166,10 @@
   width: auto;
   margin-left: 0.5rem;
   filter: drop-shadow(0 0 3px rgba(47, 214, 181, 0.4));
+  flex-shrink: 0;
 }
 
+/* Cyber Tree Items */
 .cyber-tree-item {
   height: 2.2rem;
   display: flex;
@@ -162,6 +185,7 @@
   position: relative;
   overflow: hidden;
   background: rgba(30, 25, 40, 0.2);
+  flex-shrink: 0;
 }
 
 .cyber-tree-item::before {
@@ -197,6 +221,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  flex-shrink: 0;
 }
 
 .cyber-tree-icon {
@@ -223,6 +248,9 @@
   text-transform: uppercase;
   transition: all 0.3s ease;
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .cyber-tree-folder:hover .cyber-tree-name {
@@ -235,6 +263,7 @@
   text-shadow: 0 0 8px rgba(255, 0, 73, 0.4);
 }
 
+/* Current Folder Styling */
 .cyber-tree-item.current-folder {
   background: linear-gradient(90deg, rgba(47, 214, 181, 0.15) 0%, rgba(47, 214, 181, 0.08) 50%, rgba(30, 25, 40, 0.4) 100%);
   border-left: 3px solid #2fd6b5;
@@ -277,7 +306,6 @@
   font-weight: 600;
 }
 
-/* Optional: Add a subtle pulse effect to the folder icon when current */
 .cyber-tree-item.current-folder .cyber-tree-icon {
   filter: drop-shadow(0 0 3px rgba(47, 214, 181, 0.4));
   animation: icon-glow 3s ease-in-out infinite alternate;
@@ -288,6 +316,7 @@
   100% { filter: drop-shadow(0 0 4px rgba(47, 214, 181, 0.5)); }
 }
 
+/* Current File Styling */
 .cyber-tree-item.current-file {
   background: linear-gradient(90deg, rgba(255, 0, 73, 0.25) 0%, rgba(255, 0, 73, 0.1) 100%);
   border-left: 3px solid #ff0049;
@@ -315,7 +344,7 @@
   font-weight: 600;
 }
 
-/* Add expand/collapse indicator */
+/* Expand/Collapse Indicators */
 .cyber-tree-folder {
   position: relative;
   padding-right: 3rem;
@@ -353,35 +382,85 @@
   transform: translateY(-50%) rotate(90deg) scale(1.2);
 }
 
-/* Loading animation enhancement */
+/* Loading Container */
 .sideFolderDropDown .loading-container {
   padding: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
-/* Scrollbar styling for cyberpunk theme */
-.sideItemWrapper::-webkit-scrollbar,
+/* Webkit Scrollbar Styling */
+.sideItemWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sideItemWrapper::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, rgba(30, 25, 40, 0.3) 0%, rgba(45, 41, 56, 0.5) 100%);
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.sideItemWrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #2fd6b5 0%, #47ecc7 50%, #2fd6b5 100%);
+  border-radius: 4px;
+  box-shadow: 
+    0 0 6px rgba(47, 214, 181, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.sideItemWrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #47ecc7 0%, #2fd6b5 50%, #47ecc7 100%);
+  box-shadow: 
+    0 0 10px rgba(47, 214, 181, 0.6),
+    0 0 15px rgba(47, 214, 181, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: scaleY(1.1);
+}
+
+.sideItemWrapper::-webkit-scrollbar-corner {
+  background: rgba(30, 25, 40, 0.3);
+}
+
 .sideFolderDropDown::-webkit-scrollbar {
   width: 6px;
 }
 
-.sideItemWrapper::-webkit-scrollbar-track,
 .sideFolderDropDown::-webkit-scrollbar-track {
-  background: rgba(30, 25, 40, 0.3);
+  background: rgba(30, 25, 40, 0.2);
   border-radius: 3px;
 }
 
-.sideItemWrapper::-webkit-scrollbar-thumb,
 .sideFolderDropDown::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #2fd6b5, #47ecc7);
   border-radius: 3px;
-  box-shadow: 0 0 6px rgba(47, 214, 181, 0.3);
+  box-shadow: 0 0 4px rgba(47, 214, 181, 0.3);
 }
 
-.sideItemWrapper::-webkit-scrollbar-thumb:hover,
 .sideFolderDropDown::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #47ecc7, #2fd6b5);
-  box-shadow: 0 0 10px rgba(47, 214, 181, 0.6);
+  box-shadow: 0 0 8px rgba(47, 214, 181, 0.6);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dirTreeSideBar {
+    height: calc(100vh - 60px);
+  }
+  
+  .sideItemWrapper::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dirTreeSideBar {
+    height: calc(100vh - 48px);
+  }
+  
+  .sideItemWrapper::-webkit-scrollbar {
+    width: 4px;
+  }
 }

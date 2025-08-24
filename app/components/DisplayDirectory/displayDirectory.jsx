@@ -15,7 +15,8 @@ import {
   Trash,
   Download,
   Upload,
-  MousePointerClick
+  MousePointerClick,
+  Menu 
 } from 'lucide-react';
 import {
   DisplayDirectoryContext,
@@ -25,6 +26,35 @@ import UploadCard from '../UploadCard/uploadCard';
 import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "../../css/displayDirectory.css";
+
+// New Hamburger Menu component
+const HamburgerMenu = ({ actions }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="hamburger-menu">
+      <button className="homeButton" onClick={() => setIsOpen(!isOpen)}>
+        <Menu />
+      </button>
+      {isOpen && (
+        <div className="menu-dropdown">
+          {actions.map((btn) => {
+            const Icon = btn.icon;
+            return (
+              <button key={btn.id} className="menu-button" onClick={() => {
+                btn.onClick();
+                setIsOpen(false);
+              }}>
+                <Icon />
+                <span>{btn.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function DisplayDirectory() {
   const {
@@ -439,17 +469,17 @@ export default function DisplayDirectory() {
     isIcon,
     handleFolderClick,
     handleDeleteQueue,
-    handleSelectionQueue, // Add shared selection handler
-    selectionQueue, // Add shared selection queue
-    downloadSingleFile, // Add individual download function
-    downloadBulkFiles, // Add bulk download function
+    handleSelectionQueue,
+    selectionQueue, 
+    downloadSingleFile,
+    downloadBulkFiles, 
     getChildNodes,
     handleUploadCardState,
     selectState
   };
 
-  // Nav button configs
-  const leftNavButtons = [
+  // Buttons for initial state
+  const initialNavButtons = [
     {
       id: 'home',
       icon: Home,
@@ -464,12 +494,6 @@ export default function DisplayDirectory() {
       }
     },
     {
-      id: 'sidebar',
-      icon: Sidebar,
-      className: 'homeButton',
-      onClick: () => setShowSideBar(prev => !prev)
-    },
-    {
       id: 'backward',
       icon: ChevronLeft,
       className: 'homeButton circle',
@@ -480,39 +504,44 @@ export default function DisplayDirectory() {
       icon: ChevronRight,
       className: 'homeButton circle',
       onClick: () => handleNavClick("forward")
-    }
+    },
   ];
 
-  const rightNavButtons = [
-    {
-      id: 'select',
-      icon: MousePointerClick,
-      className: selectState ? 'homeButton homeButton-selected' : 'homeButton',
-      onClick: () => setSelectState(!selectState)
-    },
+  // Buttons for select state
+  const selectStateButtons = [
     {
       id: 'delete',
       icon: Trash,
       className: `homeButton${selectState && selectionQueue.length > 0 ? ' homeButton-active' : ''}`,
       onClick: handleDeleteButton
     },
+  ];
+
+  // Buttons for hamburger menu
+  const hamburgerActions = [
     {
       id: 'download',
       icon: Download,
-      className: `homeButton${selectState && selectionQueue.length > 0 ? ' homeButton-active' : ''}`,
+      label: 'Download',
       onClick: handleDownloadButton
     },
     {
       id: 'upload',
       icon: Upload,
-      className: 'homeButton',
+      label: 'Upload',
       onClick: handleUploadCardState
     },
     {
       id: 'view-toggle',
       icon: isIcon ? Grid : List,
-      className: 'homeButton',
+      label: 'View',
       onClick: () => setIsIcon(prev => !prev)
+    },
+    {
+      id: 'sidebar-toggle',
+      icon: Sidebar,
+      label: 'Toggle Sidebar',
+      onClick: () => setShowSideBar(prev => !prev)
     }
   ];
 
@@ -526,6 +555,7 @@ export default function DisplayDirectory() {
     );
   };
 
+
   return (
     <>
       {displayUploadCard && (
@@ -534,8 +564,31 @@ export default function DisplayDirectory() {
         </DisplayDirectoryContext.Provider>
       )}
       <div className="navWrapper prevent-select">
-        <div className="nav-buttons-left">{leftNavButtons.map(renderButton)}</div>
-        <div className="nav-buttons-right">{rightNavButtons.map(renderButton)}</div>
+        <div className="nav-buttons-left">
+          {initialNavButtons.map(renderButton)}
+        </div>
+        <div className="nav-buttons-right">
+          {/* Render the Select button directly */}
+          <button
+            key="select"
+            className={selectState ? 'homeButton homeButton-selected' : 'homeButton'}
+            onClick={() => setSelectState(!selectState)}
+          >
+            <MousePointerClick />
+          </button>
+          {/* Conditionally render the Delete button when selectState is active and items are selected */}
+          {selectState && selectionQueue.length > 0 && (
+            <button
+              key="delete"
+              className="homeButton"
+              onClick={handleDeleteButton}
+            >
+              <Trash />
+            </button>
+          )}
+          {/* Render the Hamburger Menu */}
+          <HamburgerMenu actions={hamburgerActions} />
+        </div>
       </div>
       <div className="mainWindowWrapper prevent-select">
         {showSideBar && (

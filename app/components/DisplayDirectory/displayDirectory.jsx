@@ -27,30 +27,64 @@ import FolderTree from '../folder-tree/folderTree';
 import HandleDisplayIcons from '../HandleDisplayIcons/handleDisplayIcons';
 import "../../css/displayDirectory.css";
 
-// New Hamburger Menu component
+// Hamburger Menu component
 const HamburgerMenu = ({ actions }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (isOpen && menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  const handleMenuAction = (action) => {
+    action.onClick();
+    setIsOpen(false);
+  };
 
   return (
-    <div className="hamburger-menu">
-      <button className="homeButton" onClick={() => setIsOpen(!isOpen)}>
+    <div className="hamburger-menu" ref={menuRef}>
+      <button 
+        className={`homeButton ${isOpen ? 'homeButton-selected' : ''}`} 
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <Menu />
       </button>
       {isOpen && (
-        <div className="menu-dropdown">
-          {actions.map((btn) => {
-            const Icon = btn.icon;
-            return (
-              <button key={btn.id} className="menu-button" onClick={() => {
-                btn.onClick();
-                setIsOpen(false);
-              }}>
-                <Icon />
-                <span>{btn.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        <>
+          {isMobile && <div className="menu-overlay" onClick={() => setIsOpen(false)} />}
+          <div className="menu-dropdown">
+            {actions.map((action, index) => (
+              <React.Fragment key={action.id}>
+                <button
+                  className="menu-button"
+                  onClick={() => handleMenuAction(action)}
+                >
+                  <action.icon />
+                  <span>{action.label}</span>
+                </button>
+                {index < actions.length - 1 && <div className="menu-divider" />}
+              </React.Fragment>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

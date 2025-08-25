@@ -242,14 +242,20 @@ docker-compose exec filesync sh
 
 ## Development Mode
 
-This Docker setup runs your application in **development mode** using `npm run dev`, just like your current tmux setup. This means:
+This Docker setup runs the application in **development mode** using `npm run dev`. This approach was chosen for simplicity and ease of development. Benefits include:
 
 - ✅ No build step required
 - ✅ Faster startup times
 - ✅ All development dependencies available
-- ✅ Same behavior as your current `tmux` + `npm run dev` workflow
+- ✅ Simpler debugging and development workflow
 
-If you want to run it in production mode later, you can:
-1. Change `NODE_ENV=development` to `NODE_ENV=production` in docker-compose.yml
-2. Update the start script to use `npm start` instead of `npm run dev`
-3. Add a build step to the Dockerfile
+### Note on Production Use
+
+This application and Docker setup are designed for development and personal use. The current configuration runs in development mode, which is perfectly suitable for:
+
+- Personal file syncing
+- Development environments
+- Small team usage
+- Learning and experimentation
+
+If you plan to use this in a production environment, you would need to implement additional features like authentication, security hardening, proper error handling, and performance optimizations.

@@ -8,7 +8,6 @@ node_modules
 README.md
 Dockerfile
 .dockerignore
-docker-compose.yml
 npm-debug.log
 .nyc_output
 coverage

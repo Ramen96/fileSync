@@ -185,12 +185,14 @@ export default function DisplayDirectory() {
     setBackHistory(prev => [...prev, currentNodeId]);
   }, [updateDisplayNodes]);
 
-  // Sidebar state with responsive behavior
+  // Update the sidebar state and resize handling
   const [showSideBar, setShowSideBar] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 300 });
   const [isDragging, setIsDragging] = useState(false);
   const isDraggingRef = useRef(false);
-  const lastX = useRef(0);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(0);
+  const sidebarRef = useRef(null);
 
   // Responsive sidebar effect
   useEffect(() => {
@@ -209,32 +211,50 @@ export default function DisplayDirectory() {
 
   useEffect(() => { isDraggingRef.current = isDragging; }, [isDragging]);
 
-  const handleMouseDown = useCallback((e) => {
-    setIsDragging(true);
-    lastX.current = e.clientX;
-  }, []);
-
+  // Update the resize effect
   useEffect(() => {
+    if (!isDragging) return;
+
     const handleMouseMove = (e) => {
       if (!isDraggingRef.current) return;
-      const difference = e.clientX - lastX.current;
-      lastX.current = e.clientX;
+      e.preventDefault();
+      
+      const difference = e.clientX - startXRef.current;
+      const newWidth = startWidthRef.current + difference;
+      const minWidth = 200;
+      const maxWidth = Math.min(800, window.innerWidth * 0.8);
+      
       setDimensions(prev => ({
-        ...prev,
-        width: Math.min(Math.max(300, prev.width + difference), 1600)
+        width: Math.min(Math.max(minWidth, newWidth), maxWidth)
       }));
     };
-    const handleMouseUp = () => setIsDragging(false);
 
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.body.style.cursor = '';
+      document.body.classList.remove('resizing');
+    };
+
+    document.body.classList.add('resizing');
+    document.body.style.cursor = 'col-resize';
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.classList.remove('resizing');
     };
   }, [isDragging]);
+
+  const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    startXRef.current = e.clientX;
+    startWidthRef.current = dimensions.width;
+    setIsDragging(true);
+  }, [dimensions.width]);
 
   // Icon vs list view
   const [isIcon, setIsIcon] = useState(true);
@@ -627,14 +647,18 @@ export default function DisplayDirectory() {
       <div className="mainWindowWrapper prevent-select">
         {showSideBar && (
           <div
-            onMouseDown={handleMouseDown}
-            style={{ width: `${dimensions.width}px` }}
+            ref={sidebarRef}
             className="dirTreeSideBar"
+            style={{ width: `${dimensions.width}px` }}
           >
             <div className="sideItemWrapper">
               <FolderTree {...folderTreeComponentProps} />
             </div>
-            <div className="handle">
+            <div 
+              className="handle"
+              onMouseDown={handleMouseDown}
+              style={{ cursor: isDragging ? 'ew-resize' : 'col-resize' }}
+            >
               <div className="handle-gui">
                 {handleDots.map(dot => (
                   <div key={dot.id} className="dot"></div>

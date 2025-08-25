@@ -12,8 +12,8 @@ WORKDIR /app
 # Copy package files first for better Docker layer caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including dev dependencies)
+RUN npm install
 
 # Copy Prisma schema and migration files
 COPY prisma ./prisma/
@@ -23,9 +23,6 @@ RUN npx prisma generate
 
 # Copy application code
 COPY . .
-
-# Build the React application
-RUN npm run build
 
 # Create directories for file sync data
 RUN mkdir -p /app/data /app/uploads
@@ -51,5 +48,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 COPY start.sh ./
 RUN chmod +x start.sh
 
-# Start script that runs migrations and starts both servers
+# Start script that runs migrations and starts dev server
 CMD ["./start.sh"]

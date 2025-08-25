@@ -100,7 +100,8 @@ docker-compose up -d
 
 The setup includes:
 - PostgreSQL database (automatically configured)
-- FileSync application with WebSocket server
+- FileSync application running in development mode (`npm run dev`)
+- WebSocket server
 - Persistent data volumes
 
 ## Configuration
@@ -239,19 +240,16 @@ docker-compose exec filesync sh
    - Enable HTTPS/TLS
    - Configure firewall rules
 
-## Development
+## Development Mode
 
-To run in development mode:
+This Docker setup runs your application in **development mode** using `npm run dev`, just like your current tmux setup. This means:
 
-```bash
-# Development setup
-cp .env.example .env
-# Edit .env with your settings
+- ✅ No build step required
+- ✅ Faster startup times
+- ✅ All development dependencies available
+- ✅ Same behavior as your current `tmux` + `npm run dev` workflow
 
-# Start only the database
-docker-compose up -d postgres
-
-# Run the app locally
-npm install
-npm run dev
-```
+If you want to run it in production mode later, you can:
+1. Change `NODE_ENV=development` to `NODE_ENV=production` in docker-compose.yml
+2. Update the start script to use `npm start` instead of `npm run dev`
+3. Add a build step to the Dockerfile

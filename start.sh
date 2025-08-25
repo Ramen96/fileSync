@@ -41,9 +41,9 @@ cleanup() {
 # Set up signal handlers
 trap cleanup SIGTERM SIGINT
 
-# Start the main React Router application
-echo "Starting main application..."
-npm start &
+# Start the main React Router application in dev mode
+echo "Starting main application in development mode..."
+npm run dev &
 APP_PID=$!
 
 # Wait for the main process

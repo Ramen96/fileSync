@@ -26,14 +26,17 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "3000:3000"    # Main React Router app
+      - "3000:3000"    # Main React Router app (dev server)
       - "8080:8080"    # WebSocket server
     volumes:
       - filesync_data:/app/data
       - filesync_uploads:/app/uploads
       - ./cloud:/app/cloud  # Mount cloud directory if needed
+      # Mount source code for development (optional - for hot reload if supported)
+      - ./app:/app/app:ro
+      - ./prisma:/app/prisma:ro
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DATABASE_URL=postgresql://filesync:filesync_password_change_me@postgres:5432/filesync
       - PORT=3000
       - WS_PORT=8080

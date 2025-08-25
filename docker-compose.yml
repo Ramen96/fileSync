@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: filesync-postgres
+    environment:
+      POSTGRES_DB: filesync
+      POSTGRES_USER: filesync
+      POSTGRES_PASSWORD: filesync_password_change_me
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema-postgresql.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./initDB-generic.sql:/docker-entrypoint-initdb.d/02-init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U filesync -d filesync"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  filesync:
+    build: .
+    container_name: filesync-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"    # Main React Router app
+      - "8080:8080"    # WebSocket server
+    volumes:
+      - filesync_data:/app/data
+      - filesync_uploads:/app/uploads
+      - ./cloud:/app/cloud  # Mount cloud directory if needed
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://filesync:filesync_password_change_me@postgres:5432/filesync
+      - PORT=3000
+      - WS_PORT=8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+  filesync_data:
+    driver: local
+  filesync_uploads:
+    driver: local

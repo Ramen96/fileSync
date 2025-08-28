@@ -509,6 +509,26 @@ export default function DisplayDirectory() {
     }
   }, [updatedFolderId, displayNodeId, rootNodeId, updateDisplayNodes, setUpdatedFolderId]);
 
+  // Mouse navigation (back/forward buttons)
+  useEffect(() => {
+    const handleMouseNavigation = (e) => {
+      if (e.type === 'mouseup') {
+        // Button 3 = back, Button 4 = forward
+        if (e.button === 3) {
+          e.preventDefault();
+          handleNavClick('backward');
+        } else if (e.button === 4) {
+          e.preventDefault();
+          handleNavClick('forward');
+        }
+      }
+    };
+    document.addEventListener('mouseup', handleMouseNavigation);
+    return () => {
+      document.removeEventListener('mouseup', handleMouseNavigation);
+    };
+  }, [handleNavClick]);
+
   // Context props
   const folderTreeComponentProps = {
     childrenOfRootNode,

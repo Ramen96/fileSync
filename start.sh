@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Exit on any error
 set -e
@@ -21,20 +21,9 @@ npx prisma migrate deploy
 echo "Generating Prisma client..."
 npx prisma generate
 
-# Start WebSocket server in background if it exists
-if [ -f "webSocketServer.js" ]; then
-    echo "Starting WebSocket server..."
-    node webSocketServer.js &
-    WS_PID=$!
-    echo "WebSocket server started with PID: $WS_PID"
-fi
-
 # Function to handle shutdown gracefully
 cleanup() {
     echo "Shutting down..."
-    if [ ! -z "$WS_PID" ]; then
-        kill $WS_PID 2>/dev/null || true
-    fi
     exit 0
 }
 

@@ -53,6 +53,66 @@ docker-compose up -d
 - Web Interface: http://localhost:3000
 - WebSocket Server: ws://localhost:8080
 
+### Deployment
+
+Use these commands to manage the Docker deployment.
+
+- Start the stack:
+```bash
+docker-compose up -d
+```
+
+- Stop the stack without removing data:
+```bash
+docker-compose down
+```
+
+- Alternatively, stop containers and keep everything intact using:
+```bash
+docker-compose stop
+```
+
+- Start the stopped containers again:
+```bash
+docker-compose start
+```
+
+- Rebuild the app image after code or Dockerfile changes:
+```bash
+docker-compose build filesync
+docker-compose up -d
+```
+
+- Reset the entire stack and remove all persistent data volumes:
+```bash
+docker-compose down -v
+```
+
+- Confirm services are running:
+```bash
+docker-compose ps
+```
+
+- Follow logs while the app starts:
+```bash
+docker-compose logs -f filesync
+```
+
+- Follow PostgreSQL logs:
+```bash
+docker-compose logs -f postgres
+```
+
+If Docker reports a stale network error such as `option "com.docker.network.enable_ipv6" has changed`, run:
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+If ports `3000` or `8080` are already in use, update the `ports` section in `docker-compose.yml` before starting.
+
+> Note: `docker-compose down -v` deletes volumes and database data. Use `docker-compose down` to stop containers without losing data.
+
 The setup includes:
 - PostgreSQL database (automatically configured)
 - FileSync application running in development mode (`npm run dev`)

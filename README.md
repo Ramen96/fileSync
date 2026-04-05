@@ -34,7 +34,7 @@ This project is a self-hosted, privacy-respecting file syncing and organization 
 
 ### Prerequisites
 - Docker
-- Docker Compose
+- Docker Compose (use `docker compose` plugin, not legacy `docker-compose`)
 
 ### Installation
 
@@ -46,7 +46,7 @@ cd fileSync
 
 2. **Start with Docker Compose:**
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 3. **Access the application:**
@@ -59,48 +59,48 @@ Use these commands to manage the Docker deployment.
 
 - Start the stack:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 - Stop the stack without removing data:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 - Alternatively, stop containers and keep everything intact using:
 ```bash
-docker-compose stop
+docker compose stop
 ```
 
 - Start the stopped containers again:
 ```bash
-docker-compose start
+docker compose start
 ```
 
 - Rebuild the app image after code or Dockerfile changes:
 ```bash
-docker-compose build filesync
-docker-compose up -d
+docker compose build filesync
+docker compose up -d
 ```
 
 - Reset the entire stack and remove all persistent data volumes:
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 - Confirm services are running:
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 - Follow logs while the app starts:
 ```bash
-docker-compose logs -f filesync
+docker compose logs -f filesync
 ```
 
 - Follow PostgreSQL logs:
 ```bash
-docker-compose logs -f postgres
+docker compose logs -f postgres
 ```
 
 - If you see permission denied errors for `/var/run/docker.sock` on Linux, grant your user Docker group access:
@@ -116,13 +116,13 @@ newgrp docker
 
 If Docker reports a stale network error such as `option "com.docker.network.enable_ipv6" has changed`, run:
 ```bash
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
 ```
 
 If ports `3000` or `8080` are already in use, update the `ports` section in `docker-compose.yml` before starting.
 
-> Note: `docker-compose down -v` deletes volumes and database data. Use `docker-compose down` to stop containers without losing data.
+> Note: `docker compose down -v` deletes volumes and database data. Use `docker compose down` to stop containers without losing data.
 
 The setup includes:
 - PostgreSQL database (automatically configured)
@@ -157,31 +157,31 @@ The Docker setup uses PostgreSQL with these default settings:
 To change the database password:
 1. Update `POSTGRES_PASSWORD` in `docker-compose.yml`
 2. Update `DATABASE_URL` in your `.env` file
-3. Restart: `docker-compose down && docker-compose up -d`
+3. Restart: `docker compose down && docker compose up -d`
 
 ## Management Commands
 
 ```bash
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # View specific service logs
-docker-compose logs -f filesync
-docker-compose logs -f postgres
+docker compose logs -f filesync
+docker compose logs -f postgres
 
 # Stop the application
-docker-compose down
+docker compose down
 
 # Update to latest version
 git pull
-docker-compose build filesync
-docker-compose up -d
+docker compose build filesync
+docker compose up -d
 
 # Backup database
-docker-compose exec postgres pg_dump -U filesync filesync > backup.sql
+docker compose exec postgres pg_dump -U filesync filesync > backup.sql
 
 # Restore database
-docker-compose exec -T postgres psql -U filesync filesync < backup.sql
+docker compose exec -T postgres psql -U filesync filesync < backup.sql
 
 # Backup all data
 docker run --rm -v filesync_data:/data -v filesync_uploads:/uploads -v $(pwd):/backup alpine tar czf /backup/filesync-backup.tar.gz /data /uploads
@@ -201,19 +201,19 @@ Data persists between container restarts and updates.
 ### Database Connection Issues
 ```bash
 # Check if PostgreSQL is running
-docker-compose ps postgres
+docker compose ps postgres
 
 # Check PostgreSQL logs
-docker-compose logs postgres
+docker compose logs postgres
 
 # Test database connection
-docker-compose exec postgres psql -U filesync -d filesync -c "SELECT version();"
+docker compose exec postgres psql -U filesync -d filesync -c "SELECT version();"
 ```
 
 ### Reset Database (⚠️ **Deletes all data!**)
 ```bash
-docker-compose down -v
-docker-compose up -d
+docker compose down -v
+docker compose up -d
 ```
 
 ### Port Conflicts
@@ -230,13 +230,13 @@ services:
 ### Application Logs
 ```bash
 # View application logs
-docker-compose logs filesync
+docker compose logs filesync
 
 # Follow logs in real-time
-docker-compose logs -f filesync
+docker compose logs -f filesync
 
 # Access container shell
-docker-compose exec filesync sh
+docker compose exec filesync sh
 ```
 
 ## Security Considerations

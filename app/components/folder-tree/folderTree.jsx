@@ -167,6 +167,14 @@ export default function FolderTree({
     return <LoadingBars />;
   }
 
+  if (childrenOfRootNode.length === 0) {
+    return (
+      <div className="empty-state">
+        No files or folders found.
+      </div>
+    );
+  }
+
   return (
     <div>
       {childrenOfRootNode.map(child =>

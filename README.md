@@ -103,6 +103,17 @@ docker-compose logs -f filesync
 docker-compose logs -f postgres
 ```
 
+- If you see permission denied errors for `/var/run/docker.sock` on Linux, grant your user Docker group access:
+```bash
+sudo usermod -aG docker "$USER"
+```
+Then log out and log back in, or run:
+```bash
+newgrp docker
+```
+
+- On macOS, Docker Desktop typically handles socket permissions automatically, so this issue is usually Linux-specific.
+
 If Docker reports a stale network error such as `option "com.docker.network.enable_ipv6" has changed`, run:
 ```bash
 docker-compose down

@@ -34,6 +34,10 @@ RUN addgroup -g 1001 -S nodejs && \
 # Change ownership of app directory
 RUN chown -R filesync:nodejs /app
 
+# Copy startup script and make it executable before switching user
+COPY start.sh ./
+RUN chmod +x start.sh
+
 # Switch to non-root user
 USER filesync
 
@@ -43,10 +47,6 @@ EXPOSE 3000 8080
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3000 || exit 1
-
-# Copy startup script
-COPY start.sh ./
-RUN chmod +x start.sh
 
 # Start script that runs migrations and starts dev server
 CMD ["./start.sh"]

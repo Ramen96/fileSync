@@ -10,8 +10,8 @@ services:
       POSTGRES_PASSWORD: filesync_password_change_me
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./schema-postgresql.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./initDB-generic.sql:/docker-entrypoint-initdb.d/02-init.sql
+      - ./01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./02-initDB.sql:/docker-entrypoint-initdb.d/02-init.sql
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U filesync -d filesync"]

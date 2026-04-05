@@ -10,7 +10,7 @@ import "../css/index.css";
 
 export async function loader() {
   try {
-    const initRoot = await prisma.hierarchy.findFirst({
+    let initRoot = await prisma.hierarchy.findFirst({
       where: {
         parent_id: null,
       },
@@ -24,10 +24,36 @@ export async function loader() {
       }
     });
 
-    return data(initRoot);
+    if (!initRoot) {
+      const rootMetadata = await prisma.metadata.create({
+        data: {
+          name: "root",
+          is_folder: true,
+          hierarchy: {
+            create: {}
+          }
+        },
+        include: {
+          hierarchy: {
+            include: {
+              metadata: true,
+              children: {
+                include: {
+                  metadata: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      initRoot = rootMetadata.hierarchy;
+    }
+
+    return data(initRoot || { children: [] });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return data({}, { status: 500 });
+    return data({ children: [] }, { status: 500 });
   }
 }
 
@@ -92,8 +118,8 @@ export default function Index() {
   }, [currentDisplayNodes, updateDisplayNodes]);
 
   const db = useLoaderData();
-  const childrenOfRoot = db?.children;
-  const rootNodeId = db?.id;
+  const childrenOfRoot = db?.children || [];
+  const rootNodeId = db?.id || null;
 
   const socket = useContext(wsContext);
 
